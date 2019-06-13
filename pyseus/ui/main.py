@@ -2,7 +2,7 @@ import sys
 import webbrowser
 
 from PySide2 import QtWidgets, QtCore
-from PySide2.QtWidgets import QApplication, QMainWindow, QAction
+from PySide2.QtWidgets import QApplication, QMainWindow, QAction, QLabel
 
 class MainWindow(QMainWindow):
     def __init__(self, app):
@@ -14,6 +14,13 @@ class MainWindow(QMainWindow):
         # Status Bar
         self.status = self.statusBar()
         self.status.showMessage("Ready")
+        
+        # Image View & Scroll Area
+        self.view = QLabel()
+        # self.scrollArea = QScrollArea()
+        # self.scrollArea.setWidget(imageLabel)
+
+        # self.setCentralWidget(self.scrollArea)
 
         # Window dimensions
         geometry = app.desktop().availableGeometry(self)
@@ -61,7 +68,7 @@ class MainWindow(QMainWindow):
 
         self.about_menu.addAction(about_action)
 
-        # End View Menu
+        # End About Menu
 
     def _action_exit(self):
         sys.exit()
@@ -75,3 +82,6 @@ class MainWindow(QMainWindow):
     def _action_about(self):
         webbrowser.open("https://github.com/calmer/PySEUS", new=0, 
             autoraise=True)
+
+    def view(img):
+        self.view.setPixmap(QPixmap.fromImage(image))
