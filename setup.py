@@ -6,7 +6,7 @@ with open("README.md", "r") as readme_file:
 setup(
     name='pyseus',
     version='0.1',
-    description="A package to convert your Jupyter Notebook",
+    description="",
     long_description=readme,
     long_description_content_type="text/markdown",
     url='http://github.com/calmer/pyseus',
