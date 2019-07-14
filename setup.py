@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 with open("README.md", "r") as readme_file:
     readme = readme_file.read()
@@ -13,9 +13,16 @@ setup(
     author='Christoph Almer',
     author_email='christoph.almer@gmail.com',
     license='GNU',
-    packages=['pyseus'],
+    packages=find_packages(),
     install_requires=[
-        '',
+        'imageio',
+        'numpy',
+        'PySide2',
     ],
+    entry_points={
+        'console_scripts': [
+            'pyseus = pyseus:load',
+        ],
+    },
     zip_safe=False
 )
