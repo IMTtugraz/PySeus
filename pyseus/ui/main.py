@@ -22,6 +22,10 @@ class MainWindow(QMainWindow):
         
         # Image View & Scroll Area
         self.view = QLabel()
+        self.view.setScaledContents(True)
+
+        image = QImage("./tests/test.jpg")
+        self.view.setPixmap(QPixmap.fromImage(image))
         self.scrollArea = QScrollArea()
         self.scrollArea.setWidget(self.view)
 
@@ -35,17 +39,18 @@ class MainWindow(QMainWindow):
         # File Menu
         self.file_menu = self.menu.addMenu("File")
 
-        # Exit QAction
+        # Load Action
         load_action = QAction("Load", self)
         load_action.setShortcut("Ctrl+O")
         load_action.triggered.connect(self._action_load)
 
-        # Exit QAction
+        # Exit Action
         exit_action = QAction("Exit", self)
         exit_action.setShortcut("Ctrl+Q")
         exit_action.triggered.connect(self._action_exit)
 
         self.file_menu.addAction(load_action)
+        # self.file_menu.addSeparator()
         self.file_menu.addAction(exit_action)
 
         # End File Menu
@@ -53,23 +58,38 @@ class MainWindow(QMainWindow):
         # View Menu
         self.view_menu = self.menu.addMenu("View")
 
-        # Reset QAction
+        # Zoom In Action
+        zoom_in_action = QAction("Zoom in", self)
+        zoom_in_action.setShortcut("+")
+        zoom_in_action.triggered.connect(self._action_zoom_in)
+        
+        # Zoom Out Action
+        zoom_out_action = QAction("Zoom out", self)
+        zoom_out_action.setShortcut("-")
+        zoom_out_action.triggered.connect(self._action_zoom_out)
+        
+        # Fit Action
+        zoom_fit_action = QAction("Fit", self)
+        zoom_fit_action.setShortcut("#")
+        zoom_fit_action.triggered.connect(self._action_zoom_fit)
+        
+        # Reset Action
         reset_action = QAction("Reset", self)
         reset_action.setShortcut("0")
-        reset_action.triggered.connect(self._action_reset)
+        reset_action.triggered.connect(self._action_zoom_reset)
 
+        self.view_menu.addAction(zoom_in_action)
+        self.view_menu.addAction(zoom_out_action)
+        self.view_menu.addAction(zoom_fit_action)
         self.view_menu.addAction(reset_action)
 
         # End View Menu
 
-        # About Menu
-        self.about_menu = self.menu.addMenu("About")
-
-        # About QAction
+        # About Action
         about_action = QAction("About", self)
         about_action.triggered.connect(self._action_about)
 
-        self.about_menu.addAction(about_action)
+        self.menu.addAction(about_action)
 
         # End About Menu
 
@@ -81,9 +101,50 @@ QMenuBar::item:selected { background: #222; }
 QMenu { background: #222; color: #eee; padding: 0px; }
 QMenu::item { padding: 5px 10px 5px 10px; }
 QMenu::item:selected { background: #333; }
+
 QScrollArea { background: #111; border: none; }
+QScrollBar:horizontal {
+  background: transparent;
+  height: 8px;
+  margin: 2px 10px 2px 10px;
+}
+QScrollBar::handle:horizontal {
+  background-color: #bbb;
+  min-width: 12px;
+  border-radius: 2px;
+}
+QScrollBar::handle:horizontal:hover {
+  background-color: #eee;
+}
+
+QScrollBar:vertical {
+  background: transparent;
+  width: 8px;
+  margin: 10px 2px 10px 2px;
+}
+QScrollBar::handle:vertical {
+  background-color: #bbb;
+  min-height: 12px;
+  border-radius: 2px;
+}
+QScrollBar::handle:vertical:hover {
+  background-color: #eee;
+}
+
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
+  width: 0px;
+}
+QScrollBar::add-line:vertical,QScrollBar::sub-line:vertical {
+  height: 0px;
+}
+QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal,
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+  background: none;
+}
+
 QLabel { background: #111; }
-QStatusBar { background: #222; color: #eee; }
+
+QStatusBar { background: #111; color: #eee; }
 """
         )
 
@@ -91,10 +152,19 @@ QStatusBar { background: #222; color: #eee; }
         sys.exit()
     
     def _action_load(self):
-        pass
+        print("load")
     
-    def _action_reset(self):
-        pass
+    def _action_zoom_in(self):
+        print("+")
+        
+    def _action_zoom_out(self):
+        print("-")
+        
+    def _action_zoom_fit(self):
+        print("#")
+    
+    def _action_zoom_reset(self):
+        print("0")
     
     def _action_about(self):
         webbrowser.open("https://github.com/calmer/PySEUS", new=0, 
