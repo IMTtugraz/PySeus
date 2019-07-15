@@ -50,7 +50,6 @@ class MainWindow(QMainWindow):
 
         self.scrollArea = QScrollArea()
         self.scrollArea.setWidget(self.imageLabel)
-        self.scrollArea.wheelEvent
 
         self.setCentralWidget(self.scrollArea)
 
@@ -78,13 +77,6 @@ class MainWindow(QMainWindow):
         h_zoom = viewport.width() / image.width()
         self.zoom_factor = min(v_zoom, h_zoom)*0.99
         self.imageLabel.resize(self.zoom_factor * self.imageLabel.pixmap().size())
-
-    def mousePressEvent(self, event):
-        #print mouse position
-        print(event.pos())
-    
-    def wheelEvent(self, event):
-        print(event.delta())
 
 if __name__ == "__main__":
     app = QApplication()
