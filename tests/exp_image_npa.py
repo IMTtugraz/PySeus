@@ -12,23 +12,34 @@ class MainWindow(QMainWindow):
         QMainWindow.__init__(self)
         self.setWindowTitle("PySEUS")
 
-        npa = numpy.loadtxt("npa.txt", numpy.uint8)
+        self.npa = numpy.loadtxt("npa.txt", numpy.uint8)
 
-        h, w = npa.shape
-        image = QImage(npa.data, w, h, w, \
+        h, w = self.npa.shape
+        image = QImage(self.npa.data, w, h, w, \
             QImage.Format_Grayscale8)
 
-        imageLabel = QLabel()
-        imageLabel.setPixmap(QPixmap.fromImage(image))
+        self.imageLabel = QLabel()
+        self.imageLabel.setPixmap(QPixmap.fromImage(image))
 
-        scrollArea = QScrollArea()
-        scrollArea.setWidget(imageLabel)
-
-        self.setCentralWidget(scrollArea)
+        self.setCentralWidget(self.imageLabel)
 
         # Window dimensions
         geometry = app.desktop().availableGeometry(self)
         self.setFixedSize(geometry.width() * 0.4, geometry.height() * 0.4)
+
+    def wheelEvent(self, event):
+        if(event.delta() > 0):
+            h, w = self.npa.shape
+            data = numpy.asarray(self.npa.data) * 1.2
+            image = QImage(data, w, h, w, \
+            QImage.Format_Grayscale8)
+            self.imageLabel.setPixmap(QPixmap.fromImage(image))
+        else:
+            h, w = self.npa.shape
+            data = numpy.asarray(self.npa.data) * 0.8
+            image = QImage(data, w, h, w, \
+            QImage.Format_Grayscale8)
+            self.imageLabel.setPixmap(QPixmap.fromImage(image))
 
 if __name__ == "__main__":
     app = QApplication()
