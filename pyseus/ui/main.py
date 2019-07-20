@@ -189,8 +189,4 @@ QStatusBar { background: #111; color: #eee; }
             self.scrollArea.horizontalScrollBar().value() + \
             ((change - 1) * self.scrollArea.horizontalScrollBar().pageStep()/2)))
 
-    def view_data(self, image):
-        self.view.setPixmap(QPixmap.fromImage(image))
-        self._action_zoom_reset()
-
 # @TODO Refactor: setZoom(factor)
