@@ -30,6 +30,7 @@ class MainWindow(QMainWindow):
         self.view = QLabel()
         self.view.setScaledContents(True)
         self.zoom_factor = 1
+        self.mouse_move_mode = 0
 
         self.scrollArea = QScrollArea()
         self.scrollArea.setWidget(self.view)
@@ -40,7 +41,7 @@ class MainWindow(QMainWindow):
 
         # Window dimensions
         geometry = app.desktop().availableGeometry(self)
-        self.setFixedSize(geometry.width() * 0.5, geometry.height() * 0.6)
+        self.resize(geometry.width() * 0.5, geometry.height() * 0.6)
 
     def add_menu_item(self, menu, title, callback, shortcut = ""):
         action = QAction(title, self)
@@ -74,25 +75,32 @@ class MainWindow(QMainWindow):
     def _action_load(self):
         print("load")
     
-    def _action_zoom_in(self):
-        self.zoom_factor = self.zoom_factor * 1.25
+    def zoom(self, factor, relative = True):
+        self.zoom_factor = self.zoom_factor * factor if relative else factor
         self.view.resize(self.zoom_factor * self.view.pixmap().size())
+
+        self.scrollArea.verticalScrollBar().setValue(int(factor * \
+            self.scrollArea.verticalScrollBar().value() + \
+            ((factor - 1) * self.scrollArea.verticalScrollBar().pageStep()/2)))
+        self.scrollArea.horizontalScrollBar().setValue(int(factor * \
+            self.scrollArea.horizontalScrollBar().value() + \
+            ((factor - 1) * self.scrollArea.horizontalScrollBar().pageStep()/2)))
+
+    def _action_zoom_in(self):
+        self.zoom(1.25)
         
     def _action_zoom_out(self):
-        self.zoom_factor = self.zoom_factor * 0.8
-        self.view.resize(self.zoom_factor * self.view.pixmap().size())
+        self.zoom(0.8)
         
     def _action_zoom_fit(self):
         image = self.view.pixmap().size()
         viewport = self.scrollArea.size()
         v_zoom = viewport.height() / image.height()
         h_zoom = viewport.width() / image.width()
-        self.zoom_factor = min(v_zoom, h_zoom)*0.99
-        self.view.resize(self.zoom_factor * self.view.pixmap().size())
+        self.zoom(min(v_zoom, h_zoom)*0.99, False)
     
     def _action_zoom_reset(self):
-        self.zoom_factor = 1
-        self.view.resize(self.view.pixmap().size())
+        self.zoom(1, False)
     
     def _action_about(self):
         webbrowser.open("https://github.com/calmer/PySEUS", new=0, 
@@ -127,17 +135,4 @@ class MainWindow(QMainWindow):
             self.last_position = event.pos()
     
     def wheelEvent(self, event):
-        change = 0.8 if event.delta() < 0 else 1.25
-        if(self.zoom_factor * change > 5 or self.zoom_factor * change < 0.1): return
-            
-        self.zoom_factor = self.zoom_factor * change
-        self.view.resize(self.zoom_factor * self.view.pixmap().size())
-
-        self.scrollArea.verticalScrollBar().setValue(int(change * \
-            self.scrollArea.verticalScrollBar().value() + \
-            ((change - 1) * self.scrollArea.verticalScrollBar().pageStep()/2)))
-        self.scrollArea.horizontalScrollBar().setValue(int(change * \
-            self.scrollArea.horizontalScrollBar().value() + \
-            ((change - 1) * self.scrollArea.horizontalScrollBar().pageStep()/2)))
-
-# @TODO Refactor: setZoom(factor)
+        self.zoom(0.8 if event.delta() < 0 else 1.25)
