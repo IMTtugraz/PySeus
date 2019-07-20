@@ -1,3 +1,4 @@
+import os
 import sys
 import webbrowser
 
@@ -10,7 +11,12 @@ class MainWindow(QMainWindow):
     def __init__(self, app):
         QMainWindow.__init__(self)
         self.setWindowTitle("PySEUS")
-        self.setup_stylesheet(app)
+        self.app = app
+
+        # Stylesheet
+        qss = os.path.join(os.path.dirname(__file__), "style.qss")
+        with open(qss,"r") as f:
+            app.setStyleSheet(f.read())
 
         # Menu Bar
         self.menu = self.menuBar()
@@ -61,61 +67,6 @@ class MainWindow(QMainWindow):
 
         # About Menu
         self.add_menu_item(self.menu, "About", self._action_about)
-
-    def setup_stylesheet(self, app):
-        app.setStyleSheet("""
-QMenuBar { background: #111; color: #ddd; }
-QMenuBar::item { padding: 5px 10px 5px 10px; }
-QMenuBar::item:selected { background: #222; }
-QMenu { background: #222; color: #eee; padding: 0px; }
-QMenu::item { padding: 5px 10px 5px 10px; }
-QMenu::item:selected { background: #333; }
-
-QScrollArea { background: #111; border: none; }
-QScrollBar:horizontal {
-    background: transparent;
-    height: 8px;
-    margin: 2px 10px 2px 10px;
-}
-QScrollBar::handle:horizontal {
-    background-color: #bbb;
-    min-width: 12px;
-    border-radius: 2px;
-}
-QScrollBar::handle:horizontal:hover {
-    background-color: #eee;
-}
-
-QScrollBar:vertical {
-    background: transparent;
-    width: 8px;
-    margin: 10px 2px 10px 2px;
-}
-QScrollBar::handle:vertical {
-    background-color: #bbb;
-    min-height: 12px;
-    border-radius: 2px;
-}
-QScrollBar::handle:vertical:hover {
-    background-color: #eee;
-}
-
-QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
-    width: 0px;
-}
-QScrollBar::add-line:vertical,QScrollBar::sub-line:vertical {
-    height: 0px;
-}
-QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal,
-QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
-    background: none;
-}
-
-QLabel { background: #111; }
-
-QStatusBar { background: #111; color: #eee; }
-"""
-        )
 
     def _action_exit(self):
         sys.exit()
