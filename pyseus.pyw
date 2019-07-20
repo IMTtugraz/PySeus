@@ -1,4 +1,4 @@
-from pyseus import load
+from pyseus import show
 
 if __name__ == "__main__":
-    load()
+    show()
