@@ -15,13 +15,13 @@ setup(
     license='GNU',
     packages=find_packages(),
     install_requires=[
-        'imageio',
-        'numpy',
         'PySide2',
+        'numpy',
+        'h5py',
     ],
     entry_points={
         'console_scripts': [
-            'pyseus = pyseus:load',
+            'pyseus = pyseus:_console_entry',
         ],
     },
     zip_safe=False

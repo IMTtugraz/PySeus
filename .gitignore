@@ -1,5 +1,9 @@
 *.pyc
-.vscode/*
+
+# Ignore setuptools output
 build/*
 dist/*
 pyseus.egg-info/*
+
+# Ignore local editor config
+.vscode/*
