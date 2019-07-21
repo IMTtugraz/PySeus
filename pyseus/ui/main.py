@@ -84,6 +84,9 @@ class MainWindow(QMainWindow):
         print("load")
     
     def zoom(self, factor, relative = True):
+        if relative and not (0.1 <= self.zoom_factor * factor <= 10):
+            return
+
         self.zoom_factor = self.zoom_factor * factor if relative else factor
         self.view.resize(self.zoom_factor * self.view.pixmap().size())
 
@@ -153,27 +156,22 @@ class MainWindow(QMainWindow):
             pass
     
     def _action_win_lower(self):
-        print("lower")
         self.app.mode.move(-20)
         self.app.refresh()
     
     def _action_win_raise(self):
-        print("raise")
         self.app.mode.move(20)
         self.app.refresh()
 
     def _action_win_shrink(self):
-        print("shrink")
-        self.app.mode.scale(-20)
+        self.app.mode.scale(-25)
         self.app.refresh()
 
     def _action_win_enlarge(self):
-        print("enlarge")
-        self.app.mode.scale(20)
+        self.app.mode.scale(25)
         self.app.refresh()
 
     def _action_win_reset(self):
-        print("reset")
         self.app.mode.reset()
         self.app.refresh()
 

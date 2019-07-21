@@ -1,4 +1,4 @@
-"""PySeus v0.1
+"""PySeus is a minimal viewer for medical imaging data
 
 
 """
