@@ -17,11 +17,6 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("PySEUS")
         self.app = app
 
-        # Stylesheet
-        qss = os.path.join(os.path.dirname(__file__), "style.qss")
-        with open(qss,"r") as f:
-            app.setStyleSheet(f.read())
-
         # Menu Bar
         self.menu = self.menuBar()
         self.setup_menu()

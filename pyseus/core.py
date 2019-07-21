@@ -2,7 +2,7 @@ from PySide2.QtWidgets import QApplication
 from PySide2.QtGui import QImage, QPixmap
 import numpy
 
-from .ui import MainWindow
+from .ui import MainWindow, get_stylesheet
 from .formats import H5
 from .modes import Amplitude
 
@@ -10,6 +10,10 @@ class PySeus(QApplication):
 
     def __init__(self):
         QApplication.__init__(self)
+        
+        # Stylesheet
+        self.setStyleSheet(get_stylesheet())
+
         self.window = MainWindow(self)
         self.window.show()
 
