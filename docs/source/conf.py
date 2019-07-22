@@ -44,36 +44,18 @@ exclude_patterns = []
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'classic'
+html_theme = 'sphinx_rtd_theme'
 html_theme_options = {
-    'rightsidebar': 'false',
-    'stickysidebar': 'true',
-
-    'footerbgcolor': '#eee',
-    'footertextcolor': '#aaa',
-
-    'sidebarbgcolor': '#ddd',
-    'sidebartextcolor': '#333',
-    'sidebarlinkcolor': '#e4154b',
-
-    'relbarbgcolor': '#ccc',
-    'relbartextcolor': '#333',
-    'relbarlinkcolor': '#e4154b',
-
-    'bgcolor': '#fff',
-    'textcolor': '#111',
-    'linkcolor': '#e4154b',
-    'visitedlinkcolor': '#e4154b',
-
-    'headbgcolor': '#eee',
-    'headtextcolor': '#e4154b',
-    'headlinkcolor': '#111',
-
-    'codebgcolor': 'green',
-    'codetextcolor': '#111',
-
-    'bodyfont': 'Arial, sans-serif',
-    'headfont': 'Arial, sans-serif',
+    'logo_only': False,
+    'display_version': False,
+    'prev_next_buttons_location': 'bottom',
+    'style_external_links': True,
+    'style_nav_header_background': '',
+    'collapse_navigation': True,
+    'sticky_navigation': True,
+    'navigation_depth': 2,
+    'includehidden': True,
+    'titles_only': False
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,

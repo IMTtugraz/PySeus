@@ -28,9 +28,7 @@ def show():
 def _console_entry():
     """Start Pyseus from Console
 
-    If available, loads data from stdin
-    If available, loads files from arguments
-    Else, loads without data
+    Loads path from arguments or data from stdin, if available.
     """
     # @TODO check argv
     # @TODO check stdin
