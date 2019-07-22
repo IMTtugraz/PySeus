@@ -147,7 +147,6 @@ class MainWindow(QMainWindow):
         elif(self.mouse_action == self.MA_WINDOW):
             move = self.last_position.x() - event.pos().x()
             scale = self.last_position.y() - event.pos().y()
-            print("window %i" % move)
             self.last_position = event.pos()
             self.app.mode.adjust(move, scale)
             self.app.refresh()

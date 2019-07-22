@@ -1,8 +1,8 @@
 import numpy
 
-from .base import Mode
+from .base import BaseMode
 
-class Amplitude(Mode):
+class Amplitude(BaseMode):
 
     def __init__(self, data):
         self.data_min = numpy.amin(data)
@@ -28,10 +28,6 @@ class Amplitude(Mode):
         if(new_max > new_min):
             self.window_min = new_min
             self.window_max = new_max
-
-    def adjust(self, move, scale):
-        self.move(move)
-        self.scale(scale)
 
     def reset(self):
         self.window_min = self.data_min

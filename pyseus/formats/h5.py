@@ -1,9 +1,9 @@
 import h5py
 import numpy
 
-from .base import Format
+from .base import BaseFormat
 
-class H5(Format):
+class H5(BaseFormat):
 
     def __init__(self):
         Format.__init__(self)

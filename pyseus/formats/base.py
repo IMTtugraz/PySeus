@@ -1,4 +1,4 @@
-class Format():
+class BaseFormat():
 
     def __init__(self):
         self.type = ""
