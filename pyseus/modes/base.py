@@ -1,4 +1,11 @@
 class BaseMode():
+
+    def __init__(self):
+        pass
+
+    def setup(self, data):
+        pass
+
     def prepare(self, data):
         pass
     
@@ -13,7 +20,4 @@ class BaseMode():
         self.scale(scale)
 
     def reset(self):
-        pass
-
-    def setup(self, data):
         pass

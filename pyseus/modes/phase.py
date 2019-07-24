@@ -2,7 +2,7 @@ import numpy
 
 from .base import BaseMode
 
-class Amplitude(BaseMode):
+class Phase(BaseMode):
 
     def __init__(self):
         BaseMode.__init__(self)
@@ -33,7 +33,7 @@ class Amplitude(BaseMode):
 
     def setup(self, data):
         if data.dtype == "complex64":
-            data = numpy.absolute(data)
+            data = numpy.angle(data)
         self.data_min = numpy.amin(data)
         self.data_max = numpy.amax(data)
         self.reset()

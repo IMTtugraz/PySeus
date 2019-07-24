@@ -65,6 +65,12 @@ class MainWindow(QMainWindow):
         self.add_menu_item(self.view_menu, "Fit", self._action_zoom_fit, "#")
         self.add_menu_item(self.view_menu, "Reset", self._action_zoom_reset, "0")
 
+        # Mode Menu
+        self.mode_menu = self.menu.addMenu("Mode")
+
+        self.add_menu_item(self.mode_menu, "Amplitude", self._action_mode_ampl, "q")
+        self.add_menu_item(self.mode_menu, "Phase", self._action_mode_phase, "w")
+        
         # Window Menu
         self.window_menu = self.menu.addMenu("Window")
 
@@ -155,6 +161,9 @@ class MainWindow(QMainWindow):
         elif(self.mouse_action == self.MA_ROI):
             pass
     
+    def wheelEvent(self, event):
+        self.zoom(0.8 if event.delta() < 0 else 1.25)
+
     def _action_win_lower(self):
         self.app.mode.move(-20)
         self.app.refresh()
@@ -175,5 +184,8 @@ class MainWindow(QMainWindow):
         self.app.mode.reset()
         self.app.refresh()
 
-    def wheelEvent(self, event):
-        self.zoom(0.8 if event.delta() < 0 else 1.25)
+    def _action_mode_ampl(self):
+        self.app.set_mode("Amplitude")
+
+    def _action_mode_phase(self):
+        self.app.set_mode("Phase")
