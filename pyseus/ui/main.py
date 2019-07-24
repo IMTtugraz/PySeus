@@ -23,7 +23,6 @@ class MainWindow(QMainWindow):
 
         # Status Bar
         self.status = self.statusBar()
-        self.status.showMessage("Ready")
         
         # Image View & Scroll Area
         self.view = QLabel()
@@ -31,12 +30,12 @@ class MainWindow(QMainWindow):
         self.zoom_factor = 1
         self.mouse_action = 0
 
-        self.scrollArea = QScrollArea()
-        self.scrollArea.setWidget(self.view)
+        self.scroll_area = QScrollArea()
+        self.scroll_area.setWidget(self.view)
         # Reset Scroll event Handler
-        self.scrollArea.wheelEvent = lambda e: False
+        self.scroll_area.wheelEvent = lambda e: False
 
-        self.setCentralWidget(self.scrollArea)
+        self.setCentralWidget(self.scroll_area)
 
         # Window dimensions
         geometry = app.desktop().availableGeometry(self)
@@ -97,12 +96,12 @@ class MainWindow(QMainWindow):
         self.zoom_factor = self.zoom_factor * factor if relative else factor
         self.view.resize(self.zoom_factor * self.view.pixmap().size())
 
-        self.scrollArea.verticalScrollBar().setValue(int(factor * \
-            self.scrollArea.verticalScrollBar().value() + \
-            ((factor - 1) * self.scrollArea.verticalScrollBar().pageStep()/2)))
-        self.scrollArea.horizontalScrollBar().setValue(int(factor * \
-            self.scrollArea.horizontalScrollBar().value() + \
-            ((factor - 1) * self.scrollArea.horizontalScrollBar().pageStep()/2)))
+        self.scroll_area.verticalScrollBar().setValue(int(factor * \
+            self.scroll_area.verticalScrollBar().value() + \
+            ((factor - 1) * self.scroll_area.verticalScrollBar().pageStep()/2)))
+        self.scroll_area.horizontalScrollBar().setValue(int(factor * \
+            self.scroll_area.horizontalScrollBar().value() + \
+            ((factor - 1) * self.scroll_area.horizontalScrollBar().pageStep()/2)))
 
     def _action_zoom_in(self):
         self.zoom(1.25)
@@ -112,7 +111,7 @@ class MainWindow(QMainWindow):
         
     def _action_zoom_fit(self):
         image = self.view.pixmap().size()
-        viewport = self.scrollArea.size()
+        viewport = self.scroll_area.size()
         v_zoom = viewport.height() / image.height()
         h_zoom = viewport.width() / image.width()
         self.zoom(min(v_zoom, h_zoom)*0.99, False)
@@ -132,23 +131,37 @@ class MainWindow(QMainWindow):
             self.mouse_action = self.MA_WINDOW
         elif(event.buttons() == QtCore.Qt.LeftButton):
             self.mouse_action = self.MA_ROI
-            print("roi")
+            vp = self.view.pos()
+            scroll_x = int(self.scroll_area.horizontalScrollBar().value() / self.zoom_factor)
+            scroll_y = int(self.scroll_area.verticalScrollBar().value() / self.zoom_factor)
+            self.app.roi[0] = int((event.pos().x()) / self.zoom_factor) + scroll_x
+            self.app.roi[1] = int((event.pos().y() - 26) / self.zoom_factor) + scroll_y
         else:
             self.mouse_action = 0 # nothing
 
     def mouseReleaseEvent(self, event):
+        if(self.mouse_action == self.MA_ROI):
+            scroll_x = int(self.scroll_area.horizontalScrollBar().value() / self.zoom_factor)
+            scroll_y = int(self.scroll_area.verticalScrollBar().value() / self.zoom_factor)
+            roi_end_x = int((event.pos().x()) / self.zoom_factor) + scroll_x
+            roi_end_y = int((event.pos().y() - 26) / self.zoom_factor) + scroll_y
+            if(self.app.roi[0] == roi_end_x and self.app.roi[1] == roi_end_y):
+                self.app.roi = [0,0,0,0]
+                self.app.refresh()
+            self.app.recalculate()
+
         self.last_position = None
         self.mouse_action = 0
 
     def mouseMoveEvent(self, event):
         if(self.mouse_action == self.MA_PAN):
-            vertical = self.scrollArea.verticalScrollBar().value() \
+            vertical = self.scroll_area.verticalScrollBar().value() \
                 + self.last_position.y() - event.pos().y()
-            horizontal = self.scrollArea.horizontalScrollBar().value() \
+            horizontal = self.scroll_area.horizontalScrollBar().value() \
                 + self.last_position.x() - event.pos().x()
 
-            self.scrollArea.verticalScrollBar().setValue(vertical)
-            self.scrollArea.horizontalScrollBar().setValue(horizontal)
+            self.scroll_area.verticalScrollBar().setValue(vertical)
+            self.scroll_area.horizontalScrollBar().setValue(horizontal)
             self.last_position = event.pos()
 
         elif(self.mouse_action == self.MA_WINDOW):
@@ -159,7 +172,11 @@ class MainWindow(QMainWindow):
             self.app.refresh()
         
         elif(self.mouse_action == self.MA_ROI):
-            pass
+            scroll_x = int(self.scroll_area.horizontalScrollBar().value() / self.zoom_factor)
+            scroll_y = int(self.scroll_area.verticalScrollBar().value() / self.zoom_factor)
+            self.app.roi[2] = int((event.pos().x()) / self.zoom_factor) + scroll_x
+            self.app.roi[3] = int((event.pos().y() - 26) / self.zoom_factor) + scroll_y
+            self.app.refresh()
     
     def wheelEvent(self, event):
         self.zoom(0.8 if event.delta() < 0 else 1.25)

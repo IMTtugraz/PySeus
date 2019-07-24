@@ -3,11 +3,12 @@ from os import path
 import numpy
 
 from PySide2.QtWidgets import QApplication
-from PySide2.QtGui import QImage, QPixmap
+from PySide2.QtGui import QImage, QPixmap, QPainter, QColor, QPen
 
 from .ui import MainWindow, get_stylesheet
 from .formats import Raw, H5
 from .modes import Amplitude, Phase
+from .functions import TestFct
 
 class PySeus(QApplication):
 
@@ -24,6 +25,11 @@ class PySeus(QApplication):
         # "DICOM": DICOM,
     }
 
+    # @TODO Allow registering functions dynamically
+    functions = {
+        "Test": TestFct
+    }
+
     def __init__(self):
         QApplication.__init__(self)
         
@@ -35,6 +41,9 @@ class PySeus(QApplication):
 
         self.window = MainWindow(self)
         self.window.show()
+
+        self.roi = [0,0,0,0]
+        self.function = TestFct()
 
     def load_image(self, image):
         # @TODO remove after testing
@@ -66,9 +75,28 @@ class PySeus(QApplication):
         image = QImage(tmp.data, tmp.shape[1],
                        tmp.shape[0], tmp.strides[0],
                        QImage.Format_Grayscale8)
-        self.window.view.setPixmap(QPixmap.fromImage(image))
+        pixmap = QPixmap.fromImage(image)
+        if self.roi != [0,0,0,0]:
+            painter = QPainter(pixmap)
+            pen = QPen(QColor("red"))
+            pen.setWidth(1)
+            painter.setPen(pen)
+            painter.drawRect(self.roi[0], self.roi[1], 
+                self.roi[2] - self.roi[0], self.roi[3] - self.roi[1])
+            painter.end()
+
+        self.window.view.setPixmap(pixmap)
 
     def set_mode(self, mode):
         self.mode = PySeus.modes[mode]()
         self.mode.setup(self.frame_data)
         self.refresh()
+
+    def show_status(self, message):
+        self.window.status.showMessage(message)
+
+    def recalculate(self):
+        result = ""
+        if self.roi != [0,0,0,0]:
+            result = self.function.recalculate(self.frame_data, self.roi)
+        self.show_status(result)
