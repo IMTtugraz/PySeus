@@ -10,3 +10,6 @@ docs/build/*
 
 # Ignore local editor config
 .vscode/*
+
+# Ignore local dev tools
+dev/*

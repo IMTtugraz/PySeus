@@ -8,6 +8,9 @@ class BaseFormat():
     def load_file(self, file):
         pass
     
+    def load_data(self, data):
+        pass
+    
     def load_frame(self, frame):
         pass
     
