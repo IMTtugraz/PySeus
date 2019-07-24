@@ -3,26 +3,29 @@
 
 """
 
+from os import path
 from sys import stdin, argv
+
+import numpy as np
+from PySide2.QtGui import QImage
 
 from .core import PySeus
 from .ui import MainWindow
 
-def load_image(data):
-    """View QImage for testing purposes"""
+def load(arg = None):
+    """Start Pyseus and load arg."""
     app = PySeus()
-    app.view_data(data)
-    return app.exec_()
+    
+    if isinstance(arg, str) and path.isfile(arg):
+        app.load_file(arg)
+    
+    # @TODO remove after testing
+    elif isinstance(arg, QImage):
+        app.load_image(arg)
 
-def load_file(file):
-    """Load File for testing purposes"""
-    app = PySeus()
-    app.load_file(file)
-    return app.exec_()
+    elif arg is not None:
+        app.load_data(arg)
 
-def show():
-    """Start Pyseus without data"""
-    app = PySeus()
     return app.exec_()
 
 def _console_entry():
@@ -30,6 +33,14 @@ def _console_entry():
 
     Loads path from arguments or data from stdin, if available.
     """
-    # @TODO check argv
-    # @TODO check stdin
-    show()
+
+    if len(argv) > 1:
+        load(argv[1])
+
+    elif not stdin.isatty():
+        # @TODO try loading data from stdin
+        # data = stdin.read()
+        # load(np.loadtxt(data))
+
+    else:
+        load()

@@ -10,4 +10,4 @@ from context import pyseus
 
 image = QImage("test.jpg")
 
-pyseus.load_image(image)
+pyseus.load(image)
