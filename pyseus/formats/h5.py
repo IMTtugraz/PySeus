@@ -6,7 +6,7 @@ from .base import BaseFormat
 class H5(BaseFormat):
 
     def __init__(self):
-        Format.__init__(self)
+        BaseFormat.__init__(self)
         self.type = "H5"
 
     def load_file(self, file):
@@ -15,5 +15,5 @@ class H5(BaseFormat):
         self.file = h5py.File(file, "r")
     
     def load_frame(self, frame):
-        data = numpy.asarray(self.file['images'][0])
+        data = numpy.asarray(self.file['images'][frame])
         return data

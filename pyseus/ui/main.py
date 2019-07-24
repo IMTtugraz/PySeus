@@ -4,8 +4,8 @@ import webbrowser
 
 from PySide2 import QtWidgets, QtCore
 from PySide2.QtWidgets import QApplication, QMainWindow, QAction, \
-    QLabel, QScrollArea
-from PySide2.QtGui import QImage, QPixmap, QPalette
+    QLabel, QScrollArea, QFileDialog
+from PySide2.QtGui import QImage, QPixmap
 
 class MainWindow(QMainWindow):
     MA_PAN    = 3
@@ -54,7 +54,7 @@ class MainWindow(QMainWindow):
         # File Menu
         self.file_menu = self.menu.addMenu("File")
 
-        self.add_menu_item(self.file_menu, "Load", self._action_load, "Ctrl+O")
+        self.add_menu_item(self.file_menu, "Load", self._action_open, "Ctrl+O")
         self.add_menu_item(self.file_menu, "Exit", self._action_exit, "Ctrl+Q")
         
         # View Menu
@@ -80,8 +80,9 @@ class MainWindow(QMainWindow):
     def _action_exit(self):
         sys.exit()
     
-    def _action_load(self):
-        print("load")
+    def _action_open(self):
+        path, filter = QFileDialog.getOpenFileName(None, "Open file", ".", "*.h5")
+        self.app.load_file(path)
     
     def zoom(self, factor, relative = True):
         if relative and not (0.1 <= self.zoom_factor * factor <= 10):

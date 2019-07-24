@@ -8,4 +8,4 @@ from PySide2.QtGui import QImage, QPixmap, QPalette
 
 from context import pyseus
 
-pyseus.load_file("test.h5")
+pyseus.load("test.h5")
