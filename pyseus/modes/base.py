@@ -14,3 +14,6 @@ class BaseMode():
 
     def reset(self):
         pass
+
+    def setup(self, data):
+        pass

@@ -4,10 +4,8 @@ from .base import BaseMode
 
 class Amplitude(BaseMode):
 
-    def __init__(self, data):
-        self.data_min = numpy.amin(data)
-        self.data_max = numpy.amax(data)
-        self.reset()
+    def __init__(self):
+        BaseMode.__init__(self)
 
     def prepare(self, data):
         data -= self.window_min # align window_min to 0
@@ -32,3 +30,8 @@ class Amplitude(BaseMode):
     def reset(self):
         self.window_min = self.data_min
         self.window_max = self.data_max
+
+    def setup(self, data):
+        self.data_min = numpy.amin(data)
+        self.data_max = numpy.amax(data)
+        self.reset()
