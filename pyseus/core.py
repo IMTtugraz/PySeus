@@ -8,7 +8,7 @@ from PySide2.QtGui import QImage, QPixmap, QPainter, QColor, QPen
 from .ui import MainWindow, get_stylesheet
 from .formats import Raw, H5
 from .modes import Amplitude, Phase
-from .functions import TestFct
+from .functions import TestFct, StatsFct
 
 class PySeus(QApplication):
 
@@ -27,7 +27,8 @@ class PySeus(QApplication):
 
     # @TODO Allow registering functions dynamically
     functions = {
-        "Test": TestFct
+        "Test": TestFct,
+        "Stats": StatsFct
     }
 
     def __init__(self):
@@ -100,3 +101,7 @@ class PySeus(QApplication):
         if self.roi != [0,0,0,0]:
             result = self.function.recalculate(self.frame_data, self.roi)
         self.show_status(result)
+
+    def set_function(self, fct):
+        self.function = fct()
+        self.recalculate()

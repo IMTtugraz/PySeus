@@ -67,8 +67,8 @@ class MainWindow(QMainWindow):
         # Mode Menu
         self.mode_menu = self.menu.addMenu("Mode")
 
-        self.add_menu_item(self.mode_menu, "Amplitude", self._action_mode_ampl, "q")
-        self.add_menu_item(self.mode_menu, "Phase", self._action_mode_phase, "w")
+        self.add_menu_item(self.mode_menu, "Amplitude", self._action_mode_ampl, "1")
+        self.add_menu_item(self.mode_menu, "Phase", self._action_mode_phase, "2")
         
         # Window Menu
         self.window_menu = self.menu.addMenu("Window")
@@ -78,6 +78,12 @@ class MainWindow(QMainWindow):
         self.add_menu_item(self.window_menu, "Shrink", self._action_win_shrink, "a")
         self.add_menu_item(self.window_menu, "Enlarge", self._action_win_enlarge, "s")
         self.add_menu_item(self.window_menu, "Reset", self._action_win_reset, "d")
+
+        # Functions Menu
+        self.functions_menu = self.menu.addMenu("Functions")
+        from ..core import PySeus
+        for f in PySeus.functions:
+            self.add_menu_item(self.functions_menu, f, self._action_set_fct)
 
         # About Menu
         self.add_menu_item(self.menu, "About", self._action_about)
@@ -206,3 +212,8 @@ class MainWindow(QMainWindow):
 
     def _action_mode_phase(self):
         self.app.set_mode("Phase")
+
+    def _action_set_fct(self):
+        from ..core import PySeus
+        fct = self.sender().text()
+        self.app.set_function(PySeus.functions[fct])
