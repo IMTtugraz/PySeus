@@ -41,6 +41,7 @@ def _console_entry():
         # @TODO try loading data from stdin
         # data = stdin.read()
         # load(np.loadtxt(data))
+        pass
 
     else:
         load()
