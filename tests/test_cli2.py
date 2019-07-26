@@ -1,8 +1,7 @@
+import ptvsd
 from sys import stdin
 
 from context import pyseus
-
-import ptvsd
 
 # VSC remote debugging
 ptvsd.enable_attach(address=('localhost', 5678), redirect_output=True)
