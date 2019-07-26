@@ -3,11 +3,14 @@ import numpy
 from .base import BaseMode
 
 class Phase(BaseMode):
+    """Visualizes the phase of a complex dataset. Uses standard windowing behavior."""
 
     def __init__(self):
         BaseMode.__init__(self)
 
     def prepare(self, data):
+        if data.dtype == "complex64":
+            data = numpy.angle(data)
         data -= self.window_min # align window_min to 0
         data *= 255 / (self.window_max - self.window_min) # scale window_max to 255
 

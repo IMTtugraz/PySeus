@@ -1,24 +1,24 @@
 PySeus Documentation
 ====================
 
-.. automodule:: pyseus
-   :noindex:
-
-Content
--------
+PySeus is a minimal viewer for medical imaging data.
 
 .. toctree::
    :maxdepth: 2
-   :caption: End Users
+   :caption: Using PySeus
 
-   usage
+   installation
+   loading
+   navigation
+   evaluation
 
 .. toctree::
    :maxdepth: 2
-   :caption: Developers
+   :caption: Development
 
    development
-   dev/pyseus
-   dev/formats
-   dev/modes
-   dev/ui
+   application
+   formats
+   modes
+   functions
+   interface

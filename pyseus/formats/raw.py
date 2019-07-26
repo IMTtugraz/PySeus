@@ -4,6 +4,7 @@ import numpy
 from .base import BaseFormat
 
 class Raw(BaseFormat):
+    """Support for NumPy array data and files."""
 
     def __init__(self):
         BaseFormat.__init__(self)

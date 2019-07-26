@@ -8,9 +8,7 @@ from PySide2.QtWidgets import QApplication, QMainWindow, QAction, \
 from PySide2.QtGui import QImage, QPixmap
 
 class MainWindow(QMainWindow):
-    MA_PAN    = 3
-    MA_WINDOW = 2
-    MA_ROI    = 1
+    """The main window for PySeus."""
 
     def __init__(self, app):
         QMainWindow.__init__(self)
@@ -42,6 +40,7 @@ class MainWindow(QMainWindow):
         self.resize(geometry.width() * 0.5, geometry.height() * 0.6)
 
     def add_menu_item(self, menu, title, callback, shortcut = ""):
+        """Create menu item (DRY wrapper function)."""
         action = QAction(title, self)
         if(shortcut != ""):
             action.setShortcut(shortcut)
@@ -130,13 +129,14 @@ class MainWindow(QMainWindow):
             autoraise=True)
 
     def mousePressEvent(self, event):
+        """Handle pan, window and RoI functionality on mouse button down."""
         self.last_position = event.pos()
         if(event.buttons() == QtCore.Qt.RightButton):
-            self.mouse_action = self.MA_PAN
+            self.mouse_action = "PAN"
         elif(event.buttons() == QtCore.Qt.MiddleButton):
-            self.mouse_action = self.MA_WINDOW
+            self.mouse_action = "WINDOW"
         elif(event.buttons() == QtCore.Qt.LeftButton):
-            self.mouse_action = self.MA_ROI
+            self.mouse_action = "ROI"
             vp = self.view.pos()
             scroll_x = int(self.scroll_area.horizontalScrollBar().value() / self.zoom_factor)
             scroll_y = int(self.scroll_area.verticalScrollBar().value() / self.zoom_factor)
@@ -146,7 +146,8 @@ class MainWindow(QMainWindow):
             self.mouse_action = 0 # nothing
 
     def mouseReleaseEvent(self, event):
-        if(self.mouse_action == self.MA_ROI):
+        """Handle pan, window and RoI functionality on mouse button up."""
+        if(self.mouse_action == "ROI"):
             scroll_x = int(self.scroll_area.horizontalScrollBar().value() / self.zoom_factor)
             scroll_y = int(self.scroll_area.verticalScrollBar().value() / self.zoom_factor)
             roi_end_x = int((event.pos().x()) / self.zoom_factor) + scroll_x
@@ -160,7 +161,8 @@ class MainWindow(QMainWindow):
         self.mouse_action = 0
 
     def mouseMoveEvent(self, event):
-        if(self.mouse_action == self.MA_PAN):
+        """Handle pan, window and RoI functionality on mouse move."""
+        if(self.mouse_action == "PAN"):
             vertical = self.scroll_area.verticalScrollBar().value() \
                 + self.last_position.y() - event.pos().y()
             horizontal = self.scroll_area.horizontalScrollBar().value() \
@@ -170,14 +172,14 @@ class MainWindow(QMainWindow):
             self.scroll_area.horizontalScrollBar().setValue(horizontal)
             self.last_position = event.pos()
 
-        elif(self.mouse_action == self.MA_WINDOW):
+        elif(self.mouse_action == "WINDOW"):
             move = self.last_position.x() - event.pos().x()
             scale = self.last_position.y() - event.pos().y()
             self.last_position = event.pos()
             self.app.mode.adjust(move, scale)
             self.app.refresh()
         
-        elif(self.mouse_action == self.MA_ROI):
+        elif(self.mouse_action == "ROI"):
             scroll_x = int(self.scroll_area.horizontalScrollBar().value() / self.zoom_factor)
             scroll_y = int(self.scroll_area.verticalScrollBar().value() / self.zoom_factor)
             self.app.roi[2] = int((event.pos().x()) / self.zoom_factor) + scroll_x

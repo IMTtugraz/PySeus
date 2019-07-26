@@ -4,6 +4,7 @@ import numpy
 from .base import BaseFormat
 
 class H5(BaseFormat):
+    """Support for HDF5 files."""
 
     def __init__(self):
         BaseFormat.__init__(self)

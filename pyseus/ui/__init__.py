@@ -1,6 +1,11 @@
+"""Contains the GUI elements for PySeus."""
+
 from .main import MainWindow
 
 def get_stylesheet():
+    """Provides the custom stylesheet for PySeus."""
+    # @TODO refactor into separate module / file --> include_package_data
+
     return """
 QMenuBar { background: #111; color: #ddd; }
 QMenuBar::item { padding: 5px 10px 5px 10px; }
