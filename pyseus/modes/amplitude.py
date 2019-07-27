@@ -2,8 +2,11 @@ import numpy
 
 from .base import BaseMode
 
+
 class Amplitude(BaseMode):
-    """Visualizes the amplitude of a complex dataset. Uses standard windowing behavior."""
+    """Visualizes the amplitude of a complex dataset. Uses standard
+    windowing behavior.
+    """
 
     def __init__(self):
         BaseMode.__init__(self)
@@ -11,8 +14,10 @@ class Amplitude(BaseMode):
     def prepare(self, data):
         if data.dtype == "complex64":
             data = numpy.absolute(data)
-        data -= self.window_min # align window_min to 0
-        data *= 255 / (self.window_max - self.window_min) # scale window_max to 255
+        # align window_min to 0
+        data -= self.window_min
+        # scale window_max to 255
+        data *= 255 / (self.window_max - self.window_min)
 
         data = data.clip(0, 255)
         return data.astype(numpy.int8).copy()
@@ -21,7 +26,7 @@ class Amplitude(BaseMode):
         delta = self.data_max - self.data_min
         self.window_min += delta * 0.003 * steps
         self.window_max += delta * 0.003 * steps
-    
+
     def scale(self, steps):
         delta = self.data_max - self.data_min
         new_min = self.window_min - delta * 0.003 * steps

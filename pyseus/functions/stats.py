@@ -2,6 +2,7 @@ import numpy
 
 from .base import BaseFct
 
+
 class StatsFct(BaseFct):
     """Displays basic statistics (min, max, avg) for the RoI."""
 

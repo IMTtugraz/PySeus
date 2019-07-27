@@ -2,6 +2,7 @@
 
 from .main import MainWindow
 
+
 def get_stylesheet():
     """Provides the custom stylesheet for PySeus."""
     # @TODO refactor into separate module / file --> include_package_data

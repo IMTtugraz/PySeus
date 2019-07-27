@@ -1,6 +1,5 @@
-import numpy
-
 from .base import BaseFct
+
 
 class TestFct(BaseFct):
     """Displays the coordinates of the current RoI."""

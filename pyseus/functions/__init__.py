@@ -1,6 +1,5 @@
-"""Functions provide specific information about a region-of-interest in the data.
-
-All functions extend the *BaseFct* class, guaranteeing basic functionality.
+"""Functions provide specific information about a region-of-interest
+in the data.
 """
 
 from .base import BaseFct
