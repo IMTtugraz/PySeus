@@ -57,7 +57,7 @@ class PySeus(QApplication):
     def load_image(self, image):
         """Display image (only for testing purposes)."""
         # @TODO remove after testing
-        self.window.view.setPixmap(QPixmap.fromImage(image))
+        self.window.view.view.setPixmap(QPixmap.fromImage(image))
         self.window._action_zoom_reset()
 
     def load_file(self, path):
@@ -99,7 +99,7 @@ class PySeus(QApplication):
                              - self.roi[0], self.roi[3] - self.roi[1])
             painter.end()
 
-        self.window.view.setPixmap(pixmap)
+        self.window.view.view.setPixmap(pixmap)
 
     def set_mode(self, mode):
         """Set the mode with the slug `mode` as current."""
