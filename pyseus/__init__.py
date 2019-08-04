@@ -40,7 +40,7 @@ def load(arg=None):
     `arg` can be a file path or data array."""
     app = PySeus()
 
-    if isinstance(arg, str) and path.isfile(arg):
+    if isinstance(arg, str):  # and path.isfile(arg):
         app.load_file(arg)
 
     # @TODO remove after testing

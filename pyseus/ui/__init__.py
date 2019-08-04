@@ -1,6 +1,7 @@
 """Contains the GUI elements for PySeus."""
 
 from .main import MainWindow
+from .view import ViewWidget
 
 
 def get_stylesheet():
