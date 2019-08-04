@@ -3,5 +3,5 @@ in the data.
 """
 
 from .base import BaseFct
-from .test import TestFct
+from .roi import RoIFct
 from .stats import StatsFct

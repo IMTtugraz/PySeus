@@ -4,7 +4,7 @@ from PySide2.QtGui import QImage, QPixmap, QPainter, QColor, QPen
 from .ui import MainWindow, get_stylesheet
 from .formats import Raw, H5
 from .modes import Amplitude, Phase
-from .functions import TestFct, StatsFct
+from .functions import RoIFct, StatsFct
 
 
 class PySeus(QApplication):
@@ -41,7 +41,7 @@ class PySeus(QApplication):
         }
 
         PySeus.functions = {
-            "Coordinates": TestFct,
+            "Region of Interest": RoIFct,
             "Statistics": StatsFct
         }
 
@@ -52,7 +52,7 @@ class PySeus(QApplication):
         self.window.show()
 
         self.roi = [0, 0, 0, 0]
-        self.function = TestFct()
+        self.function = RoIFct()
 
     def load_image(self, image):
         """Display image (only for testing purposes)."""

@@ -13,5 +13,10 @@ class StatsFct(BaseFct):
         roi = data[roi[0]:roi[2], roi[1]:roi[3]]
         min = numpy.amin(roi)
         max = numpy.amax(roi)
+        med = numpy.median(roi)
         avg = numpy.average(roi)
-        return "Min: {} | Max: {} | Avg: {}".format(min, max, avg)
+        
+        if avg > med:
+            return "Min: {g.4} | Med: {g.4} | Avg: {g.4} | Max: {g.4}".format(min, med, avg, max)
+        else:
+            return "Min: {g.4} | Avg: {g.4} | Med: {g.4} | Max: {g.4}".format(min, avg, med, max)
