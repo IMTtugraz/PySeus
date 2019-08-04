@@ -22,7 +22,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'pyseus=pyseus:_console_entry',
+            'pyseus=pyseus:load',
         ],
     },
     zip_safe=False
