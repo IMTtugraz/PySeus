@@ -11,7 +11,7 @@ class BaseMode():
     def prepare(self, data):
         """Prepare frame data for display."""
         pass
-    
+
     def move(self, steps):
         """Move the window up / down; results in a darker / lighter image."""
         pass

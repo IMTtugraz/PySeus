@@ -30,20 +30,19 @@ Subpackages
 from os import path
 from sys import stdin, argv
 
-import numpy as np
 from PySide2.QtGui import QImage
 
 from .core import PySeus
-from .ui import MainWindow
 
-def load(arg = None):
+
+def load(arg=None):
     """Start Pyseus and load `arg`.
     `arg` can be a file path or data array."""
     app = PySeus()
-    
-    if isinstance(arg, str) and path.isfile(arg):
+
+    if isinstance(arg, str):  # and path.isfile(arg):
         app.load_file(arg)
-    
+
     # @TODO remove after testing
     elif isinstance(arg, QImage):
         app.load_image(arg)
@@ -52,6 +51,7 @@ def load(arg = None):
         app.load_data(arg)
 
     return app.exec_()
+
 
 def _console_entry():
     """Start Pyseus from Console.
