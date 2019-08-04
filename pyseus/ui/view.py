@@ -29,12 +29,10 @@ class ViewWidget(QScrollArea):
         self.zoom_factor = self.zoom_factor * factor if relative else factor
         self.view.resize(self.zoom_factor * self.view.pixmap().size())
 
-        # @TODO Refactor into View Widgete (!!!)
         v_scroll = int(factor * self.verticalScrollBar().value() +
             ((factor - 1) * self.verticalScrollBar().pageStep()/2))
         self.verticalScrollBar().setValue(v_scroll)
         
-        # @TODO Refactor into View Widgete (!!!)
         h_scroll = int(factor * self.horizontalScrollBar().value() +
             ((factor - 1) * self.horizontalScrollBar().pageStep()/2))
         self.horizontalScrollBar().setValue(h_scroll)
