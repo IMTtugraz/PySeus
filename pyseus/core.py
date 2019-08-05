@@ -10,15 +10,12 @@ from .functions import RoIFct, StatsFct
 class PySeus(QApplication):
     """The main application class acts as controller."""
 
-    # @TODO Allow registering modes dynamically
     modes = {}
     """Holds all avaiable display modes."""
 
-    # @TODO Allow registering formats dynamically
     formats = {}
     """Holds all avaiable data formats."""
 
-    # @TODO Allow registering functions dynamically
     functions = {}
     """Holds all avaiable RoI evaluation functions."""
 
@@ -54,9 +51,9 @@ class PySeus(QApplication):
         self.roi = [0, 0, 0, 0]
         self.function = RoIFct()
 
+    # @TODO remove after testing
     def load_image(self, image):
         """Display image (only for testing purposes)."""
-        # @TODO remove after testing
         self.window.view.view.setPixmap(QPixmap.fromImage(image))
         self.window._action_zoom_reset()
 

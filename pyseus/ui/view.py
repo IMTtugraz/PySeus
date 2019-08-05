@@ -15,8 +15,10 @@ class ViewWidget(QScrollArea):
 
         self.view = QLabel()
         self.view.setScaledContents(True)
+        self.view.setMouseTracking(True)
         self.zoom_factor = 1
         self.mouse_action = 0
+        self.setMouseTracking(True)
 
         self.setWidget(self.view)
         # Reset Scroll event Handler
@@ -77,6 +79,15 @@ class ViewWidget(QScrollArea):
 
     def mouseMoveEvent(self, event):
         """Handle pan, window and RoI functionality on mouse move."""
+
+        # @TODO Refactor into image Label event
+        x = int((self.horizontalScrollBar().value() + event.pos().x()) // self.zoom_factor)
+        y = int((self.verticalScrollBar().value() + event.pos().y()) // self.zoom_factor)
+        shape = self.app.frame_data.shape
+        if(x < shape[0] and y < shape[1]):
+            val = self.app.frame_data[y,x]
+            self.app.show_status("{} x {}  -  {:.4g}".format(x, y, val))
+
         if(self.mouse_action == "PAN"):
             vertical = self.verticalScrollBar().value() \
                 + self.last_position.y() - event.pos().y()
