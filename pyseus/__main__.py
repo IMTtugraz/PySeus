@@ -1,15 +1,18 @@
-from os import path
-from sys import stdin, argv
+from sys import argv
 
+# @TODO remove after testing
 from PySide2.QtGui import QImage
 
-from .core import PySeus
+from pyseus.core import PySeus
 
 
 def load(arg=None):
     """Start Pyseus and load `arg`.
     `arg` can be a file path or data array."""
     app = PySeus()
+
+    if len(argv) > 1 and arg is None:
+        arg = argv[1]
 
     if isinstance(arg, str):  # and path.isfile(arg):
         app.load_file(arg)

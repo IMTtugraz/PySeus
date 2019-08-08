@@ -8,5 +8,8 @@ class RoIFct(BaseFct):
         BaseFct.__init__(self)
 
     def recalculate(self, data, roi):
-        return "X: {}-{} | Y: {}-{} | Area: {}".format(roi[0], roi[2], roi[1], roi[3], 
-            (roi[2]-roi[0])*roi[3]-roi[1])
+        result = "X: {}-{} | Y: {}-{} | Area: {}".format(
+            roi[0], roi[2], roi[1], roi[3],
+            abs((roi[0]-roi[2])*(roi[3]-roi[1])))
+
+        return "RoI: " + result

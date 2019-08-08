@@ -27,5 +27,5 @@ Subpackages
 
 """
 
-from .core import PySeus
-from .__main__ import load
+from pyseus.core import PySeus
+from pyseus.__main__ import load
