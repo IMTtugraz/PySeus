@@ -1,13 +1,9 @@
-import sys
-import webbrowser
-
 from PySide2 import QtCore
-from PySide2.QtWidgets import QMainWindow, QAction, \
-    QLabel, QScrollArea, QFileDialog
+from PySide2.QtWidgets import QLabel, QScrollArea
 
 
 class ViewWidget(QScrollArea):
-    """The widget providing an iamge viewport."""
+    """The widget providing an image viewport."""
 
     def __init__(self, app):
         QScrollArea.__init__(self)
@@ -21,8 +17,13 @@ class ViewWidget(QScrollArea):
         self.setMouseTracking(True)
 
         self.setWidget(self.view)
+
         # Reset Scroll event Handler
         # self.wheelEvent = lambda e: False
+
+        # Hide scrollbars
+        self.horizontalScrollBar().setStyleSheet("QScrollBar { height: 0 }")
+        self.verticalScrollBar().setStyleSheet("QScrollBar { width: 0 }")
 
     def zoom(self, factor, relative=True):
         if relative and not (0.1 <= self.zoom_factor * factor <= 10):
@@ -32,11 +33,11 @@ class ViewWidget(QScrollArea):
         self.view.resize(self.zoom_factor * self.view.pixmap().size())
 
         v_scroll = int(factor * self.verticalScrollBar().value() +
-            ((factor - 1) * self.verticalScrollBar().pageStep()/2))
+                       ((factor-1) * self.verticalScrollBar().pageStep()/2))
         self.verticalScrollBar().setValue(v_scroll)
-        
+
         h_scroll = int(factor * self.horizontalScrollBar().value() +
-            ((factor - 1) * self.horizontalScrollBar().pageStep()/2))
+                       ((factor-1) * self.horizontalScrollBar().pageStep()/2))
         self.horizontalScrollBar().setValue(h_scroll)
 
     def mousePressEvent(self, event):
@@ -81,11 +82,13 @@ class ViewWidget(QScrollArea):
         """Handle pan, window and RoI functionality on mouse move."""
 
         # @TODO Refactor into image Label event
-        x = int((self.horizontalScrollBar().value() + event.pos().x()) // self.zoom_factor)
-        y = int((self.verticalScrollBar().value() + event.pos().y()) // self.zoom_factor)
+        x = int((self.horizontalScrollBar().value()
+                 + event.pos().x()) // self.zoom_factor)
+        y = int((self.verticalScrollBar().value()
+                 + event.pos().y()) // self.zoom_factor)
         shape = self.app.frame_data.shape
         if(x < shape[0] and y < shape[1]):
-            val = self.app.frame_data[y,x]
+            val = self.app.frame_data[y, x]
             self.app.show_status("{} x {}  -  {:.4g}".format(x, y, val))
 
         if(self.mouse_action == "PAN"):
