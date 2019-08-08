@@ -18,14 +18,12 @@ class ViewWidget(QScrollArea):
 
         self.setWidget(self.view)
 
-        # Reset Scroll event Handler
-        # self.wheelEvent = lambda e: False
-
         # Hide scrollbars
         self.horizontalScrollBar().setStyleSheet("QScrollBar { height: 0 }")
         self.verticalScrollBar().setStyleSheet("QScrollBar { width: 0 }")
 
     def zoom(self, factor, relative=True):
+        """Zoom"""
         if relative and not (0.1 <= self.zoom_factor * factor <= 10):
             return
 
@@ -39,6 +37,14 @@ class ViewWidget(QScrollArea):
         h_scroll = int(factor * self.horizontalScrollBar().value() +
                        ((factor-1) * self.horizontalScrollBar().pageStep()/2))
         self.horizontalScrollBar().setValue(h_scroll)
+    
+    def zoom_fit(self):
+        """Zoom Fit"""
+        image = self.view.pixmap().size()
+        viewport = self.size()
+        v_zoom = viewport.height() / image.height()
+        h_zoom = viewport.width() / image.width()
+        self.zoom(min(v_zoom, h_zoom)*0.99, False)
 
     def mousePressEvent(self, event):
         """Handle pan, window and RoI functionality on mouse button down."""
@@ -86,9 +92,9 @@ class ViewWidget(QScrollArea):
                  + event.pos().x()) // self.zoom_factor)
         y = int((self.verticalScrollBar().value()
                  + event.pos().y()) // self.zoom_factor)
-        shape = self.app.frame_data.shape
+        shape = self.app.current_slice.shape
         if(x < shape[0] and y < shape[1]):
-            val = self.app.frame_data[y, x]
+            val = self.app.current_slice[y, x]
             self.app.show_status("{} x {}  -  {:.4g}".format(x, y, val))
 
         if(self.mouse_action == "PAN"):
@@ -119,4 +125,5 @@ class ViewWidget(QScrollArea):
             self.app.refresh()
 
     def wheelEvent(self, event):
+        """Wheel Event Handler."""
         self.zoom(0.8 if event.delta() < 0 else 1.25)

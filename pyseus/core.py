@@ -1,87 +1,107 @@
+import os
+
 from PySide2.QtWidgets import QApplication
 from PySide2.QtGui import QImage, QPixmap, QPainter, QColor, QPen
 
-from .ui import MainWindow, get_stylesheet
-from .formats import Raw, H5
-from .modes import Amplitude, Phase
-from .functions import RoIFct, StatsFct
+from pyseus.settings import settings
+from pyseus.ui import MainWindow
+from pyseus.formats import Raw, H5, DICOM
+from pyseus.modes import Amplitude, Phase
+from pyseus.functions import RoIFct, StatsFct
 
 
 class PySeus(QApplication):
     """The main application class acts as controller."""
 
-    modes = {}
-    """Holds all avaiable display modes."""
-
-    formats = {}
-    """Holds all avaiable data formats."""
-
-    functions = {}
-    """Holds all avaiable RoI evaluation functions."""
-
     def __init__(self):
         """Setup the GUI and default values."""
+
         QApplication.__init__(self)
 
-        # Stylesheet
-        self.setStyleSheet(get_stylesheet())
+        self.modes = [Amplitude, Phase]
+        """Holds all avaiable display modes."""
 
-        PySeus.modes = {
-            "Amplitude": Amplitude,
-            "Phase": Phase,
-        }
+        self.formats = [Raw, H5, DICOM]
+        """Holds all avaiable data formats."""
 
-        PySeus.formats = {
-            "Raw": Raw,
-            "H5": H5,
-            # "DICOM": DICOM,
-        }
+        self.functions = [RoIFct, StatsFct]
+        """Holds all avaiable RoI evaluation functions."""
 
-        PySeus.functions = {
-            "Region of Interest": RoIFct,
-            "Statistics": StatsFct
-        }
+        self.format = None
+        """Format"""
 
-        self.file = Raw()  # Remove, only set after "try_load"
-        self.mode = PySeus.modes["Amplitude"]()
+        self.mode = self.modes[0]()
+        """Mode"""
+
+        self.function = self.functions[0]()
+        """Function"""
+
+        # @ TODO roi util functions (reset, set, get --> property ?!?)
+        self.roi = [0, 0, 0, 0]
+        """Region of Interest"""
 
         self.window = MainWindow(self)
+        """Window"""
+
+        self.path = ""
+        """Path"""
+
+        self.scans = []
+        """Scans"""
+
+        self.slices = []
+        """Slices"""
+
+        self.current_slice = []
+        """Current Slice"""
+
+        # Stylesheet
+        style_path = os.path.abspath(os.path.join(
+            os.path.dirname(__file__),
+            "./ui/" + settings["app"]["style"] + ".qss"))
+        with open(style_path, "r") as stylesheet:
+            self.setStyleSheet(stylesheet.read())
+
+        self.setup_functions_menu()
         self.window.show()
 
-        self.roi = [0, 0, 0, 0]
-        self.function = RoIFct()
+    def setup_functions_menu(self):
+        """Add functions to main windows `Evals` menu."""
+        for key, function in enumerate(self.functions):
+            self.window.add_function_to_menu(key, function)
 
-    # @TODO remove after testing
+    # @TODO remove after testing // dont change at all !!!
     def load_image(self, image):
         """Display image (only for testing purposes)."""
         self.window.view.view.setPixmap(QPixmap.fromImage(image))
-        self.window._action_zoom_reset()
+        self.window._action_zoom_fit()
 
     def load_file(self, path):
         """Try to load file at `path`."""
         # @TODO check for Format
-        self.file = H5()
-        self.file.load_file(path)
+        self.format = H5()
+        self.format.load_file(path)
         # @TODO implement frame selection
-        self.frame_data = self.file.load_frame(0)
+        self.current_slice = self.format.load_frame(0)
 
-        self.mode.setup(self.frame_data)
+        self.mode.setup(self.current_slice)
         self.refresh()
-        self.window._action_zoom_reset()
+        self.window._action_zoom_fit()
+        self.path = path
 
     def load_data(self, data):
         """Try to load the frame contained in `data`."""
         # @TODO check for Format
-        self.file.load_data(data)
-        self.frame_data = self.file.load_frame(0)
+        self.format.load_data(data)
+        self.current_slice = self.format.load_frame(0)
 
-        self.mode.setup(self.frame_data)
+        self.mode.setup(self.current_slice)
         self.refresh()
-        self.window._action_zoom_reset()
+        self.window._action_zoom_fit()
 
     def refresh(self):
         """Refresh the displayed image."""
-        tmp = self.mode.prepare(self.frame_data.copy())
+        tmp = self.mode.prepare(self.current_slice.copy())
 
         image = QImage(tmp.data, tmp.shape[1],
                        tmp.shape[0], tmp.strides[0],
@@ -100,22 +120,21 @@ class PySeus(QApplication):
 
     def set_mode(self, mode):
         """Set the mode with the slug `mode` as current."""
-        self.mode = PySeus.modes[mode]()
-        self.mode.setup(self.frame_data)
+        self.mode = self.modes[mode]()
+        self.mode.setup(self.current_slice)
         self.refresh()
 
     def show_status(self, message):
         """Display `message` in status bar."""
-        self.window.status.showMessage(message)
+        self.window.statusBar().showMessage(message)
 
     def recalculate(self):
         """Recalculate the current RoI-function."""
-        result = ""
         if self.roi != [0, 0, 0, 0]:
-            result = self.function.recalculate(self.frame_data, self.roi)
-        self.show_status(result)
+            result = self.function.recalculate(self.current_slice, self.roi)
+            self.window.console.print(result)
 
-    def set_function(self, fct):
-        """Set the RoI-function with the slug `fct` as current."""
-        self.function = fct()
+    def set_function(self, key):
+        """Set the RoI-function with the slug `key` as current."""
+        self.function = self.functions[key]()
         self.recalculate()

@@ -1,5 +1,7 @@
 import sys
 import webbrowser
+from functools import partial
+import os
 
 from PySide2.QtWidgets import QMainWindow, QAction, \
     QLabel, QFileDialog, QFrame, QVBoxLayout, QHBoxLayout
@@ -16,52 +18,58 @@ class MainWindow(QMainWindow):
     def __init__(self, app):
         QMainWindow.__init__(self)
         self.setWindowTitle("PySEUS")
+
         self.app = app
-
-        self.menu = self.menuBar()
-        self.setup_menu()
-
-        self.status = self.statusBar()
+        """Holds reference to front controller."""
 
         self.thumbs = ThumbsWidget(app)
+        """@TODO"""
 
         self.view = ViewWidget(app)
+        """@TODO"""
 
         self.info = InfoWidget(app)
+        """@TODO"""
+
         self.console = ConsoleWidget(app)
+        """@TODO"""
 
-        # Layout
-        self.wrapper = QFrame(self)
-        self.wrapper.setLayout(QHBoxLayout())
-        self.wrapper.layout().setContentsMargins(0, 0, 0, 0)
+        # Default path for file open dialoge
+        self._open_path = ""
 
-        self.wrapper.layout().addWidget(self.thumbs)
+        # Horizontal layout (thumbs, view, sidebar)
+        wrapper = QFrame(self)
+        wrapper.setLayout(QHBoxLayout())
+        wrapper.layout().setContentsMargins(0, 0, 0, 0)
+        wrapper.layout().addWidget(self.thumbs)
+        wrapper.layout().addWidget(self.view)
 
-        self.wrapper.layout().addWidget(self.view)
+        # Sidebar / Vertical layout (info, meta, console)
+        sidebar = QFrame(self)
+        sidebar.setLayout(QVBoxLayout())
+        sidebar.layout().setContentsMargins(0, 0, 5, 0)
 
-        self.sidebar = QFrame(self)
-        self.sidebar.setLayout(QVBoxLayout())
-        self.sidebar.layout().setContentsMargins(0, 0, 5, 5)
-
+        # @TODO refactor into sidebar widget (base class) or QDockWidget
         info_heading = QLabel()
         info_heading.setText("FILE INFO")
         info_heading.setProperty("role", "widget_heading__first")
         info_heading.setMinimumHeight(24)
         info_heading.setMaximumHeight(24)
-        self.sidebar.layout().addWidget(info_heading)
-        self.sidebar.layout().addWidget(self.info)
+        sidebar.layout().addWidget(info_heading)
+        sidebar.layout().addWidget(self.info)
 
         console_heading = QLabel()
         console_heading.setText("CONSOLE")
         console_heading.setProperty("role", "widget_heading")
         console_heading.setMinimumHeight(24)
         console_heading.setMaximumHeight(24)
-        self.sidebar.layout().addWidget(console_heading)
-        self.sidebar.layout().addWidget(self.console)
+        sidebar.layout().addWidget(console_heading)
+        sidebar.layout().addWidget(self.console)
 
-        self.wrapper.layout().addWidget(self.sidebar)
+        wrapper.layout().addWidget(sidebar)
 
-        self.setCentralWidget(self.wrapper)
+        self.setup_menu()
+        self.setCentralWidget(wrapper)
 
         # Window dimensions
         geometry = app.desktop().availableGeometry(self)
@@ -79,43 +87,49 @@ class MainWindow(QMainWindow):
     def setup_menu(self):
         ami = self.add_menu_item
 
-        self.file_menu = self.menu.addMenu("&File")
+        self.file_menu = self.menuBar().addMenu("&File")
         ami(self.file_menu, "&Load", self._action_open, "Ctrl+O")
         ami(self.file_menu, "&Exit", self._action_exit, "Ctrl+Q")
 
-        self.view_menu = self.menu.addMenu("&View")
+        self.view_menu = self.menuBar().addMenu("&View")
         ami(self.view_menu, "Zoom &in", self._action_zoom_in, "+")
         ami(self.view_menu, "Zoom &out", self._action_zoom_out, "-")
         ami(self.view_menu, "&Fit", self._action_zoom_fit, "#")
         ami(self.view_menu, "&Reset", self._action_zoom_reset, "0")
 
-        self.mode_menu = self.menu.addMenu("&Mode")
-        ami(self.mode_menu, "&Amplitude", self._action_mode_ampl, "1")
-        ami(self.mode_menu, "&Phase", self._action_mode_phase, "2")
+        self.mode_menu = self.menuBar().addMenu("&Mode")
+        ami(self.mode_menu, "&Amplitude", partial(self._action_mode, 0), "F1")
+        ami(self.mode_menu, "&Phase", partial(self._action_mode, 1), "F2")
 
-        self.window_menu = self.menu.addMenu("&Window")
+        self.window_menu = self.menuBar().addMenu("&Window")
         ami(self.window_menu, "&Lower", self._action_win_lower, "q")
         ami(self.window_menu, "&Raise", self._action_win_raise, "w")
         ami(self.window_menu, "&Shrink", self._action_win_shrink, "a")
         ami(self.window_menu, "&Enlarge", self._action_win_enlarge, "s")
         ami(self.window_menu, "Rese&t", self._action_win_reset, "d")
 
-        # @TODO remove import; maybe call "add function to menu" from app ?!?
-        # self.functions_menu = self.menu.addMenu("&Evals")
-        # from ..core import PySeus
-        # for f in PySeus.functions:
-        #     ami(self.functions_menu, f, self._action_set_fct)
+        self.functions_menu = self.menuBar().addMenu("&Evals")
+        # Functions menu is built in app.setup_functions_menu
+        # by calling add_function_to_menu
 
         # About action is its own top level menu
-        ami(self.menu, "&About", self._action_about)
+        ami(self.menuBar(), "&About", self._action_about)
+
+    def add_function_to_menu(self, key, function):
+        "Add a entry in `Evals` menu for `function`."
+        self.add_menu_item(self.functions_menu, function.MENU_NAME,
+                           partial(self._action_set_function, key))
 
     def _action_exit(self):
         sys.exit()
 
     def _action_open(self):
         path, filter = QFileDialog.getOpenFileName(None, "Open file",
-                                                   ".", "*.h5")
-        self.app.load_file(path)
+                           self._open_path, "*.h5")
+
+        if path != "":
+            self._open_path = os.path.dirname(path)
+            self.app.load_file(path)
 
     def _action_zoom_in(self):
         self.view.zoom(1.25)
@@ -124,18 +138,13 @@ class MainWindow(QMainWindow):
         self.view.zoom(0.8)
 
     def _action_zoom_fit(self):
-        image = self.view.view.pixmap().size()
-        viewport = self.view.size()
-        v_zoom = viewport.height() / image.height()
-        h_zoom = viewport.width() / image.width()
-        self.view.zoom(min(v_zoom, h_zoom)*0.99, False)
+        self.view.zoom_fit()
 
     def _action_zoom_reset(self):
         self.view.zoom(1, False)
 
     def _action_about(self):
-        webbrowser.open("https://github.com/calmer/PySEUS", new=0,
-                        autoraise=True)
+        webbrowser.open_new("https://github.com/calmer/PySEUS", autoraise=True)
 
     def _action_win_lower(self):
         self.app.mode.move(-20)
@@ -157,13 +166,8 @@ class MainWindow(QMainWindow):
         self.app.mode.reset()
         self.app.refresh()
 
-    def _action_mode_ampl(self):
-        self.app.set_mode("Amplitude")
+    def _action_mode(self, mode):
+        self.app.set_mode(mode)
 
-    def _action_mode_phase(self):
-        self.app.set_mode("Phase")
-
-    def _action_set_fct(self):
-        from ..core import PySeus
-        fct = self.sender().text()
-        self.app.set_function(PySeus.functions[fct])
+    def _action_set_function(self, key):
+        self.app.set_function(key)

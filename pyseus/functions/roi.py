@@ -4,6 +4,8 @@ from .base import BaseFct
 class RoIFct(BaseFct):
     """Displays the coordinates of the current RoI."""
 
+    MENU_NAME = "Coordinates"
+
     def __init__(self):
         BaseFct.__init__(self)
 

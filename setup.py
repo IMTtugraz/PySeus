@@ -12,9 +12,10 @@ setup(
     author_email='christoph.almer@gmail.com',
     license='GNU',
     packages=find_packages(),
-    # package_data={'pyseus': [
-    # ]},
-    # include_package_data=True,
+    package_data={'pyseus': [
+        'ui/style_dark.qss',
+    ]},
+    include_package_data=True,
     install_requires=[
         'PySide2',
         'numpy',

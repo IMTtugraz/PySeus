@@ -6,6 +6,8 @@ from .base import BaseFct
 class StatsFct(BaseFct):
     """Displays basic statistics (min, max, avg) for the RoI."""
 
+    MENU_NAME = "Statistics"
+
     def __init__(self):
         BaseFct.__init__(self)
 
