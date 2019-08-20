@@ -3,6 +3,7 @@ import webbrowser
 from functools import partial
 import os
 
+from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QMainWindow, QAction, \
     QLabel, QFileDialog, QFrame, QVBoxLayout, QHBoxLayout
 
@@ -10,6 +11,7 @@ from .view import ViewWidget
 from .console import ConsoleWidget
 from .info import InfoWidget
 from .thumbs import ThumbsWidget
+from .overlay import OverlayWidget
 
 
 class MainWindow(QMainWindow):
@@ -43,6 +45,12 @@ class MainWindow(QMainWindow):
         wrapper.layout().setContentsMargins(0, 0, 0, 0)
         wrapper.layout().addWidget(self.thumbs)
         wrapper.layout().addWidget(self.view)
+
+        # @TODO Remove overlay test
+        # test = OverlayWidget(self.app)
+        # self.addDockWidget(Qt.RightDockWidgetArea, test)
+        # test.setFloating(True);
+        # test.setWindowOpacity(0.8)
 
         # Sidebar / Vertical layout (info, meta, console)
         sidebar = QFrame(self)
@@ -109,6 +117,9 @@ class MainWindow(QMainWindow):
         ami(self.window_menu, "&Enlarge", self._action_win_enlarge, "s")
         ami(self.window_menu, "Rese&t", self._action_win_reset, "d")
 
+        # @TODO remove after thumb test
+        ami(self.file_menu, "ThumbTest", self._thumb_test, "t")
+
         self.functions_menu = self.menuBar().addMenu("&Evals")
         # Functions menu is built in app.setup_functions_menu
         # by calling add_function_to_menu
@@ -172,3 +183,9 @@ class MainWindow(QMainWindow):
 
     def _action_set_function(self, key):
         self.app.set_function(key)
+
+    def add_thumbs(self):
+        self.thumbs = ThumbsWidget(app)
+
+    def _thumb_test(self):
+        self.thumbs.add_thumbs()

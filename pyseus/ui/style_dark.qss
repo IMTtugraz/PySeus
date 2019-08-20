@@ -77,6 +77,11 @@ QStatusBar {
     color: #eee;
 }
 
+QDockWidget, QDockWidget::title {
+    background: #000;
+}
+QDockWidget { border: 1px solid #111 }
+
 [debug="red"] { background: red; }
 [debug="blue"] { background: blue; }
 [debug="green"] { background: green; }

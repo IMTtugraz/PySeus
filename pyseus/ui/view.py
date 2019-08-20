@@ -16,6 +16,7 @@ class ViewWidget(QScrollArea):
         self.mouse_action = 0
         self.setMouseTracking(True)
 
+        self.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
         self.setWidget(self.view)
 
         # Hide scrollbars
