@@ -69,6 +69,7 @@ class MainWindow(QMainWindow):
         wrapper.layout().addWidget(sidebar)
 
         self.setup_menu()
+        self.statusBar().setSizeGripEnabled(False)
         self.setCentralWidget(wrapper)
 
         # Window dimensions
@@ -144,7 +145,7 @@ class MainWindow(QMainWindow):
         self.view.zoom(1, False)
 
     def _action_about(self):
-        webbrowser.open_new("https://github.com/calmer/PySEUS", autoraise=True)
+        webbrowser.open_new("https://github.com/calmer/PySEUS")
 
     def _action_win_lower(self):
         self.app.mode.move(-20)
