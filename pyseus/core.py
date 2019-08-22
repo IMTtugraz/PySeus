@@ -63,6 +63,8 @@ class PySeus(QApplication):
             self.setStyleSheet(stylesheet.read())
 
         self.setup_functions_menu()
+        self.window.thumbs.thumb_clicked = self.load_scan
+
         self.window.show()
 
     def setup_functions_menu(self):
@@ -138,3 +140,6 @@ class PySeus(QApplication):
         """Set the RoI-function with the slug `key` as current."""
         self.function = self.functions[key]()
         self.recalculate()
+
+    def load_scan(self, key):
+        print(key)

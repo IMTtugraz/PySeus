@@ -188,4 +188,4 @@ class MainWindow(QMainWindow):
         self.thumbs = ThumbsWidget(app)
 
     def _thumb_test(self):
-        self.thumbs.add_thumbs()
+        self.thumbs.add_thumb(self.app.current_slice)

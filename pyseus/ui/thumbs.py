@@ -1,3 +1,5 @@
+from functools import partial
+
 from PySide2.QtCore import QSize
 from PySide2.QtGui import QImage, QPixmap
 from PySide2.QtWidgets import QLabel, QScrollArea, QSizePolicy, \
@@ -16,8 +18,6 @@ class ThumbsWidget(QScrollArea):
         self.wrapper = QFrame()
         self.wrapper.setLayout(QVBoxLayout())
         self.wrapper.layout().addStretch()
-        self.setProperty("debug", "green")
-        self.wrapper.setProperty("debug", "red")
 
         self.thumbs = []
 
@@ -30,37 +30,41 @@ class ThumbsWidget(QScrollArea):
         self.setWidgetResizable(True)
         self.setWidget(self.wrapper)
 
-    def add_thumbs(self):
-        image = QImage("test2.jpg")
+    def add_thumb(self, data):
+        data = self.app.mode.prepare(data.copy())
+
+        image = QImage(data.data, data.shape[1],
+                       data.shape[0], data.strides[0],
+                       QImage.Format_Grayscale8)
+
         pixmap = QPixmap.fromImage(image)
         pixmap = pixmap.scaledToWidth(int(settings["ui"]["thumb_size"]))
 
-        self.thumbs.append(QLabel())
-        self.thumbs[-1].setScaledContents(True)
-        self.thumbs[-1].setProperty("debug", "blue")
-        self.thumbs[-1].setScaledContents(True)
-        self.thumbs[-1].setPixmap(pixmap)
+        thumb = QLabel()
+        thumb.setPixmap(pixmap)
+        thumb.mousePressEvent = partial(self._thumb_clicked, 
+                                        self.wrapper.layout().count()-1)
 
-        layout = self.wrapper.layout()
-        layout.insertWidget(layout.count() - 1, self.thumbs[-1])
-        self.wrapper.updateGeometry()
+        self.thumbs.append(thumb)
+        self.wrapper.layout().insertWidget(self.wrapper.layout().count()-1, 
+                                           thumb)
 
-        # image = QImage(data.data, data.shape[1],
-                    #    data.shape[0], data.strides[0],
-                    #    QImage.Format_Grayscale8)
-        # pixmap = QPixmap.fromImage(image)
+        self.updateGeometry()
 
-        # thumb = QLabel()
-        # thumb.setScaledContents(True)
-        # thumb.setPixmap(pixmap)
-
-        # self.thumbs.append(thumb)
-        # self.wrapper.layout().addWidget(thumb)
 
     def clear(self):
         for t in self.thumbs:
             t.deleteLater()
         self.thumbs = []
+    
+    def _thumb_clicked(self, thumb, event):
+        self.thumb_clicked(thumb)
+    
+    def thumb_clicked(self, thumb):
+        pass
 
     def minimumSizeHint(self):
-        return QSize(int(settings["ui"]["thumb_size"])+24, 0)
+        if self.thumbs:
+            return QSize(int(settings["ui"]["thumb_size"])+16, 0)
+        else:
+            return QSize(0,0)
