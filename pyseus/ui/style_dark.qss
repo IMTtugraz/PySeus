@@ -5,8 +5,11 @@ QMenu { background: #222; color: #eee; padding: 0px; }
 QMenu::item { padding: 5px 10px 5px 10px; }
 QMenu::item:selected { background: #333; }
 
-QFrame {
+QMainWindow {
     background: #000;
+}
+QFrame {
+    background: transparent;
 }
 
 QTextEdit {
@@ -76,6 +79,7 @@ QStatusBar {
     background: #000;
     color: #eee;
 }
+
 
 QDockWidget, QDockWidget::title {
     background: #000;

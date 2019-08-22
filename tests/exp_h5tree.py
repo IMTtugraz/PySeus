@@ -1,38 +1,9 @@
 import h5py
-import numpy
 from functools import partial
 
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QApplication, QDialog, QLabel, QLayout, \
         QVBoxLayout, QDialogButtonBox, QTreeWidget, QTreeWidgetItem
-
-from .base import BaseFormat
-
-
-class H5(BaseFormat):
-    """Support for HDF5 files."""
-
-    def __init__(self):
-        BaseFormat.__init__(self)
-        self.type = "H5"
-
-    def load_file(self, path):
-        # @TODO check file access
-        self.file = h5py.File(path, "r")
-        if len(self.file.keys()) >= 1:  # @TODO change to > 1
-            dialog = H5Explorer(self.file)
-            choice = dialog.exec()
-            if choice == QDialog.Accepted:
-                self.dataset = dialog.result()
-            else:
-                self.dataset = None
-        else:
-            self.dataset = self.file.keys()[0]
-
-    def load_frame(self, frame):
-        if not self.dataset == None:
-            data = numpy.asarray(self.file[self.dataset][frame])
-            return data
 
 
 class H5Explorer(QDialog):
@@ -49,7 +20,8 @@ class H5Explorer(QDialog):
         self.view.setColumnCount(1)
 
         node = QTreeWidgetItem()
-        file.visititems(partial(self._walk, node))
+        f = h5py.File(file, "r")
+        f.visititems(partial(self._walk, node))
         for n in node.takeChildren():
             self.view.addTopLevelItem(n)
 
@@ -75,3 +47,11 @@ class H5Explorer(QDialog):
     
     def result(self):
         return self.view.currentItem().text(0)
+
+app = QApplication()
+win = H5Explorer("test.h5")
+res = win.exec()
+if res == QDialog.Accepted:
+    print(win.result())
+else:
+    print("Cancled")
