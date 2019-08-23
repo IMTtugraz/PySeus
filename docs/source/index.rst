@@ -1,7 +1,7 @@
 PySeus Documentation
 ====================
 
-PySeus is a minimal viewer for medical imaging data.
+PySeus is a simple viewer for MRI data.
 
 .. toctree::
    :maxdepth: 1
@@ -19,6 +19,6 @@ PySeus is a minimal viewer for medical imaging data.
    development
    application
    formats
-   modes
+   display
    functions
    interface

@@ -12,7 +12,7 @@ Functions
 Built-in Functions
 ------------------
 
-.. autoclass:: pyseus.functions.TestFct
+.. autoclass:: pyseus.functions.RoIFct
 
 .. autoclass:: pyseus.functions.StatsFct
 
