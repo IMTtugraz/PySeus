@@ -1,23 +1,24 @@
 import numpy
 
-from pyseus.settings import settings
+from pyseus import settings
 
 
 class DisplayHelper():
-    """The main application class acts as controller."""
+    """A collection of display helper functions."""
 
     def __init__(self):
-        self.mode = 1
+        self.mode = 0
+        """Amplitude or Phase"""
     
     def prepare(self, data):
-        if self.mode = 2:
+        if self.mode == 1:
             data = numpy.angle(data)
             data += numpy.pi  # align -pi to 0
             data *= 255 / (2*numpy.pi)  # scale pi to 255
 
-        else:
+        elif self.mode == 0:
             data = numpy.absolute(data)
-            data -= self.window_min  # align black to 0
+            data -= self.black  # align black to 0
             data *= 255 / (self.white - self.black)  # scale white to 255
         
         data = data.clip(0, 255)
@@ -36,14 +37,14 @@ class DisplayHelper():
     def move_window(self, steps):
         """Move the window up / down; results in a darker / lighter image."""
         delta = self.data_max - self.data_min
-        step_size = settings["window"]["move_step"]
+        step_size = float(settings["window"]["move_step"])
         self.black += delta * step_size * steps
         self.white += delta * step_size * steps
 
     def scale_window(self, steps):
         """Shrink / widen the window; results in higher / lower contrast."""
         delta = self.data_max - self.data_min
-        step_size = settings["window"]["scale_step"]
+        step_size = float(settings["window"]["scale_step"])
         new_black = self.black - delta * step_size * steps
         new_white = self.white + delta * step_size * steps
         if(new_white > new_black):
@@ -52,5 +53,6 @@ class DisplayHelper():
 
     def adjust_window(self, move, scale):
         """Move the window up / down and shrink / widen simultaneously."""
-        self.move(move)
-        self.scale(scale)
+        self.move_window(move)
+        self.scale_window(scale)
+

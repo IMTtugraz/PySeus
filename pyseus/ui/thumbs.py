@@ -31,7 +31,7 @@ class ThumbsWidget(QScrollArea):
         self.setWidget(self.wrapper)
 
     def add_thumb(self, data):
-        data = self.app.mode.prepare(data.copy())
+        data = self.app.display.prepare(data.copy())
 
         image = QImage(data.data, data.shape[1],
                        data.shape[0], data.strides[0],

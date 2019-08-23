@@ -23,6 +23,9 @@ class ViewWidget(QScrollArea):
         self.horizontalScrollBar().setStyleSheet("QScrollBar { height: 0 }")
         self.verticalScrollBar().setStyleSheet("QScrollBar { width: 0 }")
 
+    def set(self, pixmap):
+        self.view.setPixmap(pixmap)
+
     def zoom(self, factor, relative=True):
         """Zoom"""
         if relative and not (0.1 <= self.zoom_factor * factor <= 10):
@@ -112,8 +115,9 @@ class ViewWidget(QScrollArea):
             move = self.last_position.x() - event.pos().x()
             scale = self.last_position.y() - event.pos().y()
             self.last_position = event.pos()
-            self.app.mode.adjust(move, scale)
+            self.app.display.adjust_window(move, scale)
             self.app.refresh()
+
         elif(self.mouse_action == "ROI"):
             scroll_x = int(self.horizontalScrollBar().value()
                            / self.zoom_factor)

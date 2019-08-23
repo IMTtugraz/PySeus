@@ -3,12 +3,11 @@ import os
 from PySide2.QtWidgets import QApplication
 from PySide2.QtGui import QImage, QPixmap, QPainter, QColor, QPen
 
-from pyseus.settings import settings
+from pyseus import settings
+from pyseus import DisplayHelper
 from pyseus.ui import MainWindow
 from pyseus.formats import Raw, H5, DICOM
-from pyseus.modes import Amplitude, Phase
 from pyseus.functions import RoIFct, StatsFct
-
 
 class PySeus(QApplication):
     """The main application class acts as controller."""
@@ -17,9 +16,6 @@ class PySeus(QApplication):
         """Setup the GUI and default values."""
 
         QApplication.__init__(self)
-
-        self.modes = [Amplitude, Phase]
-        """Holds all avaiable display modes."""
 
         self.formats = [Raw, H5, DICOM]
         """Holds all avaiable data formats."""
@@ -30,9 +26,6 @@ class PySeus(QApplication):
         self.format = None
         """Format"""
 
-        self.mode = self.modes[0]()
-        """Mode"""
-
         self.function = self.functions[0]()
         """Function"""
 
@@ -42,6 +35,9 @@ class PySeus(QApplication):
 
         self.window = MainWindow(self)
         """Window"""
+
+        self.display = DisplayHelper()
+        """DisplayHelper"""
 
         self.path = ""
         """Path"""
@@ -73,10 +69,10 @@ class PySeus(QApplication):
             self.window.add_function_to_menu(key, function)
 
     # @TODO remove after testing // dont change at all !!!
-    def load_image(self, image):
-        """Display image (only for testing purposes)."""
-        self.window.view.view.setPixmap(QPixmap.fromImage(image))
-        self.window._action_zoom_fit()
+    # def load_image(self, image):
+    #     """Display image (only for testing purposes)."""
+    #     self.window.view.view.setPixmap(QPixmap.fromImage(image))
+    #     self.window.view.zoom_fit()
 
     def load_file(self, path):
         """Try to load file at `path`."""
@@ -86,7 +82,7 @@ class PySeus(QApplication):
         # @TODO implement frame selection
         self.current_slice = self.format.load_frame(0)
 
-        self.mode.setup(self.current_slice)
+        self.display.setup_window(self.current_slice)
         self.refresh()
         self.window._action_zoom_fit()
         self.path = path
@@ -97,13 +93,13 @@ class PySeus(QApplication):
         self.format.load_data(data)
         self.current_slice = self.format.load_frame(0)
 
-        self.mode.setup(self.current_slice)
+        self.display.setup_window(self.current_slice)
         self.refresh()
-        self.window._action_zoom_fit()
+        self.window.view.zoom_fit()
 
     def refresh(self):
         """Refresh the displayed image."""
-        tmp = self.mode.prepare(self.current_slice.copy())
+        tmp = self.display.prepare(self.current_slice.copy())
 
         image = QImage(tmp.data, tmp.shape[1],
                        tmp.shape[0], tmp.strides[0],
@@ -118,12 +114,12 @@ class PySeus(QApplication):
                              - self.roi[0], self.roi[3] - self.roi[1])
             painter.end()
 
-        self.window.view.view.setPixmap(pixmap)
+        self.window.view.set(pixmap)
 
     def set_mode(self, mode):
         """Set the mode with the slug `mode` as current."""
-        self.mode = self.modes[mode]()
-        self.mode.setup(self.current_slice)
+        self.display.mode = mode
+        self.display.reset_window()
         self.refresh()
 
     def show_status(self, message):

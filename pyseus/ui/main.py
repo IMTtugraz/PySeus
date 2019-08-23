@@ -5,7 +5,7 @@ import os
 
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QMainWindow, QAction, \
-    QLabel, QFileDialog, QFrame, QVBoxLayout, QHBoxLayout
+    QLabel, QFileDialog, QFrame, QVBoxLayout, QHBoxLayout, QSpinBox
 
 from .view import ViewWidget
 from .console import ConsoleWidget
@@ -78,6 +78,7 @@ class MainWindow(QMainWindow):
 
         self.setup_menu()
         self.statusBar().setSizeGripEnabled(False)
+        self.statusBar().addPermanentWidget(self.slice)
         self.setCentralWidget(wrapper)
 
         # Window dimensions
@@ -159,23 +160,23 @@ class MainWindow(QMainWindow):
         webbrowser.open_new("https://github.com/calmer/PySEUS")
 
     def _action_win_lower(self):
-        self.app.mode.move(-20)
+        self.app.display.move_window(-20)
         self.app.refresh()
 
     def _action_win_raise(self):
-        self.app.mode.move(20)
+        self.app.display.move_window(20)
         self.app.refresh()
 
     def _action_win_shrink(self):
-        self.app.mode.scale(-25)
+        self.app.display.scale_window(-25)
         self.app.refresh()
 
     def _action_win_enlarge(self):
-        self.app.mode.scale(25)
+        self.app.display.scale_window(25)
         self.app.refresh()
 
     def _action_win_reset(self):
-        self.app.mode.reset()
+        self.app.display.reset_window()
         self.app.refresh()
 
     def _action_mode(self, mode):

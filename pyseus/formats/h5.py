@@ -19,7 +19,7 @@ class H5(BaseFormat):
     def load_file(self, path):
         # @TODO check file access
         self.file = h5py.File(path, "r")
-        if len(self.file.keys()) >= 1:  # @TODO change to > 1
+        if len(self.file.keys()) > 1:
             dialog = H5Explorer(self.file)
             choice = dialog.exec()
             if choice == QDialog.Accepted:
@@ -27,7 +27,7 @@ class H5(BaseFormat):
             else:
                 self.dataset = None
         else:
-            self.dataset = self.file.keys()[0]
+            self.dataset = list(self.file.keys())[0]
 
     def load_frame(self, frame):
         if not self.dataset == None:

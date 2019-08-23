@@ -27,5 +27,7 @@ Subpackages
 
 """
 
+from pyseus.settings import settings
+from pyseus.display import DisplayHelper
 from pyseus.core import PySeus
 from pyseus.__main__ import load
