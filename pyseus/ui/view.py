@@ -1,6 +1,8 @@
 from PySide2 import QtCore
+from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QLabel, QScrollArea
 
+import numpy as np
 
 class ViewWidget(QScrollArea):
     """The widget providing an image viewport."""
@@ -24,6 +26,9 @@ class ViewWidget(QScrollArea):
         self.verticalScrollBar().setStyleSheet("QScrollBar { width: 0 }")
 
     def set(self, pixmap):
+        # if pixmap is None:
+        #     self.view.clear()
+        # else:
         self.view.setPixmap(pixmap)
 
     def zoom(self, factor, relative=True):
@@ -96,9 +101,9 @@ class ViewWidget(QScrollArea):
                  + event.pos().x()) // self.zoom_factor)
         y = int((self.verticalScrollBar().value()
                  + event.pos().y()) // self.zoom_factor)
-        shape = self.app.current_slice.shape
+        shape = self.app.slices[self.app.current_slice].shape
         if(x < shape[0] and y < shape[1]):
-            val = self.app.current_slice[y, x]
+            val = self.app.slices[self.app.current_slice][y, x]
             self.app.show_status("{} x {}  -  {:.4g}".format(x, y, val))
 
         if(self.mouse_action == "PAN"):
@@ -131,4 +136,9 @@ class ViewWidget(QScrollArea):
 
     def wheelEvent(self, event):
         """Wheel Event Handler."""
-        self.zoom(0.8 if event.delta() < 0 else 1.25)
+        if event.modifiers() == Qt.NoModifier:
+            slice = int(np.sign(event.delta()))
+            self.app.set_current_slice(slice, True)
+
+        elif event.modifiers() == Qt.ControlModifier:
+            self.zoom(0.8 if event.delta() < 0 else 1.25)

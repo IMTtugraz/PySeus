@@ -1,6 +1,6 @@
 import os
 
-from PySide2.QtWidgets import QApplication
+from PySide2.QtWidgets import QApplication, QMessageBox
 from PySide2.QtGui import QImage, QPixmap, QPainter, QColor, QPen
 
 from pyseus import settings
@@ -17,7 +17,7 @@ class PySeus(QApplication):
 
         QApplication.__init__(self)
 
-        self.formats = [Raw, H5, DICOM]
+        self.formats = [H5, DICOM, Raw]
         """Holds all avaiable data formats."""
 
         self.functions = [RoIFct, StatsFct]
@@ -48,7 +48,7 @@ class PySeus(QApplication):
         self.slices = []
         """Slices"""
 
-        self.current_slice = []
+        self.current_slice = -1
         """Current Slice"""
 
         # Stylesheet
@@ -68,43 +68,56 @@ class PySeus(QApplication):
         for key, function in enumerate(self.functions):
             self.window.add_function_to_menu(key, function)
 
-    # @TODO remove after testing // dont change at all !!!
-    # def load_image(self, image):
-    #     """Display image (only for testing purposes)."""
-    #     self.window.view.view.setPixmap(QPixmap.fromImage(image))
-    #     self.window.view.zoom_fit()
-
     def load_file(self, path):
         """Try to load file at `path`."""
-        # @TODO check for Format
-        self.format = H5()
-        self.format.load_file(path)
-        # @TODO implement frame selection
-        self.current_slice = self.format.load_frame(0)
+        self.deload()
 
-        self.display.setup_window(self.current_slice)
-        self.refresh()
-        self.window._action_zoom_fit()
-        self.path = path
+        for f in self.formats:
+            if f.check_file(path):
+                self.format = f()
+                break
+        
+        if not self.format is None:
+            try:
+                self.path, self.scans, self.slices = \
+                    self.format.load_file(path)
+
+                self.current_slice = len(self.slices) // 2
+
+                self.display.setup_window(self.slices[self.current_slice])
+                self.refresh()
+                self.window.view.zoom_fit()
+            except OSError as e:
+                QMessageBox.warning(self.window, "Pyseus", 
+                    "Error loading file.")
+        else:
+            QMessageBox.warning(self.window, "Pyseus", 
+                "Unknown file format.".format(path))
 
     def load_data(self, data):
-        """Try to load the frame contained in `data`."""
-        # @TODO check for Format
-        self.format.load_data(data)
-        self.current_slice = self.format.load_frame(0)
+        """Try to load `data`."""
+        # @TODO
+        pass
 
-        self.display.setup_window(self.current_slice)
-        self.refresh()
-        self.window.view.zoom_fit()
+    def deload(self):
+        self.format = None
+        self.scans = []
+        self.slices = []
+        self.current_slice = -1
+        self.window.view.set(None)
+        self.window.thumbs.clear()
 
     def refresh(self):
         """Refresh the displayed image."""
-        tmp = self.display.prepare(self.current_slice.copy())
+        if self.current_slice == -1: return
+
+        tmp = self.display.prepare(self.slices[self.current_slice].copy())
 
         image = QImage(tmp.data, tmp.shape[1],
                        tmp.shape[0], tmp.strides[0],
                        QImage.Format_Grayscale8)
         pixmap = QPixmap.fromImage(image)
+
         if self.roi != [0, 0, 0, 0]:
             painter = QPainter(pixmap)
             pen = QPen(QColor("red"))
@@ -129,7 +142,8 @@ class PySeus(QApplication):
     def recalculate(self):
         """Recalculate the current RoI-function."""
         if self.roi != [0, 0, 0, 0]:
-            result = self.function.recalculate(self.current_slice, self.roi)
+            result = self.function.recalculate(self.slices[self.current_slice],
+                                               self.roi)
             self.window.console.print(result)
 
     def set_function(self, key):
@@ -139,3 +153,9 @@ class PySeus(QApplication):
 
     def load_scan(self, key):
         print(key)
+
+    def set_current_slice(self, sid, relative=False):
+        new_slice = self.current_slice + sid if relative == True else sid
+        if 0 <= new_slice < len(self.slices):
+            self.current_slice = new_slice
+        self.refresh()

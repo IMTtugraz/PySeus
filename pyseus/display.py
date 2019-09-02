@@ -12,12 +12,12 @@ class DisplayHelper():
     
     def prepare(self, data):
         if self.mode == 1:
-            data = numpy.angle(data)
+            data = numpy.angle(data).astype(float)
             data += numpy.pi  # align -pi to 0
             data *= 255 / (2*numpy.pi)  # scale pi to 255
 
         elif self.mode == 0:
-            data = numpy.absolute(data)
+            data = numpy.absolute(data).astype(float)
             data -= self.black  # align black to 0
             data *= 255 / (self.white - self.black)  # scale white to 255
         
@@ -55,4 +55,3 @@ class DisplayHelper():
         """Move the window up / down and shrink / widen simultaneously."""
         self.move_window(move)
         self.scale_window(scale)
-

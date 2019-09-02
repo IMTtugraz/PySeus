@@ -1,6 +1,7 @@
 import h5py
 import numpy
 from functools import partial
+import os
 
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QApplication, QDialog, QLabel, QLayout, \
@@ -14,25 +15,32 @@ class H5(BaseFormat):
 
     def __init__(self):
         BaseFormat.__init__(self)
-        self.type = "H5"
+
+    @classmethod
+    def check_file(cls, path):
+        _, ext = os.path.splitext(path)
+        return ext in [".h5", ".hdf5"]
 
     def load_file(self, path):
-        # @TODO check file access
-        self.file = h5py.File(path, "r")
-        if len(self.file.keys()) > 1:
-            dialog = H5Explorer(self.file)
-            choice = dialog.exec()
-            if choice == QDialog.Accepted:
-                self.dataset = dialog.result()
+        with h5py.File(path, "r") as f:
+            if len(f.keys()) > 1:
+                dialog = H5Explorer(f)
+                choice = dialog.exec()
+                if choice == QDialog.Accepted:
+                    self.dataset = dialog.result()
+                else:
+                    self.dataset = None
             else:
-                self.dataset = None
-        else:
-            self.dataset = list(self.file.keys())[0]
-
-    def load_frame(self, frame):
-        if not self.dataset == None:
-            data = numpy.asarray(self.file[self.dataset][frame])
-            return data
+                self.dataset = list(f.keys())[0]
+            
+            dimensions = len(f[self.dataset].dims)
+            if 2 <= dimensions <= 3:  # single or multiple slices
+                return path, [], numpy.asarray(f[self.dataset])
+            elif dimensions == 4:  # multiple scans
+                # @TODO handle multiple scans
+                pass
+            else:
+                raise OSError
 
 
 class H5Explorer(QDialog):

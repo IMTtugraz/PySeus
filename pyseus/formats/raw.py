@@ -6,7 +6,11 @@ class Raw(BaseFormat):
 
     def __init__(self):
         BaseFormat.__init__(self)
-        self.type = "Raw"
+
+    @classmethod
+    def check_file(cls, path):
+        # Check file if no extension present !!!
+        return False
 
     def load_file(self, file):
         # @TODO load a npa file (pickle)
@@ -16,7 +20,3 @@ class Raw(BaseFormat):
         # @TODO check for different data types
         # only accepts data from h5 for now
         self.data = data
-
-    def load_frame(self, frame):
-        data = self.data
-        return data

@@ -78,7 +78,7 @@ class MainWindow(QMainWindow):
 
         self.setup_menu()
         self.statusBar().setSizeGripEnabled(False)
-        self.statusBar().addPermanentWidget(self.slice)
+        # self.statusBar().addPermanentWidget(self.slice)
         self.setCentralWidget(wrapper)
 
         # Window dimensions
@@ -118,8 +118,9 @@ class MainWindow(QMainWindow):
         ami(self.window_menu, "&Enlarge", self._action_win_enlarge, "s")
         ami(self.window_menu, "Rese&t", self._action_win_reset, "d")
 
-        # @TODO remove after thumb test
-        ami(self.file_menu, "ThumbTest", self._thumb_test, "t")
+        self.slice_menu = self.menuBar().addMenu("&Slices")
+        ami(self.slice_menu, "&Up", partial(self._action_slice, 1), "PgUp")
+        ami(self.slice_menu, "&Down", partial(self._action_slice, -1), "PgDown")
 
         self.functions_menu = self.menuBar().addMenu("&Evals")
         # Functions menu is built in app.setup_functions_menu
@@ -138,7 +139,7 @@ class MainWindow(QMainWindow):
 
     def _action_open(self):
         path, filter = QFileDialog.getOpenFileName(None, "Open file",
-                           self._open_path, "*.h5")
+                           self._open_path, "*.*")
 
         if path != "":
             self._open_path = os.path.dirname(path)
@@ -185,8 +186,11 @@ class MainWindow(QMainWindow):
     def _action_set_function(self, key):
         self.app.set_function(key)
 
-    def add_thumbs(self):
-        self.thumbs = ThumbsWidget(app)
+    def _action_slice(self, step):
+        self.app.set_current_slice(step, True)
 
-    def _thumb_test(self):
-        self.thumbs.add_thumb(self.app.current_slice)
+    def resizeEvent(self, event):
+        x_factor = event.size().width() / event.oldSize().width()
+        y_factor = event.size().height() / event.oldSize().height()
+        self.view.zoom(x_factor, True)
+        # @TODO x_factor if xf < yf or xf * width * zoom_factor < viewport_x
