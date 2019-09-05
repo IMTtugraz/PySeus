@@ -12,3 +12,15 @@ class BaseFormat():
     def load_file(self, path):
         """Attempt to load the file at `path`."""
         pass
+    
+    def load_scan(self, scan):
+        """Attempt to load the scan `scan`."""
+        pass
+    
+    def load_scan_thumb(self, scan):
+        """Attempt to load the thumbnail for scan `scan`."""
+        pass
+
+class LoadError(Exception):
+    """Raised when an error is encountered loading a file or scan."""
+    pass

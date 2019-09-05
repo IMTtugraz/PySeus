@@ -17,6 +17,7 @@ class ThumbsWidget(QScrollArea):
 
         self.wrapper = QFrame()
         self.wrapper.setLayout(QVBoxLayout())
+        self.wrapper.layout().setContentsMargins(0, 0, 0, 0)
         self.wrapper.layout().addStretch()
 
         self.thumbs = []

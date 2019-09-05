@@ -6,7 +6,7 @@ from PySide2.QtGui import QImage, QPixmap, QPainter, QColor, QPen
 from pyseus import settings
 from pyseus import DisplayHelper
 from pyseus.ui import MainWindow
-from pyseus.formats import Raw, H5, DICOM
+from pyseus.formats import Raw, H5, DICOM, LoadError
 from pyseus.functions import RoIFct, StatsFct
 
 class PySeus(QApplication):
@@ -23,8 +23,8 @@ class PySeus(QApplication):
         self.functions = [RoIFct, StatsFct]
         """Holds all avaiable RoI evaluation functions."""
 
-        self.format = None
-        """Format"""
+        self.dataset = None
+        """dataset"""
 
         self.function = self.functions[0]()
         """Function"""
@@ -45,6 +45,9 @@ class PySeus(QApplication):
         self.scans = []
         """Scans"""
 
+        self.current_scan = -1
+        """Current Scan"""
+
         self.slices = []
         """Slices"""
 
@@ -59,7 +62,7 @@ class PySeus(QApplication):
             self.setStyleSheet(stylesheet.read())
 
         self.setup_functions_menu()
-        self.window.thumbs.thumb_clicked = self.load_scan
+        self.window.thumbs.thumb_clicked = self._load_scan
 
         self.window.show()
 
@@ -72,27 +75,46 @@ class PySeus(QApplication):
         """Try to load file at `path`."""
         self.deload()
 
+        dataset = None
         for f in self.formats:
             if f.check_file(path):
-                self.format = f()
+                dataset = f()
                 break
         
-        if not self.format is None:
+        if not dataset is None:
             try:
-                self.path, self.scans, self.slices = \
-                    self.format.load_file(path)
+                self.path, self.scans, self.current_scan = dataset.load_file(path)
 
-                self.current_slice = len(self.slices) // 2
+                if len(self.scans) > 1:
+                    for s in self.scans:
+                        thumb = self._generate_thumb(
+                            dataset.load_scan_thumb(s))
+                        self.window.thumbs.add_thumb(thumb)
 
-                self.display.setup_window(self.slices[self.current_slice])
-                self.refresh()
-                self.window.view.zoom_fit()
+                self._load_scan(self.current_scan,  dataset)
+
             except OSError as e:
                 QMessageBox.warning(self.window, "Pyseus", 
-                    "Error loading file.")
+                    str(e))
+            except LoadError as e:
+                QMessageBox.warning(self.window, "Pyseus", 
+                    e)
+
+            self.dataset = dataset
+
         else:
             QMessageBox.warning(self.window, "Pyseus", 
-                "Unknown file format.".format(path))
+                "Unknown file format.")
+
+    def _generate_thumb(self, data):
+        thumb_size = int(settings["ui"]["thumb_size"])
+        x_factor = data.shape[0] // thumb_size
+        y_factor = data.shape[1] // thumb_size
+        factor = max(x_factor, y_factor)
+        thumb_data = data[::factor, ::factor]
+
+        self.display.setup_window(thumb_data)
+        return self.display.prepare(thumb_data)
 
     def load_data(self, data):
         """Try to load `data`."""
@@ -100,8 +122,9 @@ class PySeus(QApplication):
         pass
 
     def deload(self):
-        self.format = None
+        self.dataset = None
         self.scans = []
+        self.current_scan = -1
         self.slices = []
         self.current_slice = -1
         self.window.view.set(None)
@@ -151,11 +174,28 @@ class PySeus(QApplication):
         self.function = self.functions[key]()
         self.recalculate()
 
-    def load_scan(self, key):
-        print(key)
+    def _load_scan(self, key, dataset=None):
+        dataset = self.dataset if dataset is None else dataset
 
-    def set_current_slice(self, sid, relative=False):
+        self.slices = dataset.load_scan(self.scans[key])
+        self.current_slice = len(self.slices) // 2
+
+        self.display.setup_window(self.slices[self.current_slice])
+        self.refresh()
+        self.window.view.zoom_fit()
+
+    def select_slice(self, sid, relative=False):
+        if self.path == "": return
+
         new_slice = self.current_slice + sid if relative == True else sid
         if 0 <= new_slice < len(self.slices):
             self.current_slice = new_slice
         self.refresh()
+
+    def select_scan(self, sid, relative=False):
+        if self.path == "": return
+
+        new_scan = self.current_scan + sid if relative == True else sid
+        if 0 <= new_scan < len(self.scans):
+            self._load_scan(self.scans[new_scan])
+            self.current_scan = new_scan

@@ -2,7 +2,7 @@ from PySide2 import QtCore
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QLabel, QScrollArea
 
-import numpy as np
+import numpy
 
 class ViewWidget(QScrollArea):
     """The widget providing an image viewport."""
@@ -137,8 +137,12 @@ class ViewWidget(QScrollArea):
     def wheelEvent(self, event):
         """Wheel Event Handler."""
         if event.modifiers() == Qt.NoModifier:
-            slice = int(np.sign(event.delta()))
-            self.app.set_current_slice(slice, True)
+            slice = int(numpy.sign(event.delta()))
+            self.app.select_slice(slice, True)
 
         elif event.modifiers() == Qt.ControlModifier:
             self.zoom(0.8 if event.delta() < 0 else 1.25)
+
+        elif event.modifiers() == Qt.AltModifier:
+            scan = int(numpy.sign(event.delta()))
+            self.app.select_scan(scan, True)

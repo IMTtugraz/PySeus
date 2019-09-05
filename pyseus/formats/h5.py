@@ -7,7 +7,7 @@ from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QApplication, QDialog, QLabel, QLayout, \
         QVBoxLayout, QDialogButtonBox, QTreeWidget, QTreeWidgetItem
 
-from .base import BaseFormat
+from .base import BaseFormat, LoadError
 
 
 class H5(BaseFormat):
@@ -16,31 +16,48 @@ class H5(BaseFormat):
     def __init__(self):
         BaseFormat.__init__(self)
 
+    EXTENSIONS = (".h5", ".hdf5")
+
     @classmethod
     def check_file(cls, path):
         _, ext = os.path.splitext(path)
-        return ext in [".h5", ".hdf5"]
+        return ext in cls.EXTENSIONS
 
     def load_file(self, path):
+        self.path = path
+
         with h5py.File(path, "r") as f:
             if len(f.keys()) > 1:
                 dialog = H5Explorer(f)
                 choice = dialog.exec()
                 if choice == QDialog.Accepted:
-                    self.dataset = dialog.result()
+                    self.ds_path = dialog.result()
                 else:
-                    self.dataset = None
+                    self.ds_path = None
             else:
-                self.dataset = list(f.keys())[0]
+                self.ds_path = list(f.keys())[0]
             
-            dimensions = len(f[self.dataset].dims)
+            dimensions = len(f[self.ds_path].dims)
             if 2 <= dimensions <= 3:  # single or multiple slices
-                return path, [], numpy.asarray(f[self.dataset])
+                return path, [0], 0
             elif dimensions == 4:  # multiple scans
-                # @TODO handle multiple scans
+                return path, range(0, len(f[self.ds_path].dims[3])-1), 0
                 pass
             else:
-                raise OSError
+                raise LoadError("Invalid dataset '{}' in '{}': Wrong dimensions.".format(self.ds_path, path))
+    
+    def load_scan(self, scan):
+        with h5py.File(self.path, "r") as f:
+            dimensions = len(f[self.ds_path].dims)
+            if 2 <= dimensions <= 3:  # single or multiple slices
+                return numpy.asarray(f[self.ds_path])
+            elif dimensions == 4:  # multiple scans
+                return numpy.asarray(f[self.ds_path][scan])
+
+    def load_scan_thumb(self, scan):
+        with h5py.File(self.path, "r") as f:
+            scan = f[self.ds_path][scan]
+            return numpy.asarray(scan[len(scan) // 2])
 
 
 class H5Explorer(QDialog):

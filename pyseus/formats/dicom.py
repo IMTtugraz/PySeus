@@ -1,9 +1,11 @@
 import pydicom
 import numpy
 import os
+from natsort import natsorted
 
-from .base import BaseFormat
+from .base import BaseFormat, LoadError
 
+from profilehooks import profile
 
 class DICOM(BaseFormat):
     """Support for DICOM files (Coming soon)."""
@@ -11,19 +13,32 @@ class DICOM(BaseFormat):
     def __init__(self):
         BaseFormat.__init__(self)
 
+    EXTENSIONS = (".dcm", ".DCM")
+
     @classmethod
     def check_file(cls, path):
         _, ext = os.path.splitext(path)
-        return ext in [".dcm", ".DCM"]
+        return ext in cls.EXTENSIONS
 
     def load_file(self, path):
-        path = os.path.dirname(path)
+        slice_level = os.path.abspath(os.path.dirname(path))
+        scan_level = os.path.abspath(os.path.join(slice_level, os.pardir))
 
+        scans = []
+        scan_dirs = next(os.walk(scan_level))[1]
+        # @see https://stackoverflow.com/questions/973473/getting-a-list-of-all-subdirectories-in-the-current-directory
+        for d in natsorted(scan_dirs):
+            if d != "localizer":
+                scans.append(os.path.join(scan_level, d))
+        
+        current_scan = scans.index(slice_level)
+        return scan_level, scans, current_scan
+
+    def load_scan(self, key):
         slices = []
-
-        for f in os.listdir(path):
-            if f.endswith(".dcm") or f.endswith(".DCM"): 
-                slice = pydicom.dcmread(os.path.join(path,f))
+        for f in os.listdir(key):
+            if f.endswith(DICOM.EXTENSIONS): 
+                slice = pydicom.read_file(os.path.join(key,f), defer_size=0)
                 slices.append(slice)
         
         slices = [s for s in slices if hasattr(s, "SliceLocation")]
@@ -34,4 +49,20 @@ class DICOM(BaseFormat):
             if "PixelData" in s:
                 slice_data.append(numpy.asarray(s.pixel_array))
         
-        return "", [], slice_data
+        return slice_data
+
+    def load_scan_thumb(self, key):
+        slices = []
+        for f in os.listdir(key):
+            if f.endswith(DICOM.EXTENSIONS): 
+                slice = (f, pydicom.filereader.read_file(
+                    os.path.join(key,f), specific_tags=["SliceLocation"]))
+                slices.append(slice)
+        
+        slices = [s for s in slices if hasattr(s[1], "SliceLocation")]
+        slices = sorted(slices, key=lambda s: s[1].SliceLocation)
+
+        thumb_slice = pydicom.read_file(os.path.join(key,
+                                        slices[len(slices) // 2][0]))
+
+        return numpy.asarray(thumb_slice.pixel_array)

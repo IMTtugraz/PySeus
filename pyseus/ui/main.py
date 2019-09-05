@@ -122,6 +122,10 @@ class MainWindow(QMainWindow):
         ami(self.slice_menu, "&Up", partial(self._action_slice, 1), "PgUp")
         ami(self.slice_menu, "&Down", partial(self._action_slice, -1), "PgDown")
 
+        self.scan_menu = self.menuBar().addMenu("&Scans")
+        ami(self.scan_menu, "&Up", partial(self._action_scan, 1), "Alt+PgUp")
+        ami(self.scan_menu, "&Down", partial(self._action_scan, -1), "Alt+PgDown")
+
         self.functions_menu = self.menuBar().addMenu("&Evals")
         # Functions menu is built in app.setup_functions_menu
         # by calling add_function_to_menu
@@ -187,7 +191,10 @@ class MainWindow(QMainWindow):
         self.app.set_function(key)
 
     def _action_slice(self, step):
-        self.app.set_current_slice(step, True)
+        self.app.select_slice(step, True)
+    
+    def _action_scan(self, step):
+        self.app.select_scan(step, True)
 
     def resizeEvent(self, event):
         x_factor = event.size().width() / event.oldSize().width()

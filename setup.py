@@ -20,6 +20,7 @@ setup(
         'PySide2',
         'numpy',
         'h5py',
+        'pydicom',
     ],
     entry_points={
         'console_scripts': [
