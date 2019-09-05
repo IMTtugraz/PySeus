@@ -1,0 +1,301 @@
+ncalls,tottime,percall,cumtime,percall,filename:lineno(function)
+12181,0.009,0.000,0.009,0.000,{built-in method __new__ of type object at 0x00000000530EC3F0}
+1,0.000,0.000,0.000,0.000,{built-in method _codecs.charmap_decode}
+1,0.000,0.000,0.000,0.000,{built-in method _locale._getdefaultlocale}
+11,0.000,0.000,0.000,0.000,{method 'split' of '_sre.SRE_Pattern' objects}
+11,0.000,0.000,0.000,0.000,{method 'is_dir' of 'nt.DirEntry' objects}
+1460,0.099,0.000,0.099,0.000,{built-in method nt.stat}
+11,0.009,0.001,0.009,0.001,{built-in method nt.listdir}
+3,0.000,0.000,0.000,0.000,{built-in method nt._getfullpathname}
+1,0.000,0.000,0.000,0.000,{built-in method nt.scandir}
+1402,0.000,0.000,0.000,0.000,{built-in method nt.fspath}
+730,0.016,0.000,0.016,0.000,{method 'close' of '_io.BufferedReader' objects}
+77170,0.075,0.000,0.075,0.000,{method 'read' of '_io.BufferedReader' objects}
+60060,0.034,0.000,0.034,0.000,{method 'seek' of '_io.BufferedReader' objects}
+123960,0.294,0.000,0.294,0.000,{method 'tell' of '_io.BufferedReader' objects}
+1,0.000,0.000,0.000,0.000,{method 'read' of '_io.TextIOWrapper' objects}
+731,0.067,0.000,0.067,0.000,{built-in method io.open}
+66870,0.160,0.000,0.160,0.000,{method 'decode' of 'bytes' objects}
+39412,0.013,0.000,0.016,0.000,{method 'get' of 'dict' objects}
+450,0.000,0.000,0.000,0.000,{method 'keys' of 'dict' objects}
+472,0.000,0.000,0.000,0.000,{method 'items' of 'dict' objects}
+1893,0.000,0.000,0.000,0.000,{method 'append' of 'list' objects}
+1,0.000,0.000,0.000,0.000,{method 'index' of 'list' objects}
+800,0.000,0.000,0.000,0.000,{method 'add' of 'set' objects}
+932,0.000,0.000,0.000,0.000,{method 'replace' of 'str' objects}
+2693,0.002,0.000,0.002,0.000,{method 'split' of 'str' objects}
+29,0.000,0.000,0.000,0.000,{method 'join' of 'str' objects}
+25,0.000,0.000,0.000,0.000,{method 'find' of 'str' objects}
+75,0.000,0.000,0.000,0.000,{method 'lower' of 'str' objects}
+3,0.000,0.000,0.000,0.000,{method 'lstrip' of 'str' objects}
+6,0.000,0.000,0.000,0.000,{method 'rfind' of 'str' objects}
+2,0.000,0.000,0.000,0.000,{method 'rstrip' of 'str' objects}
+1340,0.000,0.000,0.000,0.000,{method 'strip' of 'str' objects}
+6,0.000,0.000,0.000,0.000,{method 'startswith' of 'str' objects}
+6720,0.003,0.000,0.003,0.000,{method 'endswith' of 'str' objects}
+7,0.000,0.000,0.000,0.000,{method 'isalnum' of 'str' objects}
+1231,0.004,0.000,0.004,0.000,{method 'format' of 'str' objects}
+1,0.000,0.000,0.000,0.000,{built-in method builtins.__import__}
+1000,0.005,0.000,0.144,0.000,{built-in method builtins.getattr}
+5441/4521,0.010,0.000,0.080,0.000,{built-in method builtins.hasattr}
+50,0.000,0.000,0.000,0.000,{built-in method builtins.id}
+124411,0.022,0.000,0.022,0.000,{built-in method builtins.isinstance}
+75198,0.011,0.000,0.011,0.000,{built-in method builtins.len}
+12,0.000,0.000,0.000,0.000,{built-in method builtins.max}
+1,0.000,0.000,0.000,0.000,{built-in method builtins.min}
+12665/12653,0.079,0.000,1.652,0.000,{built-in method builtins.next}
+462,0.013,0.000,0.032,0.000,{built-in method builtins.sorted}
+6,0.000,0.000,0.000,0.000,{built-in method builtins.vars}
+1,0.000,0.000,0.000,0.000,{method 'disable' of '_lsprof.Profiler' objects}
+700,0.000,0.000,0.000,0.000,{built-in method _struct.calcsize}
+1150,0.001,0.000,0.001,0.000,{built-in method _struct.unpack}
+66470,0.019,0.000,0.019,0.000,{method 'unpack' of 'Struct' objects}
+4511,0.003,0.000,0.011,0.000,<frozen importlib._bootstrap>:997(_handle_fromlist)
+1,0.000,0.000,0.000,0.000,C:\Python 36\lib\encodings\__init__.py:43(normalize_encoding)
+1,0.000,0.000,0.000,0.000,C:\Python 36\lib\encodings\__init__.py:71(search_function)
+1,0.000,0.000,0.000,0.000,C:\Python 36\lib\codecs.py:93(__new__)
+1,0.000,0.000,0.000,0.000,C:\Python 36\lib\codecs.py:259(__init__)
+1,0.000,0.000,0.000,0.000,C:\Python 36\lib\encodings\latin_1.py:41(getregentry)
+2,0.000,0.000,0.000,0.000,C:\Python 36\lib\os.py:277(walk)
+2,0.000,0.000,0.000,0.000,C:\Python 36\lib\ntpath.py:34(_get_bothseps)
+462,0.007,0.000,0.012,0.000,C:\Python 36\lib\ntpath.py:75(join)
+929,0.004,0.000,0.005,0.000,C:\Python 36\lib\ntpath.py:122(splitdrive)
+2,0.000,0.000,0.000,0.000,C:\Python 36\lib\ntpath.py:200(split)
+2,0.000,0.000,0.000,0.000,C:\Python 36\lib\ntpath.py:223(splitext)
+2,0.000,0.000,0.000,0.000,C:\Python 36\lib\ntpath.py:241(dirname)
+3,0.000,0.000,0.000,0.000,C:\Python 36\lib\ntpath.py:472(normpath)
+3,0.000,0.000,0.000,0.000,C:\Python 36\lib\ntpath.py:539(abspath)
+730,0.002,0.000,0.057,0.000,C:\Python 36\lib\genericpath.py:16(exists)
+2,0.000,0.000,0.000,0.000,C:\Python 36\lib\genericpath.py:117(_splitext)
+1,0.000,0.000,0.000,0.000,C:\Python 36\lib\_bootlocale.py:11(getpreferredencoding)
+1,0.000,0.000,0.000,0.000,C:\Python 36\lib\encodings\cp1252.py:22(decode)
+50,0.000,0.000,0.000,0.000,C:\Python 36\lib\collections\__init__.py:867(__init__)
+50,0.000,0.000,0.000,0.000,C:\Python 36\lib\collections\__init__.py:877(__getitem__)
+6,0.000,0.000,0.000,0.000,C:\Python 36\lib\re.py:231(compile)
+6,0.000,0.000,0.000,0.000,C:\Python 36\lib\re.py:286(_compile)
+7160,0.020,0.000,0.049,0.000,C:\Python 36\lib\logging\__init__.py:1285(debug)
+7160,0.005,0.000,0.005,0.000,C:\Python 36\lib\logging\__init__.py:1529(getEffectiveLevel)
+7160,0.023,0.000,0.029,0.000,C:\Python 36\lib\logging\__init__.py:1543(isEnabledFor)
+1,0.000,0.000,0.000,0.000,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\display.py:9(__init__)
+21,0.002,0.000,0.005,0.000,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\display.py:13(prepare)
+11,0.001,0.000,0.003,0.000,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\display.py:27(setup_window)
+11,0.000,0.000,0.000,0.000,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\display.py:33(reset_window)
+1,0.000,0.000,0.000,0.000,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\core.py:69(setup_functions_menu)
+1,0.012,0.012,0.793,0.793,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\core.py:15(__init__)
+1,0.003,0.003,2.954,2.954,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\core.py:74(load_file)
+10,0.001,0.000,0.006,0.001,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\core.py:109(_generate_thumb)
+25,0.000,0.000,0.001,0.000,C:\Python 36\lib\configparser.py:392(before_get)
+25,0.000,0.000,0.001,0.000,C:\Python 36\lib\configparser.py:405(_interpolate_some)
+25,0.000,0.000,0.000,0.000,C:\Python 36\lib\configparser.py:663(has_section)
+50/25,0.001,0.000,0.002,0.000,C:\Python 36\lib\configparser.py:765(get)
+75,0.000,0.000,0.000,0.000,C:\Python 36\lib\configparser.py:873(optionxform)
+25,0.000,0.000,0.000,0.000,C:\Python 36\lib\configparser.py:876(has_option)
+25,0.000,0.000,0.000,0.000,C:\Python 36\lib\configparser.py:957(__getitem__)
+50,0.000,0.000,0.000,0.000,C:\Python 36\lib\configparser.py:1131(_unify_values)
+25,0.000,0.000,0.002,0.000,C:\Python 36\lib\configparser.py:1231(__getitem__)
+50,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\numpy\core\numeric.py:469(asarray)
+22,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\numpy\core\fromnumeric.py:70(<dictcomp>)
+22,0.000,0.000,0.001,0.000,C:\Python 36\lib\site-packages\numpy\core\fromnumeric.py:69(_wrapreduction)
+11,0.000,0.000,0.001,0.000,C:\Python 36\lib\site-packages\numpy\core\fromnumeric.py:2397(amax)
+11,0.000,0.000,0.001,0.000,C:\Python 36\lib\site-packages\numpy\core\fromnumeric.py:2512(amin)
+1350,0.009,0.000,0.013,0.000,C:\Python 36\lib\site-packages\pydicom\filereader.py:264(_is_implicit_vr)
+1800,0.066,0.000,0.221,0.000,C:\Python 36\lib\site-packages\pydicom\dataset.py:359(__init__)
+790,0.005,0.000,0.023,0.000,C:\Python 36\lib\site-packages\pydicom\dataset.py:454(__contains__)
+1350,0.004,0.000,0.192,0.000,C:\Python 36\lib\site-packages\pydicom\dataset.py:652(get)
+1350,0.085,0.000,1.988,0.001,C:\Python 36\lib\site-packages\pydicom\filereader.py:317(read_dataset)
+3180,0.050,0.000,0.381,0.000,C:\Python 36\lib\site-packages\pydicom\dataset.py:720(__getattr__)
+450,0.004,0.000,0.056,0.000,C:\Python 36\lib\site-packages\pydicom\dataset.py:755(_character_set)
+6470/3930,0.078,0.000,0.394,0.000,C:\Python 36\lib\site-packages\pydicom\dataset.py:767(__getitem__)
+3600,0.007,0.000,0.010,0.000,C:\Python 36\lib\site-packages\pydicom\dataset.py:974(get_item)
+1800,0.019,0.000,0.065,0.000,C:\Python 36\lib\site-packages\pydicom\dataset.py:1033(set_original_encoding)
+4050,0.013,0.000,0.035,0.000,C:\Python 36\lib\site-packages\pydicom\dataset.py:1081(elements)
+50,0.001,0.000,0.001,0.000,C:\Python 36\lib\site-packages\pydicom\dataset.py:1230(<listcomp>)
+50,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\pydicom\dataset.py:1246(<listcomp>)
+50,0.002,0.000,0.169,0.003,C:\Python 36\lib\site-packages\pydicom\dataset.py:1204(convert_pixel_data)
+50,0.000,0.000,0.169,0.003,C:\Python 36\lib\site-packages\pydicom\dataset.py:1353(pixel_array)
+27100,0.158,0.000,0.232,0.000,C:\Python 36\lib\site-packages\pydicom\dataset.py:1561(__setattr__)
+2540,0.021,0.000,0.043,0.000,C:\Python 36\lib\site-packages\pydicom\dataset.py:1605(__setitem__)
+450,0.001,0.000,0.001,0.000,C:\Python 36\lib\site-packages\pydicom\dataset.py:1717(update)
+450,0.003,0.000,0.115,0.000,C:\Python 36\lib\site-packages\pydicom\filereader.py:456(_read_command_set_elements)
+450,0.020,0.000,0.170,0.000,C:\Python 36\lib\site-packages\pydicom\dataset.py:2035(__init__)
+4050,0.012,0.000,0.013,0.000,C:\Python 36\lib\site-packages\pydicom\filereader.py:505(_not_group_0002)
+900,0.003,0.000,0.003,0.000,C:\Python 36\lib\site-packages\pydicom\filereader.py:476(_not_group_0000)
+450,0.021,0.000,0.437,0.001,C:\Python 36\lib\site-packages\pydicom\filereader.py:485(_read_file_meta_info)
+450,0.008,0.000,0.038,0.000,C:\Python 36\lib\site-packages\pydicom\filereader.py:555(read_preamble)
+450,0.023,0.000,2.568,0.006,C:\Python 36\lib\site-packages\pydicom\filereader.py:617(read_partial)
+450,0.011,0.000,2.639,0.006,C:\Python 36\lib\site-packages\pydicom\filereader.py:748(dcmread)
+280,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\pydicom\filereader.py:892(data_element_offset_to_value)
+280,0.009,0.000,0.107,0.000,C:\Python 36\lib\site-packages\pydicom\filereader.py:904(read_deferred_data_element)
+2080,0.001,0.000,0.001,0.000,C:\Python 36\lib\site-packages\pydicom\misc.py:8(size_in_bytes)
+1,0.000,0.000,0.001,0.001,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\core.py:133(refresh)
+45,0.001,0.000,0.002,0.000,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\core.py:161(show_status)
+1,0.002,0.002,0.652,0.652,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\core.py:177(_load_scan)
+1,0.000,0.000,5.217,5.217,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\__main__.py:6(load)
+1,0.000,0.000,0.000,0.000,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\core.py:124(deload)
+1,0.001,0.001,0.184,0.184,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\ui\main.py:20(__init__)
+20,0.001,0.000,0.003,0.000,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\ui\main.py:88(add_menu_item)
+1,0.001,0.001,0.169,0.169,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\ui\main.py:97(setup_menu)
+2,0.000,0.000,0.000,0.000,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\ui\main.py:136(add_function_to_menu)
+1,0.000,0.000,0.000,0.000,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\ui\main.py:199(resizeEvent)
+1,0.000,0.000,0.000,0.000,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\formats\base.py:4(__init__)
+1,0.000,0.000,0.008,0.008,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\ui\view.py:10(__init__)
+2,0.000,0.000,0.000,0.000,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\ui\view.py:28(set)
+2,0.000,0.000,0.000,0.000,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\ui\view.py:34(zoom)
+1,0.000,0.000,0.000,0.000,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\ui\view.py:50(zoom_fit)
+56,0.007,0.000,0.010,0.000,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\ui\view.py:96(mouseMoveEvent)
+1,0.002,0.002,0.005,0.005,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\ui\console.py:10(__init__)
+100,0.001,0.000,0.003,0.000,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\ui\console.py:26(print)
+2,0.000,0.000,0.000,0.000,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\ui\info.py:21(minimumSizeHint)
+1,0.000,0.000,0.000,0.000,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\ui\info.py:10(__init__)
+10,0.002,0.000,0.007,0.001,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\ui\thumbs.py:34(add_thumb)
+1,0.001,0.001,0.001,0.001,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\ui\thumbs.py:14(__init__)
+1,0.000,0.000,0.000,0.000,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\ui\thumbs.py:56(clear)
+1,0.000,0.000,0.000,0.000,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\ui\console.py:23(minimumSizeHint)
+2,0.000,0.000,0.000,0.000,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\ui\thumbs.py:67(minimumSizeHint)
+1,0.000,0.000,0.000,0.000,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\formats\h5.py:21(check_file)
+1,0.000,0.000,0.000,0.000,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\formats\dicom.py:13(__init__)
+1,0.000,0.000,0.002,0.002,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\formats\dicom.py:23(load_file)
+1,0.000,0.000,0.000,0.000,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\formats\dicom.py:18(check_file)
+1,0.000,0.000,0.021,0.021,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\formats\dicom.py:44(<listcomp>)
+40,0.000,0.000,0.001,0.000,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\formats\dicom.py:45(<lambda>)
+1,0.002,0.002,0.648,0.648,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\formats\dicom.py:37(load_scan)
+10,0.001,0.000,0.052,0.005,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\formats\dicom.py:62(<listcomp>)
+400,0.002,0.000,0.013,0.000,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\formats\dicom.py:63(<lambda>)
+10,0.010,0.001,2.285,0.229,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\formats\dicom.py:54(load_scan_thumb)
+2990,0.006,0.000,0.006,0.000,C:\Python 36\lib\site-packages\pydicom\dataelem.py:131(__init__)
+3930,0.001,0.000,0.001,0.000,C:\Python 36\lib\site-packages\pydicom\dataelem.py:303(value)
+1,0.000,0.000,0.000,0.000,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\functions\base.py:7(__init__)
+900,0.003,0.000,0.003,0.000,C:\Python 36\lib\site-packages\pydicom\dataelem.py:465(__getitem__)
+2990,0.052,0.000,0.157,0.000,C:\Python 36\lib\site-packages\pydicom\dataelem.py:534(DataElement_from_raw)
+12910,0.832,0.000,1.574,0.000,C:\Python 36\lib\site-packages\pydicom\filereader.py:34(data_element_generator)
+50,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\pydicom\pixel_data_handlers\numpy_handler.py:64(is_available)
+50,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\pydicom\pixel_data_handlers\numpy_handler.py:69(supports_transfer_syntax)
+50,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\pydicom\pixel_data_handlers\numpy_handler.py:81(needs_to_convert_to_RGB)
+50,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\pydicom\pixel_data_handlers\numpy_handler.py:89(should_change_PhotometricInterpretation_to_RGB)
+50,0.001,0.000,0.008,0.000,C:\Python 36\lib\site-packages\pydicom\pixel_data_handlers\numpy_handler.py:231(<listcomp>)
+50,0.002,0.000,0.156,0.003,C:\Python 36\lib\site-packages\pydicom\pixel_data_handlers\numpy_handler.py:190(get_pixeldata)
+50,0.001,0.000,0.024,0.000,C:\Python 36\lib\site-packages\pydicom\pixel_data_handlers\util.py:93(pixel_dtype)
+50,0.001,0.000,0.006,0.000,C:\Python 36\lib\site-packages\pydicom\pixel_data_handlers\util.py:180(reshape_pixel_array)
+50,0.001,0.000,0.087,0.002,C:\Python 36\lib\site-packages\pydicom\pixel_data_handlers\util.py:326(get_expected_length)
+900,0.003,0.000,0.004,0.000,C:\Python 36\lib\site-packages\pydicom\uid.py:42(__new__)
+450,0.001,0.000,0.001,0.000,C:\Python 36\lib\site-packages\pydicom\uid.py:143(name)
+50,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\pydicom\pixel_data_handlers\rle_handler.py:67(supports_transfer_syntax)
+50,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\pydicom\pixel_data_handlers\pillow_handler.py:61(supports_transfer_syntax)
+4720,0.026,0.000,0.032,0.000,C:\Python 36\lib\site-packages\pydicom\tag.py:40(Tag)
+3150,0.004,0.000,0.004,0.000,C:\Python 36\lib\site-packages\pydicom\tag.py:153(__lt__)
+46220,0.055,0.000,0.063,0.000,C:\Python 36\lib\site-packages\pydicom\tag.py:172(__eq__)
+10480,0.027,0.000,0.042,0.000,C:\Python 36\lib\site-packages\pydicom\tag.py:183(__ne__)
+280,0.001,0.000,0.003,0.000,C:\Python 36\lib\site-packages\pydicom\tag.py:194(__str__)
+7770,0.004,0.000,0.004,0.000,C:\Python 36\lib\site-packages\pydicom\tag.py:200(group)
+280,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\pydicom\tag.py:205(element)
+2540,0.007,0.000,0.009,0.000,C:\Python 36\lib\site-packages\pydicom\tag.py:212(is_private)
+64630,0.079,0.000,0.079,0.000,C:\Python 36\lib\site-packages\pydicom\tag.py:223(TupleTag)
+50,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\pydicom\pixel_data_handlers\jpeg_ls_handler.py:50(supports_transfer_syntax)
+50,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\pydicom\pixel_data_handlers\gdcm_handler.py:67(supports_transfer_syntax)
+1350,0.008,0.000,0.012,0.000,C:\Python 36\lib\site-packages\pydicom\charset.py:583(convert_encodings)
+440,0.001,0.000,0.001,0.000,C:\Python 36\lib\site-packages\pydicom\valuerep.py:327(__init__)
+2690,0.012,0.000,0.022,0.000,C:\Python 36\lib\site-packages\pydicom\valuerep.py:510(MultiString)
+31470,0.016,0.000,0.022,0.000,C:\Python 36\lib\site-packages\pydicom\datadict.py:294(tag_for_keyword)
+11280,0.028,0.000,0.036,0.000,<string>:12(__new__)
+27100,0.056,0.000,0.056,0.000,C:\Python 36\lib\site-packages\pydicom\datadict.py:317(repeater_has_keyword)
+440,0.002,0.000,0.009,0.000,C:\Python 36\lib\site-packages\pydicom\values.py:82(convert_DS_string)
+700,0.004,0.000,0.005,0.000,C:\Python 36\lib\site-packages\pydicom\values.py:125(convert_numbers)
+50,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\pydicom\values.py:181(convert_OBvalue)
+50,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\pydicom\values.py:186(convert_OWvalue)
+1350,0.006,0.000,0.017,0.000,C:\Python 36\lib\site-packages\pydicom\values.py:219(convert_string)
+900,0.006,0.000,0.040,0.000,C:\Python 36\lib\site-packages\pydicom\values.py:283(convert_UI)
+2990,0.024,0.000,0.092,0.000,C:\Python 36\lib\site-packages\pydicom\values.py:310(convert_value)
+1,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\natsort\natsort.py:110(natsort_keygen)
+1,0.000,0.000,0.001,0.001,C:\Python 36\lib\site-packages\natsort\natsort.py:221(natsorted)
+6,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\natsort\utils.py:90(_construct_regex)
+1,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\natsort\utils.py:95(int_sign)
+1,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\natsort\utils.py:100(int_nosign)
+1,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\natsort\utils.py:105(float_sign_exp)
+1,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\natsort\utils.py:110(float_nosign_exp)
+1,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\natsort\utils.py:115(float_sign_noexp)
+1,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\natsort\utils.py:120(float_nosign_noexp)
+1,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\natsort\utils.py:126(regex_chooser)
+22,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\natsort\utils.py:156(_no_op)
+1,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\natsort\utils.py:161(_normalize_input_factory)
+11,0.000,0.000,0.001,0.000,C:\Python 36\lib\site-packages\natsort\utils.py:185(natsort_key)
+1,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\natsort\utils.py:253(parse_bytes_factory)
+1,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\natsort\utils.py:286(parse_number_factory)
+11,0.000,0.000,0.001,0.000,C:\Python 36\lib\site-packages\natsort\utils.py:385(func)
+1,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\natsort\utils.py:332(parse_string_factory)
+42,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\natsort\utils.py:427(sep_inserter)
+1,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\natsort\utils.py:472(input_string_transform_factory)
+1,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\natsort\utils.py:546(string_component_transform_factory)
+11,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\natsort\utils.py:636(<lambda>)
+1,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\natsort\utils.py:589(final_data_transform_factory)
+1,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\natsort\utils.py:666(chain_functions)
+21,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\natsort\compat\fake_fastnumbers.py:91(<lambda>)
+31,0.000,0.000,0.000,0.000,C:\Python 36\lib\site-packages\natsort\compat\fake_fastnumbers.py:89(fast_int)
+1,0.000,0.000,0.000,0.000,c:\Users\Christoph\Dropbox\+ Projects\+ Bakk Arbeit\# Code\pyseus\functions\roi.py:9(__init__)
+42,0.001,0.000,0.001,0.000,{method 'astype' of 'numpy.ndarray' objects}
+21,0.001,0.000,0.001,0.000,{method 'clip' of 'numpy.ndarray' objects}
+82,0.003,0.000,0.003,0.000,{method 'copy' of 'numpy.ndarray' objects}
+50,0.000,0.000,0.000,0.000,{method 'reshape' of 'numpy.ndarray' objects}
+50,0.000,0.000,0.000,0.000,{built-in method numpy.array}
+50,0.000,0.000,0.000,0.000,{built-in method numpy.frombuffer}
+22,0.001,0.000,0.001,0.000,{method 'reduce' of 'numpy.ufunc' objects}
+2,0.000,0.000,0.000,0.000,{method 'setProperty' of 'PySide2.QtCore.QObject' objects}
+56,0.000,0.000,0.000,0.000,{method 'x' of 'PySide2.QtCore.QPoint' objects}
+56,0.000,0.000,0.000,0.000,{method 'y' of 'PySide2.QtCore.QPoint' objects}
+1,0.000,0.000,0.000,0.000,{method 'height' of 'PySide2.QtCore.QRect' objects}
+1,0.000,0.000,0.000,0.000,{method 'width' of 'PySide2.QtCore.QRect' objects}
+4,0.000,0.000,0.000,0.000,{method 'height' of 'PySide2.QtCore.QSize' objects}
+4,0.000,0.000,0.000,0.000,{method 'width' of 'PySide2.QtCore.QSize' objects}
+112,0.000,0.000,0.000,0.000,{method 'pos' of 'PySide2.QtGui.QMouseEvent' objects}
+11,0.000,0.000,0.000,0.000,{built-in method fromImage}
+10,0.001,0.000,0.001,0.000,{method 'scaledToWidth' of 'PySide2.QtGui.QPixmap' objects}
+2,0.000,0.000,0.000,0.000,{method 'size' of 'PySide2.QtGui.QPixmap' objects}
+2,0.000,0.000,0.000,0.000,{method 'oldSize' of 'PySide2.QtGui.QResizeEvent' objects}
+2,0.000,0.000,0.000,0.000,{method 'size' of 'PySide2.QtGui.QResizeEvent' objects}
+61,0.000,0.000,0.000,0.000,{method 'horizontalScrollBar' of 'PySide2.QtWidgets.QAbstractScrollArea' objects}
+260,0.000,0.000,0.000,0.000,{method 'verticalScrollBar' of 'PySide2.QtWidgets.QAbstractScrollArea' objects}
+100,0.000,0.000,0.000,0.000,{method 'maximum' of 'PySide2.QtWidgets.QAbstractSlider' objects}
+2,0.000,0.000,0.000,0.000,{method 'pageStep' of 'PySide2.QtWidgets.QAbstractSlider' objects}
+102,0.000,0.000,0.000,0.000,{method 'setValue' of 'PySide2.QtWidgets.QAbstractSlider' objects}
+114,0.000,0.000,0.000,0.000,{method 'value' of 'PySide2.QtWidgets.QAbstractSlider' objects}
+17,0.000,0.000,0.000,0.000,{method 'setShortcut' of 'PySide2.QtWidgets.QAction' objects}
+1,0.000,0.000,0.000,0.000,{built-in method desktop}
+1,1.459,1.459,1.470,1.470,{built-in method exec_}
+1,0.525,0.525,0.525,0.525,{method 'setStyleSheet' of 'PySide2.QtWidgets.QApplication' objects}
+1,0.000,0.000,0.000,0.000,{method 'addStretch' of 'PySide2.QtWidgets.QBoxLayout' objects}
+7,0.000,0.000,0.000,0.000,{method 'addWidget' of 'PySide2.QtWidgets.QBoxLayout' objects}
+20,0.000,0.000,0.000,0.000,{method 'count' of 'PySide2.QtWidgets.QBoxLayout' objects}
+10,0.001,0.000,0.001,0.000,{method 'insertWidget' of 'PySide2.QtWidgets.QBoxLayout' objects}
+1,0.000,0.000,0.000,0.000,{method 'availableGeometry' of 'PySide2.QtWidgets.QDesktopWidget' objects}
+2,0.000,0.000,0.000,0.000,{method 'pixmap' of 'PySide2.QtWidgets.QLabel' objects}
+12,0.000,0.000,0.000,0.000,{method 'setPixmap' of 'PySide2.QtWidgets.QLabel' objects}
+1,0.000,0.000,0.000,0.000,{method 'setScaledContents' of 'PySide2.QtWidgets.QLabel' objects}
+2,0.000,0.000,0.000,0.000,{method 'setText' of 'PySide2.QtWidgets.QLabel' objects}
+3,0.000,0.000,0.000,0.000,{method 'setContentsMargins' of 'PySide2.QtWidgets.QLayout' objects}
+8,0.165,0.021,0.165,0.021,{method 'menuBar' of 'PySide2.QtWidgets.QMainWindow' objects}
+1,0.000,0.000,0.000,0.000,{method 'setCentralWidget' of 'PySide2.QtWidgets.QMainWindow' objects}
+46,0.000,0.000,0.000,0.000,{method 'statusBar' of 'PySide2.QtWidgets.QMainWindow' objects}
+19,0.000,0.000,0.000,0.000,{method 'addAction' of 'PySide2.QtWidgets.QMenu' objects}
+1,0.000,0.000,0.000,0.000,{method 'addAction' of 'PySide2.QtWidgets.QMenuBar' objects}
+7,0.001,0.000,0.001,0.000,{method 'addMenu' of 'PySide2.QtWidgets.QMenuBar' objects}
+1,0.000,0.000,0.000,0.000,{method 'setAlignment' of 'PySide2.QtWidgets.QScrollArea' objects}
+2,0.007,0.004,0.007,0.004,{method 'setWidget' of 'PySide2.QtWidgets.QScrollArea' objects}
+1,0.000,0.000,0.000,0.000,{method 'setWidgetResizable' of 'PySide2.QtWidgets.QScrollArea' objects}
+1,0.000,0.000,0.000,0.000,{method 'setSizeGripEnabled' of 'PySide2.QtWidgets.QStatusBar' objects}
+45,0.001,0.000,0.001,0.000,{method 'showMessage' of 'PySide2.QtWidgets.QStatusBar' objects}
+100,0.002,0.000,0.002,0.000,{method 'append' of 'PySide2.QtWidgets.QTextEdit' objects}
+1,0.000,0.000,0.000,0.000,{method 'setReadOnly' of 'PySide2.QtWidgets.QTextEdit' objects}
+41,0.000,0.000,0.000,0.000,{method 'layout' of 'PySide2.QtWidgets.QWidget' objects}
+2,0.000,0.000,0.000,0.000,{method 'resize' of 'PySide2.QtWidgets.QWidget' objects}
+4,0.000,0.000,0.000,0.000,{method 'setLayout' of 'PySide2.QtWidgets.QWidget' objects}
+2,0.000,0.000,0.000,0.000,{method 'setMaximumHeight' of 'PySide2.QtWidgets.QWidget' objects}
+2,0.000,0.000,0.000,0.000,{method 'setMinimumHeight' of 'PySide2.QtWidgets.QWidget' objects}
+2,0.000,0.000,0.000,0.000,{method 'setMouseTracking' of 'PySide2.QtWidgets.QWidget' objects}
+3,0.000,0.000,0.000,0.000,{method 'setSizePolicy' of 'PySide2.QtWidgets.QWidget' objects}
+3,0.001,0.000,0.001,0.000,{method 'setStyleSheet' of 'PySide2.QtWidgets.QWidget' objects}
+1,0.000,0.000,0.000,0.000,{method 'setWindowTitle' of 'PySide2.QtWidgets.QWidget' objects}
+1,0.070,0.070,0.071,0.071,{method 'show' of 'PySide2.QtWidgets.QWidget' objects}
+1,0.000,0.000,0.000,0.000,{method 'size' of 'PySide2.QtWidgets.QWidget' objects}
+12,0.000,0.000,0.000,0.000,{method 'updateGeometry' of 'PySide2.QtWidgets.QWidget' objects}
+20,0.001,0.000,0.001,0.000,{method 'connect' of 'PySide2.QtCore.SignalInstance' objects}
+
+
