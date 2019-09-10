@@ -63,7 +63,18 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
     background: none;
 }
 
-QLabel { background: transparent; }
+QLabel {
+    background: transparent;
+    color: #aaa;
+}
+
+QSpinBox {
+    background: transparent;
+    border: none;
+    color: #aaa;
+    selection-background-color: #aaa;
+    selection-color: #111;
+}
 
 QLabel[role="widget_heading"] {
     color: #aaa;

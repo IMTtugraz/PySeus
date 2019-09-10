@@ -58,11 +58,11 @@ class ViewWidget(QScrollArea):
     def mousePressEvent(self, event):
         """Handle pan, window and RoI functionality on mouse button down."""
         self.last_position = event.pos()
-        if(event.buttons() == QtCore.Qt.RightButton):
+        if(event.buttons() == QtCore.Qt.LeftButton and event.modifiers() == Qt.NoModifier):
             self.mouse_action = "PAN"
         elif(event.buttons() == QtCore.Qt.MiddleButton):
             self.mouse_action = "WINDOW"
-        elif(event.buttons() == QtCore.Qt.LeftButton):
+        elif(event.buttons() == QtCore.Qt.LeftButton and event.modifiers() == Qt.ControlModifier):
             self.mouse_action = "ROI"
             scroll_x = int(self.horizontalScrollBar().value()
                            / self.zoom_factor)

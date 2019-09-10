@@ -96,49 +96,52 @@ class MainWindow(QMainWindow):
 
     def setup_menu(self):
         ami = self.add_menu_item
+        menu_bar = self.menuBar()
 
-        self.file_menu = self.menuBar().addMenu("&File")
+        self.file_menu = menu_bar.addMenu("&File")
         ami(self.file_menu, "&Load", self._action_open, "Ctrl+O")
-        ami(self.file_menu, "&Exit", self._action_exit, "Ctrl+Q")
+        ami(self.file_menu, "&Quit", self._action_quit, "Ctrl+Q")
 
-        self.view_menu = self.menuBar().addMenu("&View")
+        self.view_menu = menu_bar.addMenu("&View")
+        ami(self.view_menu, "&Amplitude", partial(self._action_mode, 0), "")
+        ami(self.view_menu, "&Phase", partial(self._action_mode, 1), "")
+        self.view_menu.addSeparator()
         ami(self.view_menu, "Zoom &in", self._action_zoom_in, "+")
         ami(self.view_menu, "Zoom &out", self._action_zoom_out, "-")
-        ami(self.view_menu, "&Fit", self._action_zoom_fit, "#")
-        ami(self.view_menu, "&Reset", self._action_zoom_reset, "0")
+        ami(self.view_menu, "Zoom to &fit", self._action_zoom_fit, "#")
+        ami(self.view_menu, "Reset &Zoom", self._action_zoom_reset, "0")
+        self.view_menu.addSeparator()
+        ami(self.view_menu, "&Lower Window", self._action_win_lower, "q")
+        ami(self.view_menu, "&Raise Window", self._action_win_raise, "w")
+        ami(self.view_menu, "&Shrink Window", self._action_win_shrink, "a")
+        ami(self.view_menu, "&Enlarge Window", self._action_win_enlarge, "s")
+        ami(self.view_menu, "Reset &Window", self._action_win_reset, "d")
 
-        self.mode_menu = self.menuBar().addMenu("&Mode")
-        ami(self.mode_menu, "&Amplitude", partial(self._action_mode, 0), "F1")
-        ami(self.mode_menu, "&Phase", partial(self._action_mode, 1), "F2")
+        self.explore_menu = menu_bar.addMenu("E&xplore")
+        ami(self.explore_menu, "Nex&t Slice", partial(self._action_slice, 1), "PgUp")
+        ami(self.explore_menu, "P&revious Slice", partial(self._action_slice, -1), "PgDown")
+        self.explore_menu.addSeparator()
+        ami(self.explore_menu, "Next &Scan", partial(self._action_scan, 1), "Alt+PgUp")
+        ami(self.explore_menu, "Previous Sc&an", partial(self._action_scan, -1), "Alt+PgDown")
 
-        self.window_menu = self.menuBar().addMenu("&Window")
-        ami(self.window_menu, "&Lower", self._action_win_lower, "q")
-        ami(self.window_menu, "&Raise", self._action_win_raise, "w")
-        ami(self.window_menu, "&Shrink", self._action_win_shrink, "a")
-        ami(self.window_menu, "&Enlarge", self._action_win_enlarge, "s")
-        ami(self.window_menu, "Rese&t", self._action_win_reset, "d")
+        self.functions_menu = menu_bar.addMenu("&Evaluate")
+        ami(self.functions_menu, "&Rectangular RoI", partial(self._action_mark_roi, 0), "1")
+        # ami(self.functions_menu, "&Circular RoI", partial(self._action_mark_roi, 1), "2")
+        # ami(self.functions_menu, "&Line RoI", partial(self._action_mark_roi, 2), "3")
+        self.functions_menu.addSeparator()
 
-        self.slice_menu = self.menuBar().addMenu("&Slices")
-        ami(self.slice_menu, "&Up", partial(self._action_slice, 1), "PgUp")
-        ami(self.slice_menu, "&Down", partial(self._action_slice, -1), "PgDown")
-
-        self.scan_menu = self.menuBar().addMenu("&Scans")
-        ami(self.scan_menu, "&Up", partial(self._action_scan, 1), "Alt+PgUp")
-        ami(self.scan_menu, "&Down", partial(self._action_scan, -1), "Alt+PgDown")
-
-        self.functions_menu = self.menuBar().addMenu("&Evals")
         # Functions menu is built in app.setup_functions_menu
         # by calling add_function_to_menu
 
         # About action is its own top level menu
-        ami(self.menuBar(), "&About", self._action_about)
+        ami(menu_bar, "&About", self._action_about)
 
     def add_function_to_menu(self, key, function):
         "Add a entry in `Evals` menu for `function`."
         self.add_menu_item(self.functions_menu, function.MENU_NAME,
                            partial(self._action_set_function, key))
 
-    def _action_exit(self):
+    def _action_quit(self):
         sys.exit()
 
     def _action_open(self):
@@ -201,3 +204,6 @@ class MainWindow(QMainWindow):
         y_factor = event.size().height() / event.oldSize().height()
         self.view.zoom(x_factor, True)
         # @TODO x_factor if xf < yf or xf * width * zoom_factor < viewport_x
+
+    def _action_mark_roi(self, type):
+        self.roi_mode = 0

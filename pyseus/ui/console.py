@@ -17,9 +17,6 @@ class ConsoleWidget(QTextEdit):
                            QSizePolicy.Policy.MinimumExpanding)
         self.updateGeometry()
 
-        for i in range(100):
-            self.print("Test #" + str(i))
-
     def minimumSizeHint(self):
         return QSize(int(settings["ui"]["sidebar_size"]), 100)
 
