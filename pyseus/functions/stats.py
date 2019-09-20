@@ -4,7 +4,7 @@ from .base import BaseFct
 
 
 class StatsFct(BaseFct):
-    """Displays basic statistics (min, max, avg) for the RoI."""
+    """Displays basic statistics (min, max, med, avg) for the RoI."""
 
     MENU_NAME = "Statistics"
 

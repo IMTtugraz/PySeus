@@ -121,13 +121,18 @@ class MainWindow(QMainWindow):
         ami(self.explore_menu, "Nex&t Slice", partial(self._action_slice, 1), "PgUp")
         ami(self.explore_menu, "P&revious Slice", partial(self._action_slice, -1), "PgDown")
         self.explore_menu.addSeparator()
+        ami(self.explore_menu, "Rotate z", partial(self._action_rotate, 2, 1), "Ctrl+E")
+        ami(self.explore_menu, "Rotate y", partial(self._action_rotate, 1, 1), "Ctrl+R")
+        ami(self.explore_menu, "Rotate x", partial(self._action_rotate, 0, 1), "Ctrl+T")
+        ami(self.explore_menu, "Reset Rotation", partial(self._action_rotate, -1, 1), "Ctrl+Z")
+        self.explore_menu.addSeparator()
         ami(self.explore_menu, "Next &Scan", partial(self._action_scan, 1), "Alt+PgUp")
         ami(self.explore_menu, "Previous Sc&an", partial(self._action_scan, -1), "Alt+PgDown")
 
         self.functions_menu = menu_bar.addMenu("&Evaluate")
-        ami(self.functions_menu, "&Rectangular RoI", partial(self._action_mark_roi, 0), "1")
-        # ami(self.functions_menu, "&Circular RoI", partial(self._action_mark_roi, 1), "2")
-        # ami(self.functions_menu, "&Line RoI", partial(self._action_mark_roi, 2), "3")
+        ami(self.functions_menu, "&Rectangular RoI", partial(self._action_roi_mode, 0), "1")
+        # ami(self.functions_menu, "&Circular RoI", partial(self._action_roi_mode, 1), "2")
+        # ami(self.functions_menu, "&Line RoI", partial(self._action_roi_mode, 2), "3")
         self.functions_menu.addSeparator()
 
         # Functions menu is built in app.setup_functions_menu
@@ -205,5 +210,8 @@ class MainWindow(QMainWindow):
         self.view.zoom(x_factor, True)
         # @TODO x_factor if xf < yf or xf * width * zoom_factor < viewport_x
 
-    def _action_mark_roi(self, type):
+    def _action_roi_mode(self, type):
         self.roi_mode = 0
+    
+    def _action_rotate(self, axis, steps):
+        self.app.rotate(axis, steps)

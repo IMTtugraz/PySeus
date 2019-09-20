@@ -33,7 +33,7 @@ class ViewWidget(QScrollArea):
 
     def zoom(self, factor, relative=True):
         """Zoom"""
-        if relative and not (0.1 <= self.zoom_factor * factor <= 10):
+        if relative and not (0.1 <= self.zoom_factor * factor <= 100):
             return
 
         self.zoom_factor = self.zoom_factor * factor if relative else factor
@@ -103,7 +103,7 @@ class ViewWidget(QScrollArea):
                  + event.pos().y()) // self.zoom_factor)
         shape = self.app.slices[self.app.current_slice].shape
         if(x < shape[0] and y < shape[1]):
-            val = self.app.slices[self.app.current_slice][y, x]
+            val = self.app.slices[self.app.current_slice][x, y]
             self.app.show_status("{} x {}  -  {:.4g}".format(x, y, val))
 
         if(self.mouse_action == "PAN"):

@@ -19,6 +19,14 @@ QTextEdit {
     selection-color: #111;
 }
 
+QLineEdit {
+    background: transparent;
+    border: none;
+    color: #aaa;
+    selection-background-color: #aaa;
+    selection-color: #111;
+}
+
 QScrollArea {
     background: transparent;
     border: none;
@@ -63,7 +71,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
     background: none;
 }
 
-QLabel {
+QLabel[style="light"] {
     background: transparent;
     color: #aaa;
 }

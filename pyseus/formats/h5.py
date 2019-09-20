@@ -5,7 +5,7 @@ import os
 
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QApplication, QDialog, QLabel, QLayout, \
-        QVBoxLayout, QDialogButtonBox, QTreeWidget, QTreeWidgetItem
+        QVBoxLayout, QDialogButtonBox, QListWidget, QListWidgetItem
 
 from .base import BaseFormat, LoadError
 
@@ -27,32 +27,50 @@ class H5(BaseFormat):
         self.path = path
 
         with h5py.File(path, "r") as f:
-            if len(f.keys()) > 1:
-                dialog = H5Explorer(f)
+
+            nodes = []
+            def _walk(name, item):
+                if isinstance(item, h5py.Dataset):
+                    nodes.append(name)
+            
+            f.visititems(_walk)
+
+            if len(nodes) == 1:
+                self.ds_path = nodes[0]
+            
+            else:
+                dialog = H5Explorer(nodes)
                 choice = dialog.exec()
                 if choice == QDialog.Accepted:
                     self.ds_path = dialog.result()
                 else:
-                    self.ds_path = None
-            else:
-                self.ds_path = list(f.keys())[0]
+                    return "", [], -1
             
-            dimensions = len(f[self.ds_path].dims)
-            if 2 <= dimensions <= 3:  # single or multiple slices
+            self.dimensions = len(f[self.ds_path].dims)
+            if 2 <= self.dimensions <= 3:  # single or multiple slices
                 return path, [0], 0
-            elif dimensions == 4:  # multiple scans
-                return path, range(0, len(f[self.ds_path].dims[3])-1), 0
-                pass
+            elif self.dimensions == 4:  # multiple scans
+                return path, list(range(0, len(f[self.ds_path])-1)), 0
+            elif self.dimensions == 5:
+                QMessageBox.warning(self.window, "Pyseus", 
+                    "The selected dataset ist 5-dimensional. The first two dimensions will be concatenated.")
+                scan_count = f[self.ds_path].shape[0]*f[self.ds_path].shape[1]
+                return path, list(range(0, scan_count-1)), 0
             else:
                 raise LoadError("Invalid dataset '{}' in '{}': Wrong dimensions.".format(self.ds_path, path))
     
     def load_scan(self, scan):
         with h5py.File(self.path, "r") as f:
-            dimensions = len(f[self.ds_path].dims)
-            if 2 <= dimensions <= 3:  # single or multiple slices
+            if self.dimensions == 2:  # single slice
+                return numpy.asarray([f[self.ds_path]])
+            if self.dimensions == 3:  # multiple slices
                 return numpy.asarray(f[self.ds_path])
-            elif dimensions == 4:  # multiple scans
+            elif self.dimensions == 4:  # multiple scans
                 return numpy.asarray(f[self.ds_path][scan])
+            elif self.dimensions == 5:
+                q, r = divmod(scan, f[self.ds_path].shape[1])
+                return numpy.asarray(f[self.ds_path][q][r])
+
 
     def load_scan_thumb(self, scan):
         with h5py.File(self.path, "r") as f:
@@ -61,22 +79,20 @@ class H5(BaseFormat):
 
 
 class H5Explorer(QDialog):
+    """H5Explorer"""
 
-    def __init__(self, file):
+    def __init__(self, items):
         QDialog.__init__(self)
-        self.setWindowTitle("Test")
+        self.setWindowTitle("Select Dataset")
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.setWindowModality(Qt.ApplicationModal)  
 
         self.label = QLabel("Choose the dataset to load:")
-        self.view = QTreeWidget()
-        self.view.setHeaderHidden(True)
-        self.view.setColumnCount(1)
+        self.label.setStyleSheet("color: #000")
+        self.view = QListWidget()
 
-        node = QTreeWidgetItem()
-        file.visititems(partial(self._walk, node))
-        for n in node.takeChildren():
-            self.view.addTopLevelItem(n)
+        for i in items:
+            self.view.addItem(QListWidgetItem(i))
 
         self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel);
         self.buttons.accepted.connect(self._button_ok)
@@ -88,15 +104,15 @@ class H5Explorer(QDialog):
         layout.addWidget(self.view)
         layout.addWidget(self.buttons)
         self.setLayout(layout)
-
-    def _walk(self, tree_node, name, node):
-        tree_node.addChild(QTreeWidgetItem([name]))
     
     def _button_ok(self):
+        """Handles button click on OK"""
         self.accept()
     
     def _button_cancel(self):
+        """Handles button click on Cancel"""
         self.reject()
     
     def result(self):
-        return self.view.currentItem().text(0)
+        """Returns the selected element"""
+        return self.view.currentItem().text()

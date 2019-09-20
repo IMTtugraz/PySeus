@@ -44,7 +44,7 @@ class ThumbsWidget(QScrollArea):
         thumb = QLabel()
         thumb.setPixmap(pixmap)
         thumb.mousePressEvent = partial(self._thumb_clicked, 
-                                        self.wrapper.layout().count()-1)
+                                        len(self.thumbs))
 
         self.thumbs.append(thumb)
         self.wrapper.layout().insertWidget(self.wrapper.layout().count()-1, 
@@ -52,17 +52,13 @@ class ThumbsWidget(QScrollArea):
 
         self.updateGeometry()
 
-
     def clear(self):
         for t in self.thumbs:
             t.deleteLater()
         self.thumbs = []
     
     def _thumb_clicked(self, thumb, event):
-        self.thumb_clicked(thumb)
-    
-    def thumb_clicked(self, thumb):
-        pass
+        self.app.select_scan(thumb)
 
     def minimumSizeHint(self):
         if self.thumbs:

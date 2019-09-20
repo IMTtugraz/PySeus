@@ -1,4 +1,5 @@
 from sys import argv
+import numpy
 
 from pyseus.core import PySeus
 
@@ -13,7 +14,7 @@ def load(arg=None):
     if isinstance(arg, str):  # and path.isfile(arg):
         app.load_file(arg)
 
-    elif arg is not None:
+    else:
         app.load_data(arg)
 
     return app.exec_()

@@ -1,4 +1,5 @@
 import os
+import numpy
 
 from PySide2.QtWidgets import QApplication, QMessageBox
 from PySide2.QtGui import QImage, QPixmap, QPainter, QColor, QPen
@@ -54,6 +55,9 @@ class PySeus(QApplication):
         self.current_slice = -1
         """Current Slice"""
 
+        self.current_rotation = [0,0,0]
+        """Current rotation status"""
+
         # Stylesheet
         style_path = os.path.abspath(os.path.join(
             os.path.dirname(__file__),
@@ -62,7 +66,6 @@ class PySeus(QApplication):
             self.setStyleSheet(stylesheet.read())
 
         self.setup_functions_menu()
-        self.window.thumbs.thumb_clicked = self._load_scan
 
         self.window.show()
 
@@ -84,14 +87,21 @@ class PySeus(QApplication):
         if not dataset is None:
             try:
                 self.path, self.scans, self.current_scan = dataset.load_file(path)
+                if self.path == "": return
 
                 if len(self.scans) > 1:
+                    self.window.thumbs.clear()
                     for s in self.scans:
                         thumb = self._generate_thumb(
                             dataset.load_scan_thumb(s))
                         self.window.thumbs.add_thumb(thumb)
 
                 self._load_scan(self.current_scan,  dataset)
+                self._set_current_scan(self.current_scan)
+        
+                self.window.info.update_path(self.path)
+
+                self.dataset = dataset
 
             except OSError as e:
                 QMessageBox.warning(self.window, "Pyseus", 
@@ -99,8 +109,6 @@ class PySeus(QApplication):
             except LoadError as e:
                 QMessageBox.warning(self.window, "Pyseus", 
                     e)
-
-            self.dataset = dataset
 
         else:
             QMessageBox.warning(self.window, "Pyseus", 
@@ -118,8 +126,34 @@ class PySeus(QApplication):
 
     def load_data(self, data):
         """Try to load `data`."""
-        # @TODO
-        pass
+        self.deload()
+
+        dataset = Raw()
+        
+        try:
+            self.path, self.scans, self.current_scan = dataset.load_data(data)
+            if self.path == "": return
+
+            if len(self.scans) > 1:
+                self.window.thumbs.clear()
+                for s in self.scans:
+                    thumb = self._generate_thumb(
+                        dataset.load_scan_thumb(s))
+                    self.window.thumbs.add_thumb(thumb)
+
+            self._load_scan(self.current_scan,  dataset)
+            self._set_current_scan(self.current_scan)
+
+            self.dataset = dataset
+        
+            self.window.info.update_path(self.path)
+
+        except OSError as e:
+            QMessageBox.warning(self.window, "Pyseus", 
+                str(e))
+        except LoadError as e:
+            QMessageBox.warning(self.window, "Pyseus", 
+                e)
 
     def deload(self):
         self.dataset = None
@@ -178,7 +212,7 @@ class PySeus(QApplication):
         dataset = self.dataset if dataset is None else dataset
 
         self.slices = dataset.load_scan(self.scans[key])
-        self.current_slice = len(self.slices) // 2
+        self._set_current_slice(len(self.slices) // 2)
 
         self.display.setup_window(self.slices[self.current_slice])
         self.refresh()
@@ -189,13 +223,43 @@ class PySeus(QApplication):
 
         new_slice = self.current_slice + sid if relative == True else sid
         if 0 <= new_slice < len(self.slices):
-            self.current_slice = new_slice
+            self._set_current_slice(new_slice)
         self.refresh()
+    
+    def _set_current_slice(self, sid):
+        self.current_slice = sid
+        self.window.info.update_slice(sid, len(self.slices))
 
     def select_scan(self, sid, relative=False):
         if self.path == "": return
 
         new_scan = self.current_scan + sid if relative == True else sid
         if 0 <= new_scan < len(self.scans):
-            self._load_scan(self.scans[new_scan])
-            self.current_scan = new_scan
+            self._set_current_scan(new_scan)
+            self._load_scan(new_scan)
+    
+    def _set_current_scan(self, sid):
+        self.current_scan = sid
+        self.window.info.update_scan(self.scans[sid])
+
+    def rotate(self, axis, steps=1, refresh=True):
+        if axis == -1:  # reset
+            self._load_scan(self.current_scan)
+
+        else:
+            if axis == 0 and len(self.slices) > 2:  # x-axis
+                self.slices = numpy.asarray(numpy.swapaxes(self.slices, 0, 2))
+                self._set_current_slice(len(self.slices) // 2)
+                
+            elif axis == 1 and len(self.slices) > 2:  # y-axis
+                self.slices = numpy.asarray(numpy.rot90(self.slices))
+                self._set_current_slice(len(self.slices) // 2)
+
+            elif axis == 2:  # z-axis
+                self.slices = numpy.asarray([numpy.rot90(slice) for slice in self.slices])
+
+        if steps > 1: self.rotate(axis, steps-1, refresh)
+
+        if refresh:
+            self.refresh()
+            self.window.view.zoom_fit()

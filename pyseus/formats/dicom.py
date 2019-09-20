@@ -22,25 +22,26 @@ class DICOM(BaseFormat):
 
     def load_file(self, path):
         slice_level = os.path.abspath(os.path.dirname(path))
-        scan_level = os.path.abspath(os.path.join(slice_level, os.pardir))
+        self.scan_level = os.path.abspath(os.path.join(slice_level, os.pardir))
 
         scans = []
-        scan_dirs = next(os.walk(scan_level))[1]
+        scan_dirs = next(os.walk(self.scan_level))[1]
         # @see https://stackoverflow.com/questions/973473/getting-a-list-of-all-subdirectories-in-the-current-directory
         for d in natsorted(scan_dirs):
             if d != "localizer":
-                scans.append(os.path.join(scan_level, d))
+                scans.append(d)
         
-        current_scan = scans.index(slice_level)
-        return scan_level, scans, current_scan
+        current_scan = scans.index(os.path.basename(slice_level))
+        return self.scan_level, scans, current_scan
 
     def load_scan(self, key):
         slices = []
-        for f in os.listdir(key):
+        scan_dir = os.path.join(self.scan_level, key)
+        for f in os.listdir(scan_dir):
             if f.endswith(DICOM.EXTENSIONS): 
-                slice = pydicom.read_file(os.path.join(key,f), defer_size=0)
+                slice = pydicom.read_file(os.path.join(scan_dir,f), defer_size=0)
                 slices.append(slice)
-        
+
         slices = [s for s in slices if hasattr(s, "SliceLocation")]
         slices = sorted(slices, key=lambda s: s.SliceLocation)
 
@@ -53,16 +54,17 @@ class DICOM(BaseFormat):
 
     def load_scan_thumb(self, key):
         slices = []
-        for f in os.listdir(key):
+        scan_dir = os.path.join(self.scan_level, key)
+        for f in os.listdir(scan_dir):
             if f.endswith(DICOM.EXTENSIONS): 
                 slice = (f, pydicom.filereader.read_file(
-                    os.path.join(key,f), specific_tags=["SliceLocation"]))
+                    os.path.join(scan_dir,f), specific_tags=["SliceLocation"]))
                 slices.append(slice)
         
         slices = [s for s in slices if hasattr(s[1], "SliceLocation")]
         slices = sorted(slices, key=lambda s: s[1].SliceLocation)
 
-        thumb_slice = pydicom.read_file(os.path.join(key,
+        thumb_slice = pydicom.read_file(os.path.join(scan_dir,
                                         slices[len(slices) // 2][0]))
 
         return numpy.asarray(thumb_slice.pixel_array)
