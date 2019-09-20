@@ -1,5 +1,5 @@
 from PySide2.QtCore import QSize
-from PySide2.QtWidgets import QSizePolicy, QFormLayout, QHBoxLayout, QFrame, QLabel, QSpinBox, QLineEdit
+from PySide2.QtWidgets import QSizePolicy, QFormLayout, QHBoxLayout, QVBoxLayout, QFrame, QLabel, QSpinBox, QLineEdit, QPushButton
 
 from pyseus.settings import settings
 
@@ -11,22 +11,26 @@ class InfoWidget(QFrame):
         QFrame.__init__(self)
         self.app = app
 
-        self.setLayout(QFormLayout())
+        self.setLayout(QVBoxLayout())
+        self.layout().setContentsMargins(0, 0, 0, 0)
 
         self.path = QLineEdit("")
         self.scan = QLineEdit("")
         self.slice = QHBoxLayout()
         self.current_slice = QLabel("")
-        self.current_slice.setProperty("style", "light")
         # self.current_slice = QSpinBox()
         # self.current_slice.setMaximumWidth(50)
         # self.max_slice = QLabel("/ 7")
         self.slice.addWidget(self.current_slice)
         # self.slice.addWidget(self.max_slice)
 
-        self.layout().addRow("Path:", self.path)
-        self.layout().addRow("Scan:", self.scan)
-        self.layout().addRow("Slice:", self.slice)
+        info = QFrame()
+        info.setLayout(QFormLayout())
+        # info.layout().setContentsMargins(0, 0, 0, 0)
+        info.layout().addRow("Path:", self.path)
+        info.layout().addRow("Scan:", self.scan)
+        info.layout().addRow("Slice:", self.slice)
+        self.layout().addWidget(info)
 
         self.setSizePolicy(QSizePolicy.Policy.Fixed,
                            QSizePolicy.Policy.MinimumExpanding)

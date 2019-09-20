@@ -57,28 +57,18 @@ class MainWindow(QMainWindow):
         sidebar.setLayout(QVBoxLayout())
         sidebar.layout().setContentsMargins(0, 0, 5, 0)
 
-        # @TODO refactor into sidebar widget (base class) or QDockWidget
-        info_heading = QLabel()
-        info_heading.setText("FILE INFO")
-        info_heading.setProperty("role", "widget_heading__first")
-        info_heading.setMinimumHeight(24)
-        info_heading.setMaximumHeight(24)
-        sidebar.layout().addWidget(info_heading)
+        sidebar.layout().addWidget(SidebarHeading("File Info", True))
         sidebar.layout().addWidget(self.info)
 
-        console_heading = QLabel()
-        console_heading.setText("CONSOLE")
-        console_heading.setProperty("role", "widget_heading")
-        console_heading.setMinimumHeight(24)
-        console_heading.setMaximumHeight(24)
-        sidebar.layout().addWidget(console_heading)
+        sidebar.layout().addWidget(SidebarHeading("Console"))
         sidebar.layout().addWidget(self.console)
 
         wrapper.layout().addWidget(sidebar)
 
         self.setup_menu()
+
         self.statusBar().setSizeGripEnabled(False)
-        # self.statusBar().addPermanentWidget(self.slice)
+
         self.setCentralWidget(wrapper)
 
         # Window dimensions
@@ -215,3 +205,14 @@ class MainWindow(QMainWindow):
     
     def _action_rotate(self, axis, steps):
         self.app.rotate(axis, steps)
+
+
+class SidebarHeading(QLabel):
+
+    def __init__(self, text="", first=False):
+        QLabel.__init__(self)
+        self.setText(text)
+        role = "widget_heading__first" if first else "widget_heading"
+        self.setProperty("role", role)
+        self.setMinimumHeight(24)
+        self.setMaximumHeight(24)

@@ -71,9 +71,9 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
     background: none;
 }
 
-QLabel[style="light"] {
+QLabel {
     background: transparent;
-    color: #aaa;
+    color: #888;
 }
 
 QSpinBox {
