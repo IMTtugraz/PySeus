@@ -17,7 +17,7 @@ class ThumbsWidget(QScrollArea):
 
         self.wrapper = QFrame()
         self.wrapper.setLayout(QVBoxLayout())
-        self.wrapper.layout().setContentsMargins(0, 0, 0, 0)
+        self.wrapper.layout().setContentsMargins(5, 0, 0, 5)
         self.wrapper.layout().addStretch()
 
         self.thumbs = []
@@ -42,9 +42,12 @@ class ThumbsWidget(QScrollArea):
         pixmap = pixmap.scaledToWidth(int(settings["ui"]["thumb_size"]))
 
         thumb = QLabel()
+        # thumb.setProperty("role", "current_scan")
         thumb.setPixmap(pixmap)
         thumb.mousePressEvent = partial(self._thumb_clicked, 
                                         len(self.thumbs))
+        thumb.setProperty("role", "scan_thumb")
+        thumb.setMaximumWidth(int(settings["ui"]["thumb_size"])+2)
 
         self.thumbs.append(thumb)
         self.wrapper.layout().insertWidget(self.wrapper.layout().count()-1, 
@@ -62,6 +65,6 @@ class ThumbsWidget(QScrollArea):
 
     def minimumSizeHint(self):
         if self.thumbs:
-            return QSize(int(settings["ui"]["thumb_size"])+16, 0)
+            return QSize(int(settings["ui"]["thumb_size"])+25, 0)
         else:
             return QSize(0,0)

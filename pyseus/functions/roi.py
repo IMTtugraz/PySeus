@@ -14,4 +14,4 @@ class RoIFct(BaseFct):
             roi[0], roi[2], roi[1], roi[3],
             abs((roi[0]-roi[2])*(roi[3]-roi[1])))
 
-        return "RoI: " + result
+        return "RoI:   " + result

@@ -14,7 +14,7 @@ def load(arg=None):
     if isinstance(arg, str):  # and path.isfile(arg):
         app.load_file(arg)
 
-    else:
+    elif not arg == None:
         app.load_data(arg)
 
     return app.exec_()

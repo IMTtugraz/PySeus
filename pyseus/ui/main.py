@@ -12,6 +12,7 @@ from .console import ConsoleWidget
 from .info import InfoWidget
 from .thumbs import ThumbsWidget
 from .overlay import OverlayWidget
+from .meta import MetaWidget
 
 
 class MainWindow(QMainWindow):
@@ -33,6 +34,9 @@ class MainWindow(QMainWindow):
         self.info = InfoWidget(app)
         """@TODO"""
 
+        self.meta = MetaWidget(app)
+        """@TODO"""
+
         self.console = ConsoleWidget(app)
         """@TODO"""
 
@@ -46,12 +50,6 @@ class MainWindow(QMainWindow):
         wrapper.layout().addWidget(self.thumbs)
         wrapper.layout().addWidget(self.view)
 
-        # @TODO Remove overlay test
-        # test = OverlayWidget(self.app)
-        # self.addDockWidget(Qt.RightDockWidgetArea, test)
-        # test.setFloating(True);
-        # test.setWindowOpacity(0.8)
-
         # Sidebar / Vertical layout (info, meta, console)
         sidebar = QFrame(self)
         sidebar.setLayout(QVBoxLayout())
@@ -59,6 +57,9 @@ class MainWindow(QMainWindow):
 
         sidebar.layout().addWidget(SidebarHeading("File Info", True))
         sidebar.layout().addWidget(self.info)
+
+        sidebar.layout().addWidget(SidebarHeading("Metadata"))
+        sidebar.layout().addWidget(self.meta)
 
         sidebar.layout().addWidget(SidebarHeading("Console"))
         sidebar.layout().addWidget(self.console)
@@ -124,9 +125,13 @@ class MainWindow(QMainWindow):
         # ami(self.functions_menu, "&Circular RoI", partial(self._action_roi_mode, 1), "2")
         # ami(self.functions_menu, "&Line RoI", partial(self._action_roi_mode, 2), "3")
         self.functions_menu.addSeparator()
+        ami(self.functions_menu, "&Clear RoI", self._action_roi_clear, "Esc")
+        self.functions_menu.addSeparator()
 
         # Functions menu is built in app.setup_functions_menu
         # by calling add_function_to_menu
+
+        ami(menu_bar, "META TEST", self.__meta_test)
 
         # About action is its own top level menu
         ami(menu_bar, "&About", self._action_about)
@@ -202,9 +207,15 @@ class MainWindow(QMainWindow):
 
     def _action_roi_mode(self, type):
         self.roi_mode = 0
+
+    def _action_roi_clear(self):
+        self.app.clear_roi()
     
     def _action_rotate(self, axis, steps):
         self.app.rotate(axis, steps)
+    
+    def __meta_test(self):
+        self.app.show_metadata_window()
 
 
 class SidebarHeading(QLabel):

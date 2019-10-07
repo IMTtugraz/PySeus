@@ -20,6 +20,10 @@ class BaseFormat():
     def load_scan_thumb(self, scan):
         """Attempt to load the thumbnail for scan `scan`."""
         pass
+    
+    def load_metadata(self, scan, keys=None):
+        """..."""
+        pass
 
 class LoadError(Exception):
     """Raised when an error is encountered loading a file or scan."""

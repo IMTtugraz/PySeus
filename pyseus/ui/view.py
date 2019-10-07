@@ -14,10 +14,14 @@ class ViewWidget(QScrollArea):
         self.view = QLabel()
         self.view.setScaledContents(True)
         self.view.setMouseTracking(True)
+        self.view.mouseMoveEvent = self._view_mouseMoveEvent
+        self.view.mousePressEvent = self._view_mousePressEvent
+        self.view.mouseReleaseEvent = self._view_mouseReleaseEvent
+
         self.zoom_factor = 1
         self.mouse_action = 0
-        self.setMouseTracking(True)
 
+        self.setMouseTracking(True)
         self.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
         self.setWidget(self.view)
 
@@ -33,7 +37,8 @@ class ViewWidget(QScrollArea):
 
     def zoom(self, factor, relative=True):
         """Zoom"""
-        if relative and not (0.1 <= self.zoom_factor * factor <= 100):
+        if self.app.path == "" or (relative
+                and not (0.1 <= self.zoom_factor * factor <= 100)):
             return
 
         self.zoom_factor = self.zoom_factor * factor if relative else factor
@@ -57,37 +62,19 @@ class ViewWidget(QScrollArea):
 
     def mousePressEvent(self, event):
         """Handle pan, window and RoI functionality on mouse button down."""
-        self.last_position = event.pos()
+
         if(event.buttons() == QtCore.Qt.LeftButton and event.modifiers() == Qt.NoModifier):
             self.mouse_action = "PAN"
+
         elif(event.buttons() == QtCore.Qt.MiddleButton):
             self.mouse_action = "WINDOW"
-        elif(event.buttons() == QtCore.Qt.LeftButton and event.modifiers() == Qt.ControlModifier):
-            self.mouse_action = "ROI"
-            scroll_x = int(self.horizontalScrollBar().value()
-                           / self.zoom_factor)
-            scroll_y = int(self.verticalScrollBar().value()
-                           / self.zoom_factor)
-            self.app.roi[0] = int((event.pos().x()) / self.zoom_factor) \
-                + scroll_x
-            self.app.roi[1] = int((event.pos().y() - 26) / self.zoom_factor) \
-                + scroll_y
-        else:
-            self.mouse_action = ""  # nothing
+
+        self.last_position = event.screenPos()
 
     def mouseReleaseEvent(self, event):
         """Handle pan, window and RoI functionality on mouse button up."""
+
         if(self.mouse_action == "ROI"):
-            scroll_x = int(self.horizontalScrollBar().value()
-                           / self.zoom_factor)
-            scroll_y = int(self.verticalScrollBar().value()
-                           / self.zoom_factor)
-            roi_end_x = int((event.pos().x()) / self.zoom_factor) + scroll_x
-            roi_end_y = int((event.pos().y() - 26) / self.zoom_factor) \
-                + scroll_y
-            if(self.app.roi[0] == roi_end_x and self.app.roi[1] == roi_end_y):
-                self.app.roi = [0, 0, 0, 0]
-                self.app.refresh()
             self.app.recalculate()
 
         self.last_position = None
@@ -96,7 +83,47 @@ class ViewWidget(QScrollArea):
     def mouseMoveEvent(self, event):
         """Handle pan, window and RoI functionality on mouse move."""
 
-        # @TODO Refactor into image Label event
+        self.app.show_status("")
+
+        if(self.mouse_action == "PAN"):
+            vertical = self.verticalScrollBar().value() \
+                + self.last_position.y() - event.screenPos().y()
+            horizontal = self.horizontalScrollBar().value() \
+                + self.last_position.x() - event.screenPos().x()
+
+            self.verticalScrollBar().setValue(vertical)
+            self.horizontalScrollBar().setValue(horizontal)
+            self.last_position = event.screenPos()
+
+        elif(self.mouse_action == "WINDOW"):
+            move = self.last_position.x() - event.screenPos().x()
+            scale = self.last_position.y() - event.screenPos().y()
+            self.last_position = event.screenPos()
+            self.app.display.adjust_window(move, scale)
+            self.app.refresh()
+
+        elif(self.mouse_action == "ROI"):
+            x_pos = event.pos().x() if event.pos().x() <= self.view.width() \
+                else self.view.width()
+            y_pos = event.pos().y() if event.pos().y() <= self.view.height() \
+                else self.view.height()
+            self.app.roi[2] = int(x_pos / self.zoom_factor)
+            self.app.roi[3] = int(y_pos / self.zoom_factor)
+            self.app.refresh()
+
+    def _view_mousePressEvent(self, event):
+        if(event.buttons() == QtCore.Qt.LeftButton and event.modifiers() == Qt.ControlModifier):
+            self.mouse_action = "ROI"
+            self.last_position = event.pos()
+            self.app.roi[0] = int(event.pos().x() / self.zoom_factor)
+            self.app.roi[1] = int(event.pos().y() / self.zoom_factor)
+
+        else:
+            self.mousePressEvent(event)
+    
+    def _view_mouseMoveEvent(self, event):
+        self.mouseMoveEvent(event)
+
         x = int((self.horizontalScrollBar().value()
                  + event.pos().x()) // self.zoom_factor)
         y = int((self.verticalScrollBar().value()
@@ -106,33 +133,8 @@ class ViewWidget(QScrollArea):
             val = self.app.slices[self.app.current_slice][x, y]
             self.app.show_status("{} x {}  -  {:.4g}".format(x, y, val))
 
-        if(self.mouse_action == "PAN"):
-            vertical = self.verticalScrollBar().value() \
-                + self.last_position.y() - event.pos().y()
-            horizontal = self.horizontalScrollBar().value() \
-                + self.last_position.x() - event.pos().x()
-
-            self.verticalScrollBar().setValue(vertical)
-            self.horizontalScrollBar().setValue(horizontal)
-            self.last_position = event.pos()
-
-        elif(self.mouse_action == "WINDOW"):
-            move = self.last_position.x() - event.pos().x()
-            scale = self.last_position.y() - event.pos().y()
-            self.last_position = event.pos()
-            self.app.display.adjust_window(move, scale)
-            self.app.refresh()
-
-        elif(self.mouse_action == "ROI"):
-            scroll_x = int(self.horizontalScrollBar().value()
-                           / self.zoom_factor)
-            scroll_y = int(self.verticalScrollBar().value()
-                           / self.zoom_factor)
-            self.app.roi[2] = int((event.pos().x()) / self.zoom_factor) \
-                + scroll_x
-            self.app.roi[3] = int((event.pos().y() - 26) / self.zoom_factor) \
-                + scroll_y
-            self.app.refresh()
+    def _view_mouseReleaseEvent(self, event):
+        self.mouseReleaseEvent(event)
 
     def wheelEvent(self, event):
         """Wheel Event Handler."""

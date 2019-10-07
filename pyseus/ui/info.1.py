@@ -28,6 +28,14 @@ class InfoWidget(QFrame):
         info.layout().addRow("Slice:", self.slice)
         self.layout().addWidget(info)
 
+        meta_wrapper = QScrollArea()
+        meta = QFrame()
+        meta.setLayout(QFormLayout())
+        meta_wrapper.setWidgetResizable(True)
+        meta_wrapper.setWidget(meta)
+        self.layout().addWidget(meta_wrapper)
+        self.meta = meta.layout()
+
         self.setSizePolicy(QSizePolicy.Policy.Fixed,
                            QSizePolicy.Policy.MinimumExpanding)
 
@@ -44,3 +52,8 @@ class InfoWidget(QFrame):
     
     def update_path(self, path):
         self.path.setText(path)
+
+    def update_meta(self, data):
+        for i in range(1, 50):
+            data = QLineEdit("SUCCESS")
+            self.meta.addRow("Test:", data)

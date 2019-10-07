@@ -76,6 +76,10 @@ QLabel {
     color: #888;
 }
 
+QLabel[role="current_scan"] {
+    border: 1px solid red;
+}
+
 QSpinBox {
     background: transparent;
     border: none;
@@ -86,12 +90,18 @@ QSpinBox {
 
 QLabel[role="widget_heading"] {
     color: #aaa;
+    font-weight: bold;
     border-top: 1px solid #333;
     border-bottom: 1px solid #333;
 }
 QLabel[role="widget_heading__first"] {
     color: #aaa;
-    border-bottom: 1px solid #444;
+    font-weight: bold;
+    border-bottom: 1px solid #333;
+}
+
+QLabel[role="scan_thumb"] {
+    border: 1px solid transparent;
 }
 
 QStatusBar {
@@ -104,7 +114,3 @@ QDockWidget, QDockWidget::title {
     background: #000;
 }
 QDockWidget { border: 1px solid #111 }
-
-[debug="red"] { background: red; }
-[debug="blue"] { background: blue; }
-[debug="green"] { background: green; }

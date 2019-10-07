@@ -25,4 +25,4 @@ class StatsFct(BaseFct):
             result = ("Min: {:.4g}  |  Avg: {:.4g}  |  Med: {:.4g}  |  "
                       "Max: {:.4g}").format(min, avg, med, max)
 
-        return "Stats: " + result
+        return "Stats:   " + result

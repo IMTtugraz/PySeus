@@ -9,6 +9,7 @@ from pyseus import DisplayHelper
 from pyseus.ui import MainWindow
 from pyseus.formats import Raw, H5, DICOM, LoadError
 from pyseus.functions import RoIFct, StatsFct
+from pyseus.ui.meta import MetaWindow
 
 class PySeus(QApplication):
     """The main application class acts as controller."""
@@ -163,6 +164,7 @@ class PySeus(QApplication):
         self.current_slice = -1
         self.window.view.set(None)
         self.window.thumbs.clear()
+        self.clear_roi()
 
     def refresh(self):
         """Refresh the displayed image."""
@@ -210,13 +212,20 @@ class PySeus(QApplication):
 
     def _load_scan(self, key, dataset=None):
         dataset = self.dataset if dataset is None else dataset
+        
+        try:
+            self.slices = dataset.load_scan(self.scans[key])
+            self._set_current_slice(len(self.slices) // 2)
 
-        self.slices = dataset.load_scan(self.scans[key])
-        self._set_current_slice(len(self.slices) // 2)
+            self.metadata = dataset.load_metadata(self.scans[key])
+            self.window.meta.update_meta(self.metadata)
 
-        self.display.setup_window(self.slices[self.current_slice])
-        self.refresh()
-        self.window.view.zoom_fit()
+            self.display.setup_window(self.slices[self.current_slice])
+            self.refresh()
+            self.window.view.zoom_fit()
+        except LoadError as e:
+            QMessageBox.warning(self.window, "Pyseus", 
+                e)
 
     def select_slice(self, sid, relative=False):
         if self.path == "": return
@@ -224,23 +233,29 @@ class PySeus(QApplication):
         new_slice = self.current_slice + sid if relative == True else sid
         if 0 <= new_slice < len(self.slices):
             self._set_current_slice(new_slice)
-        self.refresh()
+            self.refresh()
+            self.recalculate()
     
     def _set_current_slice(self, sid):
-        self.current_slice = sid
         self.window.info.update_slice(sid, len(self.slices))
+        self.current_slice = sid
 
     def select_scan(self, sid, relative=False):
         if self.path == "": return
 
         new_scan = self.current_scan + sid if relative == True else sid
         if 0 <= new_scan < len(self.scans):
+            self.clear_roi()
             self._set_current_scan(new_scan)
             self._load_scan(new_scan)
     
     def _set_current_scan(self, sid):
-        self.current_scan = sid
+        if len(self.scans) > 1:
+            self.window.thumbs.thumbs[self.current_scan].setStyleSheet("border: 1px solid transparent")
+            self.window.thumbs.thumbs[sid].setStyleSheet("border: 1px solid #aaa")
+        
         self.window.info.update_scan(self.scans[sid])
+        self.current_scan = sid
 
     def rotate(self, axis, steps=1, refresh=True):
         if axis == -1:  # reset
@@ -263,3 +278,12 @@ class PySeus(QApplication):
         if refresh:
             self.refresh()
             self.window.view.zoom_fit()
+            self.clear_roi()
+    
+    def clear_roi(self):
+        self.roi = [0, 0, 0, 0]
+
+    def show_metadata_window(self):
+        data = self.dataset.load_metadata(self.scans[self.current_scan])
+        meta_window = MetaWindow(data)
+        meta_window.exec()
