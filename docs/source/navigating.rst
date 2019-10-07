@@ -1,7 +1,17 @@
 Navigation
 ==========
 
-*Right Mouse Btn + Drag* pans the image.
+Scan Selection
+Rotating the View
+Slice Selection
+Pan
+Zoom
+Window
+
+Exploring a dataset
+-------------------
+
+Selecting Scans
 
 +---------------------+------------+--------------------+
 | *Menu*              | *Keyboard* | *Mouse*            |

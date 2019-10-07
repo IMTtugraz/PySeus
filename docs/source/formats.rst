@@ -6,12 +6,13 @@ Formats
 .. autoclass:: pyseus.formats.BaseFormat
    :members:
    :undoc-members:
+   :private-members:
+   :special-members:
 
 Built-in Formats
 ----------------
 
 Built-in formats follow the same structure as ``BaseFormat``.
-Due to differences in the formats, they rely on further helper functions.
 
 .. autoclass:: pyseus.formats.Raw
 
@@ -22,5 +23,4 @@ Due to differences in the formats, they rely on further helper functions.
 Custom Formats
 --------------
 
-Just extend the *BaseFormat* Class and register the new format with 
-``app().register_format()`` (coming soon).
+Just extend the *BaseFormat* Class and add the format class to the `pyseus.formats` list.

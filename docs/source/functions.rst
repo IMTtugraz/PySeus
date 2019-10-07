@@ -8,6 +8,8 @@ Functions
 .. autoclass:: pyseus.functions.BaseFct
    :members:
    :undoc-members:
+   :private-members:
+   :special-members:
 
 Built-in Functions
 ------------------
@@ -19,5 +21,4 @@ Built-in Functions
 Custom functions
 ----------------
 
-Just extend the *BaseFct* Class and register the new function with 
-``app().register_function()`` (coming soon).
+Just extend the *BaseFct* Class and add the function to the `pyseus.functions` list.

@@ -1,10 +1,10 @@
 Development
 ===========
 
-asdf
+...
 
-Environment
------------
+Setting up the environment
+--------------------------
 
 0. If you don´t have the *virtualenv* package, get it with ``pip install virtualenv``.
 1. Checkout the source code from `GitHub <>`.
@@ -13,10 +13,18 @@ Environment
 4. Run ``pip install -r requirements.txt`` to install all required packages.
 5. After you are done, run ``deactivate`` to disable the virtual environment.
 
-Documentation
--------------
+
+Overview
+--------
+
+Class Overview
+Control flow for loading
+
+
+Updating the documentation
+--------------------------
 
 The documentation for PySeus is created with `Sphinx <http://www.sphinx-doc.org>` using the `Read-the-Docs Theme <https://sphinx-rtd-theme.readthedocs.io/en/stable/index.html>`.
 
-You can setup these dependencies with ``cd docs`` and ``pip install requirements.txt``.
-After making changes, run ``./make.bat html`` or ``make html`` and check the results under *docs/build/html*.
+These dependencies are setup if you run ``pip install requirements.txt`` from the root directory.
+After making changes, run ``./make.bat html`` or ``make html``; the new files are under *docs/build/html*.
