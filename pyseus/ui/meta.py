@@ -10,7 +10,9 @@ class MetaWidget(QScrollArea):
     def __init__(self, app):
         QScrollArea.__init__(self)
         self.app = app
+        self._reset_ui()
 
+    def _reset_ui(self):
         table = QFrame()
         table.setLayout(QFormLayout())
         self.table = table.layout()
@@ -27,6 +29,8 @@ class MetaWidget(QScrollArea):
         return QSize(int(settings["ui"]["sidebar_size"]), 100)
 
     def update_meta(self, data, keys=None):
+        self._reset_ui()
+
         if len(data) == 0:
             self.table.addRow("No metadata available", None)
         elif keys == None:

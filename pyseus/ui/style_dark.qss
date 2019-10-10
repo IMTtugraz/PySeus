@@ -27,6 +27,31 @@ QLineEdit {
     selection-color: #111;
 }
 
+QListWidget {
+    color: #aaa;
+    border: none;
+}
+QListWidget::item:hover {
+    background: #444;
+}
+QListWidget::item:active {
+    border: none;
+}
+QListWidget::item:selected {
+    color: #aaa;
+    background: #222;
+    border: 1px solid #aaa;
+}
+QPushButton {
+    background: #111;
+    border: 1px solid #555;
+    padding: 6px 10px;
+    color: #aaa;
+}
+QPushButton:hover {
+    background: #222;
+}
+
 QScrollArea {
     background: transparent;
     border: none;
