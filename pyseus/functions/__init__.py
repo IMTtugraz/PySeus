@@ -5,3 +5,4 @@ in the data.
 from .base import BaseFct
 from .roi import RoIFct
 from .stats import StatsFct
+from .line import LineEval

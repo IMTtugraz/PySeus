@@ -77,8 +77,14 @@ class H5(BaseFormat):
             scan = f[self.ds_path][scan]
             return numpy.asarray(scan[len(scan) // 2])
     
-    def load_metadata(self, scan, keys):
-        pass
+    def load_metadata(self, scan, keys=None):
+        metadata = []
+        
+        with h5py.File(self.path, "r") as f:
+            for a in f[self.ds_path].attrs:
+                metadata.append((a[0], a[1]))
+        
+        return metadata
 
 
 class H5Explorer(QDialog):

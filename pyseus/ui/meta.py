@@ -26,23 +26,41 @@ class MetaWidget(QScrollArea):
     def minimumSizeHint(self):
         return QSize(int(settings["ui"]["sidebar_size"]), 100)
 
-    def update_meta(self, data):
-        for d in data:
-            value = QLineEdit(str(d[1]))
-            self.table.addRow(d[0], value)
+    def update_meta(self, data, keys=None):
+        if len(data) == 0:
+            self.table.addRow("No metadata available", None)
+        elif keys == None:
+            for d in data:
+                value = QLineEdit(str(d[1]))
+                self.table.addRow(d[0], value)
+        else:
+            for k in keys:
+                value = QLineEdit(str(d[1]))
+                self.table.addRow(d[0], value)
+            moreLabel = QLabel("more ...")
+            moreLabel.mouseReleaseEvent = self._show_more
+            self.table.addRow(moreLabel, None)
+
+    def _show_more(self, event):
+        self.app.show_metadata_window()
+
 
 class MetaWindow(QDialog):
     """..."""
 
-    def __init__(self, data):
+    def __init__(self, app, data):
         QDialog.__init__(self)
         self.setWindowTitle("Metadata")
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.setWindowModality(Qt.ApplicationModal) 
 
-        self.setLayout(QFormLayout())
-        self.table = self.layout()
+        self.setLayout(QVBoxLayout())
+        widget = MetaWidget(None)
+        widget.update_meta(data)
+        widget.setSizePolicy(QSizePolicy.Policy.MinimumExpanding,
+                             QSizePolicy.Policy.MinimumExpanding)
+        self.layout().addWidget(widget)
 
-        for d in data:
-            value = QLineEdit(str(d[1]))
-            self.table.addRow(d[0], value)
+        # Window dimensions
+        geometry = app.desktop().availableGeometry(self)
+        self.resize(geometry.width() * 0.3, geometry.height() * 0.8)

@@ -73,7 +73,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(wrapper)
 
         # Window dimensions
-        geometry = app.desktop().availableGeometry(self)
+        geometry = self.app.desktop().availableGeometry(self)
         self.resize(geometry.width() * 0.6, geometry.height() * 0.6)
 
     def add_menu_item(self, menu, title, callback, shortcut=""):
@@ -121,17 +121,14 @@ class MainWindow(QMainWindow):
         ami(self.explore_menu, "Previous Sc&an", partial(self._action_scan, -1), "Alt+PgDown")
 
         self.functions_menu = menu_bar.addMenu("&Evaluate")
-        ami(self.functions_menu, "&Rectangular RoI", partial(self._action_roi_mode, 0), "1")
-        # ami(self.functions_menu, "&Circular RoI", partial(self._action_roi_mode, 1), "2")
-        # ami(self.functions_menu, "&Line RoI", partial(self._action_roi_mode, 2), "3")
+        ami(self.functions_menu, "&Area Eval", partial(self._action_roi_mode, 0), "1")
+        ami(self.functions_menu, "&Line Eval", partial(self._action_roi_mode, 1), "2")
         self.functions_menu.addSeparator()
         ami(self.functions_menu, "&Clear RoI", self._action_roi_clear, "Esc")
         self.functions_menu.addSeparator()
 
         # Functions menu is built in app.setup_functions_menu
         # by calling add_function_to_menu
-
-        ami(menu_bar, "META TEST", self.__meta_test)
 
         # About action is its own top level menu
         ami(menu_bar, "&About", self._action_about)
@@ -205,17 +202,14 @@ class MainWindow(QMainWindow):
         self.view.zoom(x_factor, True)
         # @TODO x_factor if xf < yf or xf * width * zoom_factor < viewport_x
 
-    def _action_roi_mode(self, type):
-        self.roi_mode = 0
+    def _action_roi_mode(self, mode):
+        self.app.set_roi_mode(mode)
 
     def _action_roi_clear(self):
         self.app.clear_roi()
     
     def _action_rotate(self, axis, steps):
         self.app.rotate(axis, steps)
-    
-    def __meta_test(self):
-        self.app.show_metadata_window()
 
 
 class SidebarHeading(QLabel):

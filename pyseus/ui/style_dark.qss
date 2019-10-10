@@ -5,7 +5,7 @@ QMenu { background: #222; color: #eee; padding: 0px; }
 QMenu::item { padding: 5px 10px 5px 10px; }
 QMenu::item:selected { background: #333; }
 
-QMainWindow {
+QMainWindow, QDialog {
     background: #000;
 }
 QFrame {

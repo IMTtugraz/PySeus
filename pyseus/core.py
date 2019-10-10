@@ -8,7 +8,7 @@ from pyseus import settings
 from pyseus import DisplayHelper
 from pyseus.ui import MainWindow
 from pyseus.formats import Raw, H5, DICOM, LoadError
-from pyseus.functions import RoIFct, StatsFct
+from pyseus.functions import LineEval, RoIFct, StatsFct
 from pyseus.ui.meta import MetaWindow
 
 class PySeus(QApplication):
@@ -31,9 +31,10 @@ class PySeus(QApplication):
         self.function = self.functions[0]()
         """Function"""
 
-        # @ TODO roi util functions (reset, set, get --> property ?!?)
         self.roi = [0, 0, 0, 0]
         """Region of Interest"""
+
+        self.roi_mode = 0
 
         self.window = MainWindow(self)
         """Window"""
@@ -179,11 +180,18 @@ class PySeus(QApplication):
 
         if self.roi != [0, 0, 0, 0]:
             painter = QPainter(pixmap)
-            pen = QPen(QColor("red"))
-            pen.setWidth(1)
-            painter.setPen(pen)
-            painter.drawRect(self.roi[0], self.roi[1], self.roi[2]
-                             - self.roi[0], self.roi[3] - self.roi[1])
+            if self.roi_mode == 0:
+                pen = QPen(QColor("red"))
+                pen.setWidth(1)
+                painter.setPen(pen)
+                painter.drawRect(self.roi[0], self.roi[1], self.roi[2]
+                                 - self.roi[0], self.roi[3] - self.roi[1])
+            elif self.roi_mode == 1:
+                pen = QPen(QColor("green"))
+                pen.setWidth(1)
+                painter.setPen(pen)
+                painter.drawLine(self.roi[0], self.roi[1], self.roi[2], 
+                                 self.roi[3])
             painter.end()
 
         self.window.view.set(pixmap)
@@ -201,14 +209,33 @@ class PySeus(QApplication):
     def recalculate(self):
         """Recalculate the current RoI-function."""
         if self.roi != [0, 0, 0, 0]:
-            result = self.function.recalculate(self.slices[self.current_slice],
-                                               self.roi)
-            self.window.console.print(result)
+            if self.roi_mode == 0:  # area eval
+                result = self.function.recalculate(self.slices[self.current_slice],
+                                                   self.roi)
+                self.window.console.print(result)
+            
+            elif self.roi_mode == 1:  # line eval
+                data = self.function.recalculate(self.slices[self.current_slice],
+                                                 self.roi)
+                self.window.console.print(data)
 
     def set_function(self, key):
         """Set the RoI-function with the slug `key` as current."""
         self.function = self.functions[key]()
         self.recalculate()
+    
+    def set_roi_mode(self, mode):
+        if mode == 0:
+            self.clear_roi()
+            self.roi_mode = 0
+            self.set_function(0)
+
+        elif mode == 1:
+            self.clear_roi()
+            self.roi_mode = 1
+            self.function = LineEval()
+            self.recalculate()
+
 
     def _load_scan(self, key, dataset=None):
         dataset = self.dataset if dataset is None else dataset
@@ -218,7 +245,7 @@ class PySeus(QApplication):
             self._set_current_slice(len(self.slices) // 2)
 
             self.metadata = dataset.load_metadata(self.scans[key])
-            self.window.meta.update_meta(self.metadata)
+            self.window.meta.update_meta(self.metadata, [])
 
             self.display.setup_window(self.slices[self.current_slice])
             self.refresh()
@@ -282,8 +309,9 @@ class PySeus(QApplication):
     
     def clear_roi(self):
         self.roi = [0, 0, 0, 0]
+        self.refresh()
 
     def show_metadata_window(self):
         data = self.dataset.load_metadata(self.scans[self.current_scan])
-        meta_window = MetaWindow(data)
+        meta_window = MetaWindow(self, data)
         meta_window.exec()
