@@ -24,7 +24,7 @@ The view widget
    :special-members:
 
 The thumbs widget
----------------
+-----------------
 
 .. autoclass:: pyseus.ui.ViewWidget
    :members:
