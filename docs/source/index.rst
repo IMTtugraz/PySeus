@@ -22,5 +22,3 @@ PySeus is a simple viewer for MRI data written in Python.
    display
    functions
    interface
-
-(index.rst)
