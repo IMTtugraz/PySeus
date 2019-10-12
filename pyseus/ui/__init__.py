@@ -1,6 +1,7 @@
 """Contains the GUI elements for PySeus."""
 
-from .main import MainWindow
-from .view import ViewWidget
-from .console import ConsoleWidget
-from .thumbs import ThumbsWidget
+from .main import MainWindow  # noqa: F401
+from .view import ViewWidget  # noqa: F401
+from .console import ConsoleWidget  # noqa: F401
+from .thumbs import ThumbsWidget  # noqa: F401
+from .meta import MetaWidget  # noqa: F401

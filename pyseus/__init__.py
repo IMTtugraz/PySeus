@@ -27,7 +27,7 @@ Subpackages
 
 """
 
-from pyseus.settings import settings
-from pyseus.display import DisplayHelper
-from pyseus.core import PySeus
-from pyseus.__main__ import load
+from pyseus.settings import settings  # noqa: F401
+from pyseus.display import DisplayHelper  # noqa: F401
+from pyseus.core import PySeus  # noqa: F401
+from pyseus.__main__ import load  # noqa: F401
