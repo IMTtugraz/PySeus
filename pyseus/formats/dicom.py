@@ -5,8 +5,6 @@ from natsort import natsorted
 
 from .base import BaseFormat, LoadError
 
-from profilehooks import profile
-
 class DICOM(BaseFormat):
     """Support for DICOM files (Coming soon)."""
 

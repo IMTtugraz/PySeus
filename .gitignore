@@ -13,3 +13,6 @@ docs/build/*
 
 # Ignore local dev tools
 dev/*
+
+# Ignore local backups
+backup/*
