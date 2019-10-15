@@ -2,7 +2,7 @@ import os
 import numpy
 
 from PySide2.QtWidgets import QApplication, QMessageBox
-from PySide2.QtGui import QImage, QPixmap, QPainter, QColor, QPen
+from PySide2.QtGui import QFont, QImage, QPixmap, QPainter, QColor, QPen
 
 from pyseus import settings
 from pyseus import DisplayHelper
@@ -66,6 +66,11 @@ class PySeus(QApplication):
             "./ui/" + settings["app"]["style"] + ".qss"))
         with open(style_path, "r") as stylesheet:
             self.setStyleSheet(stylesheet.read())
+        
+        font = QFont()
+        font.setFamily(font.defaultFamily())
+        font.setPixelSize(12)
+        self.setFont(font)
 
         self.setup_functions_menu()
 
@@ -242,7 +247,10 @@ class PySeus(QApplication):
         
         try:
             self.slices = dataset.load_scan(self.scans[key])
-            self._set_current_slice(len(self.slices) // 2)
+
+            # make sure the new scan has enough slices
+            if self.current_slice >= len(self.slices):
+                self._set_current_slice(len(self.slices) // 2)
 
             self.metadata = dataset.load_metadata(self.scans[key])
             self.window.meta.update_meta(self.metadata, [])

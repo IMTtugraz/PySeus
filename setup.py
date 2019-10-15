@@ -21,6 +21,7 @@ setup(
         'numpy',
         'h5py',
         'pydicom',
+        'nibabel',
         'natsort'
     ],
     entry_points={
