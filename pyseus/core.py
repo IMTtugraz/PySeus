@@ -1,5 +1,6 @@
 import os
 import numpy
+import cv2
 
 from PySide2.QtWidgets import QApplication, QMessageBox
 from PySide2.QtGui import QFont, QImage, QPixmap, QPainter, QColor, QPen
@@ -7,7 +8,7 @@ from PySide2.QtGui import QFont, QImage, QPixmap, QPainter, QColor, QPen
 from pyseus import settings
 from pyseus import DisplayHelper
 from pyseus.ui import MainWindow
-from pyseus.formats import Raw, H5, DICOM, LoadError
+from pyseus.formats import Raw, H5, DICOM, NIfTI, LoadError
 from pyseus.functions import LineEval, RoIFct, StatsFct
 from pyseus.ui.meta import MetaWindow
 
@@ -19,7 +20,7 @@ class PySeus(QApplication):
 
         QApplication.__init__(self)
 
-        self.formats = [H5, DICOM, Raw]
+        self.formats = [H5, DICOM, NIfTI, Raw]
         """Holds all avaiable data formats."""
 
         self.functions = [RoIFct, StatsFct]
@@ -123,10 +124,10 @@ class PySeus(QApplication):
 
     def _generate_thumb(self, data):
         thumb_size = int(settings["ui"]["thumb_size"])
-        x_factor = data.shape[0] // thumb_size
-        y_factor = data.shape[1] // thumb_size
-        factor = max(x_factor, y_factor)
-        thumb_data = data[::factor, ::factor]
+        # x_factor = data.shape[0] // thumb_size
+        # y_factor = data.shape[1] // thumb_size
+        # factor = max(x_factor, y_factor)
+        thumb_data = cv2.resize(data, (thumb_size, thumb_size))
 
         self.display.setup_window(thumb_data)
         return self.display.prepare(thumb_data)
@@ -249,7 +250,7 @@ class PySeus(QApplication):
             self.slices = dataset.load_scan(self.scans[key])
 
             # make sure the new scan has enough slices
-            if self.current_slice >= len(self.slices):
+            if self.current_slice >= len(self.slices) or self.current_slice == -1:
                 self._set_current_slice(len(self.slices) // 2)
 
             self.metadata = dataset.load_metadata(self.scans[key])
