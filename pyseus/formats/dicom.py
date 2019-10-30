@@ -2,14 +2,16 @@ import pydicom
 import numpy
 import os
 from natsort import natsorted
+from PySide2.QtWidgets import QMessageBox
 
 from .base import BaseFormat, LoadError
 
 class DICOM(BaseFormat):
     """Support for DICOM files (Coming soon)."""
 
-    def __init__(self):
+    def __init__(self, app):
         BaseFormat.__init__(self)
+        self.app = app
 
     EXTENSIONS = (".dcm", ".DCM")
 
@@ -36,6 +38,15 @@ class DICOM(BaseFormat):
                 scans.append(d)
         
         current_scan = scans.index(os.path.basename(slice_level))
+
+        if len(scans) > 1:
+            load_all = QMessageBox.question(self.app.window, "Pyseus", 
+                "{} scans detected. Do you want to load all scans?".format(len(scans)))
+            
+            if load_all is QMessageBox.StandardButton.No:
+                scans = [scans[current_scan]]
+                current_scan = 0        
+        
         return self.scan_level, scans, current_scan
 
     def load_scan(self, key):
@@ -91,11 +102,32 @@ class DICOM(BaseFormat):
             raise LoadError("Couldn´t load metadata.")
 
         metadata = []
-        # for k in keys:
-        #     if hasattr(slice, k):
-        #         metadata.append (k, slice.data_element(k).value)
 
+        ignore = ["PixelData"]
         for e in slice:
-            metadata.append((e.description(), e.value))
+            if not e.keyword in ignore:
+                metadata.append((e.keyword, e.value))
         
         return metadata
+
+    def get_key_meta(self, keys=None, meta=None):
+        if meta is None: meta = self.load_metadata()
+
+        key_map = {
+            "test": "SpecificCharacterSet"
+        }
+
+        meta_set = []
+
+        if keys is None: keys = key_map.keys()
+        if isinstance(keys, str): keys = [keys]
+
+        for key in keys:
+            if key in key_map:
+                real_key = key_map[key]
+                for m in meta:
+                    if real_key == m[0]:
+                        meta_set.append((real_key, m[1]))
+                        break
+        
+        return meta_set

@@ -6,8 +6,9 @@ from .base import BaseFormat
 class Raw(BaseFormat):
     """Support for NumPy array data and files."""
 
-    def __init__(self):
+    def __init__(self, app):
         BaseFormat.__init__(self)
+        self.app = app
 
     @classmethod
     def check_file(cls, path):

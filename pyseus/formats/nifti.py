@@ -8,8 +8,9 @@ from .base import BaseFormat, LoadError
 class NIfTI():
     """Defines the basic functionality for file / data formats."""
 
-    def __init__(self):
-        pass
+    def __init__(self, app):
+        BaseFormat.__init__(self)
+        self.app = app
 
     EXTENSIONS = (".nii")
 

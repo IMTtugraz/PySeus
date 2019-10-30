@@ -5,7 +5,7 @@ import os
 
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QApplication, QDialog, QLabel, QLayout, \
-        QVBoxLayout, QDialogButtonBox, QListWidget, QListWidgetItem
+        QVBoxLayout, QDialogButtonBox, QMessageBox, QListWidget, QListWidgetItem
 
 from .base import BaseFormat, LoadError
 
@@ -13,8 +13,9 @@ from .base import BaseFormat, LoadError
 class H5(BaseFormat):
     """Support for HDF5 files."""
 
-    def __init__(self):
+    def __init__(self, app):
         BaseFormat.__init__(self)
+        self.app = app
 
     EXTENSIONS = (".h5", ".hdf5")
 
@@ -52,7 +53,7 @@ class H5(BaseFormat):
             elif self.dimensions == 4:  # multiple scans
                 return path, list(range(0, len(f[self.ds_path])-1)), 0
             elif self.dimensions == 5:
-                QMessageBox.warning(self.window, "Pyseus", 
+                QMessageBox.warning(self.app.window, "Pyseus", 
                     "The selected dataset ist 5-dimensional. The first two dimensions will be concatenated.")
                 scan_count = f[self.ds_path].shape[0]*f[self.ds_path].shape[1]
                 return path, list(range(0, scan_count-1)), 0

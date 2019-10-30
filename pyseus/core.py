@@ -89,7 +89,7 @@ class PySeus(QApplication):
         dataset = None
         for f in self.formats:
             if f.check_file(path):
-                dataset = f()
+                dataset = f(self)
                 break
         
         if not dataset is None:
@@ -254,7 +254,8 @@ class PySeus(QApplication):
                 self._set_current_slice(len(self.slices) // 2)
 
             self.metadata = dataset.load_metadata(self.scans[key])
-            self.window.meta.update_meta(self.metadata, [])
+            key_meta = dataset.get_key_meta(None, self.metadata)
+            self.window.meta.update_meta(key_meta, len(self.metadata) > 0)
 
             self.display.setup_window(self.slices[self.current_slice])
             self.refresh()
@@ -322,5 +323,5 @@ class PySeus(QApplication):
 
     def show_metadata_window(self):
         data = self.dataset.load_metadata(self.scans[self.current_scan])
-        meta_window = MetaWindow(self, data)
-        meta_window.exec()
+        self.meta_window = MetaWindow(self, data)
+        self.meta_window.show()

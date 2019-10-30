@@ -28,22 +28,22 @@ class MetaWidget(QScrollArea):
     def minimumSizeHint(self):
         return QSize(int(settings["ui"]["sidebar_size"]), 100)
 
-    def update_meta(self, data, keys=None):
+    def update_meta(self, data, more=True):
         self._reset_ui()
 
-        if len(data) == 0:
-            self.table.addRow("No metadata available", None)
-        elif keys == None:
+        if more:
             for d in data:
-                value = QLineEdit(str(d[1]))
-                self.table.addRow(d[0], value)
-        else:
-            for k in keys:
                 value = QLineEdit(str(d[1]))
                 self.table.addRow(d[0], value)
             moreLabel = QLabel("more ...")
             moreLabel.mouseReleaseEvent = self._show_more
             self.table.addRow(moreLabel, None)
+        elif len(data) == 0:
+            self.table.addRow("No metadata available", None)
+        else:
+            for d in data:
+                value = QLineEdit(str(d[1]))
+                self.table.addRow(d[0], value)
 
     def _show_more(self, event):
         self.app.show_metadata_window()
@@ -59,8 +59,8 @@ class MetaWindow(QDialog):
         self.setWindowModality(Qt.ApplicationModal) 
 
         self.setLayout(QVBoxLayout())
-        widget = MetaWidget(None)
-        widget.update_meta(data)
+        widget = MetaWidget(app)
+        widget.update_meta(data, False)
         widget.setSizePolicy(QSizePolicy.Policy.MinimumExpanding,
                              QSizePolicy.Policy.MinimumExpanding)
         self.layout().addWidget(widget)

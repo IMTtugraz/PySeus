@@ -24,6 +24,12 @@ class BaseFormat():
     def load_metadata(self, scan, keys=None):
         """..."""
         pass
+    
+    def get_key_meta(self, key, meta=None):
+        """..."""
+        pass
+
+
 
 class LoadError(Exception):
     """Raised when an error is encountered loading a file or scan."""

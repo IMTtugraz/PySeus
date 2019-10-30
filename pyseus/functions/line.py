@@ -28,33 +28,8 @@ class LineEval(BaseFct):
 
         self.window.load_data(result)
 
-        self.window.exec()
+        self.window.show()
         return ""
-
-
-class LineEvalChart(QtCharts.QChartView):
-    def __init__(self):
-        QtCharts.QChartView.__init__(self)
-        self.setRenderHint(QPainter.Antialiasing)
-    
-    def load_data(self, data):
-        chart = QtCharts.QChart()
-        series = QtCharts.QLineSeries()
-        for k, v in enumerate(data):
-            series.append(k,v)
-        series.setBrush(QBrush("red"))
-
-        chart.addSeries(series)
-        
-        series.setBrush(QBrush("red"))
-        
-        chart.setTheme(QtCharts.QChart.ChartThemeDark)
-        chart.setBackgroundVisible(False)
-        chart.setDropShadowEnabled(False)
-        chart.setMargins(QMargins())
-        chart.legend().hide()
-
-        self.setChart(chart)
 
 
 class LineEvalWindow(QDialog):
@@ -64,9 +39,27 @@ class LineEvalWindow(QDialog):
         self.setWindowTitle("Line Eval")
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
 
-        self.chart = LineEvalChart()
         self.setLayout(QVBoxLayout())
-        self.layout().addWidget(self.chart)
+
+        # Startup window size
+        self.resize(320, 320)
 
     def load_data(self, data):
-        self.chart.load_data(data)
+        if hasattr(self, "view"): self.view.deleteLater()
+
+        series = QtCharts.QLineSeries()
+        for k, v in enumerate(data):
+            series.append(k,v)
+
+        self.view = QtCharts.QChartView()
+        self.view.setRenderHint(QPainter.Antialiasing)
+        self.view.chart().addSeries(series)
+        self.view.chart().createDefaultAxes()
+        self.view.chart().setTheme(QtCharts.QChart.ChartThemeDark)
+        self.view.chart().setBackgroundVisible(False)
+        self.view.chart().setDropShadowEnabled(False)
+        self.view.chart().setMargins(QMargins())
+        self.view.chart().legend().hide()
+
+        self.layout().addWidget(self.view)
+        series.setColor(QColor("white"))
