@@ -7,7 +7,7 @@ from PySide2.QtWidgets import QMessageBox
 from .base import BaseFormat, LoadError
 
 class DICOM(BaseFormat):
-    """Support for DICOM files (Coming soon)."""
+    """Support for DICOM files."""
 
     def __init__(self, app):
         BaseFormat.__init__(self)

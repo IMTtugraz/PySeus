@@ -58,20 +58,14 @@ class PySeus(QApplication):
         self.current_slice = -1
         """Current Slice"""
 
-        self.current_rotation = [0,0,0]
-        """Current rotation status"""
-
         # Stylesheet
         style_path = os.path.abspath(os.path.join(
             os.path.dirname(__file__),
             "./ui/" + settings["app"]["style"] + ".qss"))
         with open(style_path, "r") as stylesheet:
             self.setStyleSheet(stylesheet.read())
-        
-        font = QFont()
-        font.setFamily(font.defaultFamily())
-        font.setPixelSize(12)
-        self.setFont(font)
+
+        self.font().setPixelSize(12)
 
         self.setup_functions_menu()
 
@@ -84,7 +78,10 @@ class PySeus(QApplication):
 
     def load_file(self, path):
         """Try to load file at `path`."""
-        self.deload()
+
+        if not os.path.exists():
+            QMessageBox.error(self.window, "Pyseus", 
+                "Path not found.")
 
         dataset = None
         for f in self.formats:
@@ -92,6 +89,8 @@ class PySeus(QApplication):
                 dataset = f(self)
                 break
         
+        self.deload()
+
         if not dataset is None:
             try:
                 self.path, self.scans, self.current_scan = dataset.load_file(path)

@@ -38,7 +38,7 @@ class MetaWidget(QScrollArea):
             moreLabel = QLabel("more ...")
             moreLabel.mouseReleaseEvent = self._show_more
             self.table.addRow(moreLabel, None)
-        elif len(data) == 0:
+        elif data is None or len(data) == 0:
             self.table.addRow("No metadata available", None)
         else:
             for d in data:
