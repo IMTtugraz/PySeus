@@ -1,35 +1,62 @@
+from functools import partial
+
 from PySide2.QtCore import Qt, QMargins
 from PySide2.QtCharts import QtCharts
-from PySide2.QtGui import QPen, QBrush, QPainter, QColor
+from PySide2.QtGui import QFont, QImage, QPixmap, QPainter, QColor, QPen
 from PySide2.QtWidgets import QApplication, QDialog, QLabel, QLayout, \
         QVBoxLayout, QDialogButtonBox, QTreeWidget, QTreeWidgetItem
 
-from .base import BaseFct
+from .base import BaseTool
 
 
-class LineEval(BaseFct):
-    """Displays the coordinates of the current RoI."""
+class LineTool(BaseTool):
+    """Evaluates data along a line."""
 
-    MENU_NAME = ""
+    def __init__(self, app):
+        BaseTool.__init__(self)
+        self.app = app
+        self.roi = [0,0,0,0]
+        self.window = LineEvalWindow()
+    
+    @classmethod
+    def setup_menu(cls, app, menu, ami):
+        ami(menu, "&Line Eval", partial(cls.start, app))
 
-    def __init__(self):
-        BaseFct.__init__(self)
-        self.window = None
+    def start_roi(self, x, y):
+        self.roi[0] = x
+        self.roi[1] = y
+    
+    def end_roi(self, x, y):
+        self.roi[2] = x
+        self.roi[3] = y
 
-    def recalculate(self, data, roi):
-        if self.window == None:
-            self.window = LineEvalWindow()
+    def draw_overlay(self, pixmap):
+        if self.roi == [0,0,0,0]: return pixmap
 
+        painter = QPainter(pixmap)
+
+        pen = QPen(QColor("green"))
+        pen.setWidth(1)
+        painter.setPen(pen)
+        painter.drawLine(self.roi[0], self.roi[1], self.roi[2], 
+                         self.roi[3])
+
+        painter.end()
+        return pixmap
+
+    def clear(self):
+        self.roi = None
+
+    def recalculate(self, data):
         result = []
         for i in range(0, 100):
-            x = round(roi[0] + (roi[2]-roi[0])*i/100)
-            y = round(roi[1] + (roi[3]-roi[1])*i/100)
+            x = round(self.roi[0] + (self.roi[2]-self.roi[0])*i/100)
+            y = round(self.roi[1] + (self.roi[3]-self.roi[1])*i/100)
             result.append(data[y][x])
 
         self.window.load_data(result)
 
         self.window.show()
-        return ""
 
 
 class LineEvalWindow(QDialog):

@@ -107,16 +107,18 @@ class ViewWidget(QScrollArea):
                 else self.view.width()
             y_pos = event.pos().y() if event.pos().y() <= self.view.height() \
                 else self.view.height()
-            self.app.roi[2] = int(x_pos / self.zoom_factor)
-            self.app.roi[3] = int(y_pos / self.zoom_factor)
+            if not self.app.tool is None:
+                self.app.tool.end_roi( int(x_pos / self.zoom_factor),
+                    int(y_pos / self.zoom_factor) )
             self.app.refresh()
 
     def _view_mousePressEvent(self, event):
         if(event.buttons() == QtCore.Qt.LeftButton and event.modifiers() == Qt.ControlModifier):
             self.mouse_action = "ROI"
             self.last_position = event.pos()
-            self.app.roi[0] = int(event.pos().x() / self.zoom_factor)
-            self.app.roi[1] = int(event.pos().y() / self.zoom_factor)
+            if not self.app.tool is None:
+                self.app.tool.start_roi( int(event.pos().x() / self.zoom_factor),
+                    int(event.pos().y() / self.zoom_factor))
 
         else:
             self.mousePressEvent(event)

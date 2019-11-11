@@ -9,7 +9,7 @@ from pyseus import settings
 from pyseus import DisplayHelper
 from pyseus.ui import MainWindow
 from pyseus.formats import Raw, H5, DICOM, NIfTI, LoadError
-from pyseus.functions import LineEval, RoIFct, StatsFct
+from pyseus.tools import AreaTool, LineTool
 from pyseus.ui.meta import MetaWindow
 
 class PySeus(QApplication):
@@ -23,19 +23,14 @@ class PySeus(QApplication):
         self.formats = [H5, DICOM, NIfTI, Raw]
         """Holds all avaiable data formats."""
 
-        self.functions = [RoIFct, StatsFct]
-        """Holds all avaiable RoI evaluation functions."""
+        self.tools = [AreaTool, LineTool]
+        """Holds all avaiable evaluation tools."""
 
         self.dataset = None
         """dataset"""
 
-        self.function = self.functions[0]()
-        """Function"""
-
-        self.roi = [0, 0, 0, 0]
-        """Region of Interest"""
-
-        self.roi_mode = 0
+        self.tool = None
+        """Tool"""
 
         self.window = MainWindow(self)
         """Window"""
@@ -67,19 +62,12 @@ class PySeus(QApplication):
 
         self.font().setPixelSize(12)
 
-        self.setup_functions_menu()
-
         self.window.show()
-
-    def setup_functions_menu(self):
-        """Add functions to main windows `Evals` menu."""
-        for key, function in enumerate(self.functions):
-            self.window.add_function_to_menu(key, function)
 
     def load_file(self, path):
         """Try to load file at `path`."""
 
-        if not os.path.exists():
+        if not os.path.exists(path):
             QMessageBox.error(self.window, "Pyseus", 
                 "Path not found.")
 
@@ -123,9 +111,6 @@ class PySeus(QApplication):
 
     def _generate_thumb(self, data):
         thumb_size = int(settings["ui"]["thumb_size"])
-        # x_factor = data.shape[0] // thumb_size
-        # y_factor = data.shape[1] // thumb_size
-        # factor = max(x_factor, y_factor)
         thumb_data = cv2.resize(data, (thumb_size, thumb_size))
 
         self.display.setup_window(thumb_data)
@@ -183,21 +168,8 @@ class PySeus(QApplication):
                        QImage.Format_Grayscale8)
         pixmap = QPixmap.fromImage(image)
 
-        if self.roi != [0, 0, 0, 0]:
-            painter = QPainter(pixmap)
-            if self.roi_mode == 0:
-                pen = QPen(QColor("red"))
-                pen.setWidth(1)
-                painter.setPen(pen)
-                painter.drawRect(self.roi[0], self.roi[1], self.roi[2]
-                                 - self.roi[0], self.roi[3] - self.roi[1])
-            elif self.roi_mode == 1:
-                pen = QPen(QColor("green"))
-                pen.setWidth(1)
-                painter.setPen(pen)
-                painter.drawLine(self.roi[0], self.roi[1], self.roi[2], 
-                                 self.roi[3])
-            painter.end()
+        if not self.tool is None:
+            pixmap = self.tool.draw_overlay(pixmap)
 
         self.window.view.set(pixmap)
 
@@ -212,35 +184,9 @@ class PySeus(QApplication):
         self.window.statusBar().showMessage(message)
 
     def recalculate(self):
-        """Recalculate the current RoI-function."""
-        if self.roi != [0, 0, 0, 0]:
-            if self.roi_mode == 0:  # area eval
-                result = self.function.recalculate(self.slices[self.current_slice],
-                                                   self.roi)
-                self.window.console.print(result)
-            
-            elif self.roi_mode == 1:  # line eval
-                data = self.function.recalculate(self.slices[self.current_slice],
-                                                 self.roi)
-                self.window.console.print(data)
-
-    def set_function(self, key):
-        """Set the RoI-function with the slug `key` as current."""
-        self.function = self.functions[key]()
-        self.recalculate()
-    
-    def set_roi_mode(self, mode):
-        if mode == 0:
-            self.clear_roi()
-            self.roi_mode = 0
-            self.set_function(0)
-
-        elif mode == 1:
-            self.clear_roi()
-            self.roi_mode = 1
-            self.function = LineEval()
-            self.recalculate()
-
+        """Recalculate the current function."""
+        if not self.tool is None:
+            self.tool.recalculate(self.slices[self.current_slice])
 
     def _load_scan(self, key, dataset=None):
         dataset = self.dataset if dataset is None else dataset
@@ -314,11 +260,10 @@ class PySeus(QApplication):
         if refresh:
             self.refresh()
             self.window.view.zoom_fit()
-            self.clear_roi()
+            self.tool.clear()
     
     def clear_roi(self):
-        self.roi = [0, 0, 0, 0]
-        self.refresh()
+        if not self.tool is None: self.tool.clear()
 
     def show_metadata_window(self):
         data = self.dataset.load_metadata(self.scans[self.current_scan])

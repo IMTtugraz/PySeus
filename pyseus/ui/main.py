@@ -121,14 +121,10 @@ class MainWindow(QMainWindow):
         ami(self.explore_menu, "Previous Sc&an", partial(self._action_scan, -1), "Alt+PgDown")
 
         self.functions_menu = menu_bar.addMenu("&Evaluate")
-        ami(self.functions_menu, "&Area Eval", partial(self._action_roi_mode, 0), "1")
-        ami(self.functions_menu, "&Line Eval", partial(self._action_roi_mode, 1), "2")
+        for f in self.app.tools:
+            f.setup_menu(self.app, self.functions_menu, self.add_menu_item)
         self.functions_menu.addSeparator()
         ami(self.functions_menu, "&Clear RoI", self._action_roi_clear, "Esc")
-        self.functions_menu.addSeparator()
-
-        # Functions menu is built in app.setup_functions_menu
-        # by calling add_function_to_menu
 
         # About action is its own top level menu
         ami(menu_bar, "&About", self._action_about)
