@@ -1,5 +1,5 @@
-Application
-===========
+Core
+====
 
 Public functions
 ----------------

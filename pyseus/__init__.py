@@ -1,7 +1,7 @@
-"""PySeus is a minimal viewer for medical imaging data.
+"""PySeus is a simple viewer for MRI imaging data.
 
-Version: 0.1 (Alpha)
-License: GNU General Public License
+Version: 1.0
+License: MIT License
 
 
 Methods

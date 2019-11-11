@@ -7,18 +7,18 @@ PySeus is a simple viewer for MRI data written in Python.
    :maxdepth: 1
    :caption: Using PySeus
 
-   installation
-   startup
-   navigating
-   evaluating
+   usage/installation
+   12-startup
+   13-navigation
+   14-tools
 
 .. toctree::
    :maxdepth: 1
    :caption: Development
 
-   development
-   application
-   formats
-   display
-   functions
-   interface
+   21-development
+   22-application
+   23-formats
+   24-display
+   25-functions
+   26-interface

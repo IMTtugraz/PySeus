@@ -1,3 +1,6 @@
+# Contains test cases for the pyseus UI modules.
+# @see Testing in the documentation for conventions.
+
 from context import pyseus
 
 
