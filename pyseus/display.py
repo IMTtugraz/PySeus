@@ -6,7 +6,9 @@ from pyseus import settings
 class DisplayHelper():
     """A collection of display helper functions."""
 
-    def __init__(self):
+    def __init__(self, app):
+        self.app = app
+        
         self.mode = 0
         """Amplitude or Phase"""
     
@@ -55,3 +57,7 @@ class DisplayHelper():
         """Move the window up / down and shrink / widen simultaneously."""
         self.move_window(move)
         self.scale_window(scale)
+
+    def set_mode(self, mode):
+        self.mode = mode
+        self.app.refresh()

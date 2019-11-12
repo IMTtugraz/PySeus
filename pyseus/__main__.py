@@ -11,7 +11,7 @@ def load(arg=None):
     if len(argv) > 1 and arg is None:
         arg = argv[1]
 
-    if isinstance(arg, str):  # and path.isfile(arg):
+    if isinstance(arg, str):
         app.load_file(arg)
 
     elif not arg == None:

@@ -1,24 +1,49 @@
-QMenuBar { background: #000; color: #ddd; }
-QMenuBar::item { padding: 5px 10px 5px 10px; }
-QMenuBar::item:selected { background: #222; }
-QMenu { background: #222; color: #eee; padding: 0px; }
-QMenu::item { padding: 5px 10px 5px 10px; }
-QMenu::item:selected { background: #333; }
-
 QMainWindow, QDialog {
     background: #000;
 }
 QFrame {
     background: transparent;
 }
+QStatusBar {
+    background: #000;
+    color: #eee;
+}
 
+
+QMenuBar {
+    background: #000;
+    color: #ddd;
+}
+QMenuBar::item {
+    padding: 5px 10px 5px 10px;
+}
+QMenuBar::item:selected {
+    background: #222;
+}
+
+QMenu {
+    background: #222;
+    color: #eee;
+    padding: 0px;
+}
+QMenu::item {
+    padding: 5px 10px 5px 10px;
+}
+QMenu::item:selected {
+    background: #333;
+}
+
+
+QLabel {
+    background: transparent;
+    color: #888;
+}
 QTextEdit {
     border: none;
     color: #aaa;
     selection-background-color: #aaa;
     selection-color: #111;
 }
-
 QLineEdit {
     background: transparent;
     border: none;
@@ -26,7 +51,6 @@ QLineEdit {
     selection-background-color: #aaa;
     selection-color: #111;
 }
-
 QListWidget {
     color: #aaa;
     border: none;
@@ -52,14 +76,14 @@ QPushButton:hover {
     background: #222;
 }
 
+
 QScrollArea {
     background: transparent;
     border: none;
 }
-
 QScrollBar:horizontal {
     background: transparent;
-    height: 8px;
+    height: 10px;
     margin: 2px 10px 2px 10px;
 }
 QScrollBar::handle:horizontal {
@@ -70,10 +94,9 @@ QScrollBar::handle:horizontal {
 QScrollBar::handle:horizontal:hover {
     background-color: #ccc;
 }
-
 QScrollBar:vertical {
     background: transparent;
-    width: 8px;
+    width: 10px;
     margin: 10px 2px 10px 2px;
 }
 QScrollBar::handle:vertical {
@@ -85,33 +108,21 @@ QScrollBar::handle:vertical:hover {
     background-color: #ccc;
 }
 
-QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
+QScrollBar::add-line:horizontal,
+QScrollBar::sub-line:horizontal {
     width: 0;
 }
-QScrollBar::add-line:vertical,QScrollBar::sub-line:vertical {
+QScrollBar::add-line:vertical,
+QScrollBar::sub-line:vertical {
     height: 0;
 }
-QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal,
-QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+QScrollBar::add-page:horizontal,
+QScrollBar::sub-page:horizontal,
+QScrollBar::add-page:vertical,
+QScrollBar::sub-page:vertical {
     background: none;
 }
 
-QLabel {
-    background: transparent;
-    color: #888;
-}
-
-QLabel[role="current_scan"] {
-    border: 1px solid red;
-}
-
-QSpinBox {
-    background: transparent;
-    border: none;
-    color: #aaa;
-    selection-background-color: #aaa;
-    selection-color: #111;
-}
 
 QLabel[role="widget_heading"] {
     color: #aaa;
@@ -124,18 +135,6 @@ QLabel[role="widget_heading__first"] {
     font-weight: bold;
     border-bottom: 1px solid #333;
 }
-
 QLabel[role="scan_thumb"] {
     border: 1px solid transparent;
 }
-
-QStatusBar {
-    background: #000;
-    color: #eee;
-}
-
-
-QDockWidget, QDockWidget::title {
-    background: #000;
-}
-QDockWidget { border: 1px solid #111 }

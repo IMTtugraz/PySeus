@@ -30,7 +30,6 @@ class BaseFormat():
         pass
 
 
-
 class LoadError(Exception):
     """Raised when an error is encountered loading a file or scan."""
     pass

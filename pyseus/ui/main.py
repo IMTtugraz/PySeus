@@ -181,10 +181,7 @@ class MainWindow(QMainWindow):
         self.app.refresh()
 
     def _action_mode(self, mode):
-        self.app.set_mode(mode)
-
-    def _action_set_function(self, key):
-        self.app.set_function(key)
+        self.app.display.set_mode(mode)
 
     def _action_slice(self, step):
         self.app.select_slice(step, True)
@@ -197,9 +194,6 @@ class MainWindow(QMainWindow):
         y_factor = event.size().height() / event.oldSize().height()
         self.view.zoom(x_factor, True)
         # @TODO x_factor if xf < yf or xf * width * zoom_factor < viewport_x
-
-    def _action_roi_mode(self, mode):
-        self.app.set_roi_mode(mode)
 
     def _action_roi_clear(self):
         self.app.clear_roi()

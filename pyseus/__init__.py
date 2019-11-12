@@ -21,9 +21,7 @@ Subpackages
 
 **Formats** - Contains classes modeling different data sources.
 
-**Modes** - Contains classes modeling different ways to display data.
-
-**Functions** - Contains classes for evaluating datasets.
+**Tools** - Contains classes for evaluating datasets.
 
 """
 

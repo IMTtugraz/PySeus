@@ -27,7 +27,7 @@ class PySeus(QApplication):
         """Holds all avaiable evaluation tools."""
 
         self.dataset = None
-        """dataset"""
+        """Dataset"""
 
         self.tool = None
         """Tool"""
@@ -35,7 +35,7 @@ class PySeus(QApplication):
         self.window = MainWindow(self)
         """Window"""
 
-        self.display = DisplayHelper()
+        self.display = DisplayHelper(self)
         """DisplayHelper"""
 
         self.path = ""
@@ -53,10 +53,13 @@ class PySeus(QApplication):
         self.current_slice = -1
         """Current Slice"""
 
+        self.metadata = []
+        """Metadata"""
+
         # Stylesheet
         style_path = os.path.abspath(os.path.join(
             os.path.dirname(__file__),
-            "./ui/" + settings["app"]["style"] + ".qss"))
+            "./ui/" + settings["ui"]["style"] + ".qss"))
         with open(style_path, "r") as stylesheet:
             self.setStyleSheet(stylesheet.read())
 
@@ -66,10 +69,6 @@ class PySeus(QApplication):
 
     def load_file(self, path):
         """Try to load file at `path`."""
-
-        if not os.path.exists(path):
-            QMessageBox.error(self.window, "Pyseus", 
-                "Path not found.")
 
         dataset = None
         for f in self.formats:
@@ -266,6 +265,5 @@ class PySeus(QApplication):
         if not self.tool is None: self.tool.clear()
 
     def show_metadata_window(self):
-        data = self.dataset.load_metadata(self.scans[self.current_scan])
-        self.meta_window = MetaWindow(self, data)
+        self.meta_window = MetaWindow(self, self.metadata)
         self.meta_window.show()
