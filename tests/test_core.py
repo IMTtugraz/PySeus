@@ -4,5 +4,5 @@
 import numpy
 import os
 
-from context import pyseus, app
-
+def test_core():
+    assert True
