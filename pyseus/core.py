@@ -15,7 +15,7 @@ from pyseus.ui.meta import MetaWindow
 class PySeus(QApplication):
     """The main application class acts as controller."""
 
-    def __init__(self):
+    def __init__(self, show_ui=True):
         """Setup the GUI and default values."""
 
         QApplication.__init__(self)
@@ -65,7 +65,8 @@ class PySeus(QApplication):
 
         self.font().setPixelSize(12)
 
-        self.window.show()
+        if show_ui:
+            self.window.show()
 
     def load_file(self, path):
         """Try to load file at `path`."""
@@ -119,7 +120,7 @@ class PySeus(QApplication):
         """Try to load `data`."""
         self.deload()
 
-        dataset = Raw()
+        dataset = Raw(self)
         
         try:
             self.path, self.scans, self.current_scan = dataset.load_data(data)
@@ -198,7 +199,7 @@ class PySeus(QApplication):
                 self._set_current_slice(len(self.slices) // 2)
 
             self.metadata = dataset.load_metadata(self.scans[key])
-            key_meta = dataset.get_key_meta(None, self.metadata)
+            key_meta = dataset.get_metadata()
             self.window.meta.update_meta(key_meta, len(self.metadata) > 0)
 
             self.display.setup_window(self.slices[self.current_slice])

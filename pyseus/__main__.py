@@ -14,7 +14,7 @@ def load(arg=None):
     if isinstance(arg, str):
         app.load_file(arg)
 
-    elif not arg == None:
+    elif isinstance(arg, numpy.ndarray):
         app.load_data(arg)
 
     return app.exec_()
