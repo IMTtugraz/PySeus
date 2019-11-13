@@ -29,12 +29,12 @@ class InfoWidget(QFrame):
         self.layout().addWidget(info)
 
         self.setSizePolicy(QSizePolicy.Policy.Fixed,
-                           QSizePolicy.Policy.MinimumExpanding)
+                           QSizePolicy.Policy.Fixed)
 
         self.updateGeometry()
 
     def minimumSizeHint(self):
-        return QSize(int(settings["ui"]["sidebar_size"]), 100)
+        return QSize(int(settings["ui"]["sidebar_size"]), 80)
 
     def update_slice(self, current, max):
         self.current_slice.setText("{} / {}".format(current+1, max))

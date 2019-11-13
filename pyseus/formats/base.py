@@ -21,11 +21,15 @@ class BaseFormat():
         """Attempt to load the thumbnail for scan `scan`."""
         pass
     
-    def load_metadata(self, scan, keys=None):
+    def load_metadata(self, scan):
         """..."""
         pass
     
-    def get_key_meta(self, key, meta=None):
+    def get_metadata(self, keys=None):
+        """..."""
+        pass
+    
+    def get_pixel_spacing(axis=None):
         """..."""
         pass
 

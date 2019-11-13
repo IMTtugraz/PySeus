@@ -68,9 +68,9 @@ class DICOM(BaseFormat):
         slice_data = []
         for s in slices:
             if "PixelData" in s:
-                slice_data.append(numpy.asarray(s.pixel_array))
+                slice_data.append(s.pixel_array)
         
-        return slice_data
+        return numpy.asarray(slice_data)
 
     def load_scan_thumb(self, key):
         slices = []
@@ -89,8 +89,7 @@ class DICOM(BaseFormat):
 
         return numpy.asarray(thumb_slice.pixel_array)
 
-    def load_metadata(self, scan, keys=None):
-        slices = []
+    def load_metadata(self, scan):
         slice = None
         scan_dir = os.path.join(self.scan_level, scan)
         for f in os.listdir(scan_dir):
@@ -101,33 +100,55 @@ class DICOM(BaseFormat):
         if slice == None:
             raise LoadError("Couldn´t load metadata.")
 
-        metadata = []
+        metadata = {}
 
         ignore = ["PixelData"]
         for e in slice:
-            if not e.keyword in ignore:
-                metadata.append((e.keyword, e.value))
+            if not e.keyword in ignore and not e.keyword == "":
+                metadata[e.keyword] = e.value
         
         return metadata
 
-    def get_key_meta(self, keys=None, meta=None):
-        if meta is None: meta = self.load_metadata()
+    def get_metadata(self, keys=None):
+        if self.app.metadata is None:
+            self.app.metadata = self.load_metadata()
+        meta = self.app.metadata
 
         key_map = {
-            "test": "SpecificCharacterSet"
+            "pys:patient": "PatientName",
+            "pys:series": "SeriesDescription",
+            "pys:sequence": "SequenceName",
+            "pys:matrix": "AcquisitionMatrix",
+            "pys:tr": "RepetitionTime",
+            "pys:te": "EchoTime",
+            "pys:alpha": "FlipAngle"
         }
 
-        meta_set = []
+        # keys starting with "_" are ignored unless specificially requested
+        if keys is None: keys = [k for k in key_map.keys() if k[0] != "_"]
 
-        if keys is None: keys = key_map.keys()
         if isinstance(keys, str): keys = [keys]
 
+        meta_set = {}
         for key in keys:
             if key in key_map:
                 real_key = key_map[key]
-                for m in meta:
-                    if real_key == m[0]:
-                        meta_set.append((real_key, m[1]))
-                        break
-        
+                if real_key in meta.keys():
+                    meta_set[real_key] = meta[real_key]
+            else:
+                if key in meta.keys():
+                    meta_set[key] = meta[key]
+
         return meta_set
+    
+    def get_pixel_spacing(axis=None):
+        if self.app.metadata is None:
+            self.app.metadata = self.load_metadata()
+        meta = self.app.metadata
+
+        pixel_spacing = [1,1,1]
+        if "PixelSpacing" in meta.keys():
+            pass
+    
+    def get_orientation():
+        pass

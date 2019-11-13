@@ -78,14 +78,50 @@ class H5(BaseFormat):
             scan = f[self.ds_path][scan]
             return numpy.asarray(scan[len(scan) // 2])
     
-    def load_metadata(self, scan, keys=None):
-        metadata = []
+    def load_metadata(self, scan):
+        metadata = {}
         
         with h5py.File(self.path, "r") as f:
             for a in f[self.ds_path].attrs:
-                metadata.append((a[0], a[1]))
+                metadata[a[0]] = a[1]
         
         return metadata
+
+    def get_metadata(self, keys=None):
+        if self.app.metadata is None:
+            self.app.metadata = self.load_metadata()
+        meta = self.app.metadata
+
+        key_map = {
+            "pys:patient": "PatientName",
+            "pys:series": "SeriesDescription",
+            "pys:sequence": "SequenceName",
+            "pys:matrix": "AcquisitionMatrix",
+            "pys:tr": "RepetitionTime",
+            "pys:te": "EchoTime",
+            "pys:alpha": "FlipAngle"
+        }
+
+        # keys starting with "_" are ignored unless specificially requested
+        if keys is None: keys = [k for k in key_map.keys() if k[0] != "_"]
+
+        if isinstance(keys, str): keys = [keys]
+
+        meta_set = {}
+        for key in keys:
+            if key in key_map:
+                real_key = key_map[key]
+                if real_key in meta.keys():
+                    meta_set[real_key] = meta[real_key]
+            else:
+                if key in meta.keys():
+                    meta_set[key] = meta[key]
+
+        return meta_set
+    
+    def get_pixel_spacing(axis=None):
+        meta = self.app.metadata
+        
 
 
 class H5Explorer(QDialog):

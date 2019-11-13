@@ -30,20 +30,18 @@ class MetaWidget(QScrollArea):
 
     def update_meta(self, data, more=True):
         self._reset_ui()
+        
+        if not data is None and len(data) > 0:
+            for k in sorted(data.keys()):
+                value = QLineEdit(str(data[k]))
+                self.table.addRow(k, value)
 
         if more:
-            for d in data:
-                value = QLineEdit(str(d[1]))
-                self.table.addRow(d[0], value)
             moreLabel = QLabel("more ...")
             moreLabel.mouseReleaseEvent = self._show_more
             self.table.addRow(moreLabel, None)
         elif data is None or len(data) == 0:
             self.table.addRow("No metadata available", None)
-        else:
-            for d in data:
-                value = QLineEdit(str(d[1]))
-                self.table.addRow(d[0], value)
 
     def _show_more(self, event):
         self.app.show_metadata_window()
@@ -56,7 +54,6 @@ class MetaWindow(QDialog):
         QDialog.__init__(self)
         self.setWindowTitle("Metadata")
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
-        self.setWindowModality(Qt.ApplicationModal) 
 
         self.setLayout(QVBoxLayout())
         widget = MetaWidget(app)

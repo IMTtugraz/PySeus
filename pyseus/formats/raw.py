@@ -52,5 +52,5 @@ class Raw(BaseFormat):
             q, r = divmod(scan, self.data.shape[1])
             return numpy.asarray(self.data[q][r])
 
-    def load_metadata(self, scan, keys=None):
-        pass
+    def load_metadata(self, scan):
+        return {}
