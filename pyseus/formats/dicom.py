@@ -141,14 +141,19 @@ class DICOM(BaseFormat):
 
         return meta_set
     
-    def get_pixel_spacing(axis=None):
+    def get_spacing(self, axis=None):
         if self.app.metadata is None:
             self.app.metadata = self.load_metadata()
         meta = self.app.metadata
 
         pixel_spacing = [1,1,1]
         if "PixelSpacing" in meta.keys():
-            pass
+            pixel_spacing = meta["PixelSpacing"]
+        
+        return pixel_spacing
     
-    def get_orientation():
+    def get_scale(self):
+        pass
+
+    def get_orientation(self):
         pass

@@ -29,7 +29,7 @@ class BaseFormat():
         """..."""
         pass
     
-    def get_pixel_spacing(axis=None):
+    def get_spacing(axis=None):
         """..."""
         pass
 

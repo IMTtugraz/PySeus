@@ -11,7 +11,6 @@ from .view import ViewWidget
 from .console import ConsoleWidget
 from .info import InfoWidget
 from .thumbs import ThumbsWidget
-from .overlay import OverlayWidget
 from .meta import MetaWidget
 
 

@@ -15,7 +15,7 @@ from pyseus.ui.meta import MetaWindow
 class PySeus(QApplication):
     """The main application class acts as controller."""
 
-    def __init__(self, show_ui=True):
+    def __init__(self):
         """Setup the GUI and default values."""
 
         QApplication.__init__(self)
@@ -53,7 +53,7 @@ class PySeus(QApplication):
         self.current_slice = -1
         """Current Slice"""
 
-        self.metadata = []
+        self.metadata = None
         """Metadata"""
 
         # Stylesheet
@@ -65,8 +65,7 @@ class PySeus(QApplication):
 
         self.font().setPixelSize(12)
 
-        if show_ui:
-            self.window.show()
+        self.window.show()
 
     def load_file(self, path):
         """Try to load file at `path`."""
