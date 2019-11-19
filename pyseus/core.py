@@ -20,14 +20,14 @@ class PySeus(QApplication):
 
         QApplication.__init__(self)
 
+        self.dataset = None
+        """Dataset"""
+
         self.formats = [H5, DICOM, NIfTI, Raw]
         """Holds all avaiable data formats."""
 
         self.tools = [AreaTool, LineTool]
         """Holds all avaiable evaluation tools."""
-
-        self.dataset = None
-        """Dataset"""
 
         self.tool = None
         """Tool"""
@@ -38,27 +38,11 @@ class PySeus(QApplication):
         self.display = DisplayHelper(self)
         """DisplayHelper"""
 
-        self.path = ""
-        """Path"""
-
-        self.scans = []
-        """Scans"""
-
-        self.current_scan = -1
-        """Current Scan"""
-
-        self.slices = []
-        """Slices"""
-
-        self.current_slice = -1
+        self.slice = -1
         """Current Slice"""
 
-        self.metadata = None
-        """Metadata"""
-
         # Stylesheet
-        style_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__),
+        style_path = os.path.abspath(os.path.join(os.path.dirname(__file__),
             "./ui/" + settings["ui"]["style"] + ".qss"))
         with open(style_path, "r") as stylesheet:
             self.setStyleSheet(stylesheet.read())
@@ -72,70 +56,63 @@ class PySeus(QApplication):
 
         dataset = None
         for f in self.formats:
-            if f.check_file(path):
-                dataset = f(self)
+            if f.can_handle(path):
+                dataset = f()
                 break
-        
-        self.deload()
 
         if not dataset is None:
             try:
-                self.path, self.scans, self.current_scan = dataset.load_file(path)
-                if self.path == "": return
+                if not dataset.load_file(path):  # canceled by user
+                    return
 
-                if len(self.scans) > 1:
+                # @TODO refactor ?!? --> DRY with load_data
+                if len(dataset.scans) > 1:
                     self.window.thumbs.clear()
-                    for s in self.scans:
-                        thumb = self._generate_thumb(
-                            dataset.load_scan_thumb(s))
+                    for s in dataset.scans:
+                        thumb = self.display.generate_thumb(
+                            dataset.get_thumbnail(s))
                         self.window.thumbs.add_thumb(thumb)
 
-                self._load_scan(self.current_scan,  dataset)
+                self.clear()
+                self.dataset = dataset
+
+                self._load_scan(self.current_scan, dataset)
                 self._set_current_scan(self.current_scan)
         
                 self.window.info.update_path(self.path)
 
-                self.dataset = dataset
-
             except OSError as e:
-                QMessageBox.warning(self.window, "Pyseus", 
-                    str(e))
+                QMessageBox.warning(self.window, "Pyseus", str(e))
+
             except LoadError as e:
-                QMessageBox.warning(self.window, "Pyseus", 
-                    e)
+                QMessageBox.warning(self.window, "Pyseus", str(e))
 
         else:
-            QMessageBox.warning(self.window, "Pyseus", 
-                "Unknown file format.")
+            QMessageBox.warning(self.window, "Pyseus", "Unknown file format.")
 
-    def _generate_thumb(self, data):
-        thumb_size = int(settings["ui"]["thumb_size"])
-        thumb_data = cv2.resize(data, (thumb_size, thumb_size))
-
-        self.display.setup_window(thumb_data)
-        return self.display.prepare(thumb_data)
 
     def load_data(self, data):
         """Try to load `data`."""
-        self.deload()
 
         dataset = Raw(self)
         
         try:
-            self.path, self.scans, self.current_scan = dataset.load_data(data)
-            if self.path == "": return
+            if not dataset.load_data(data):  # canceled by user
+                return
 
+            # @TODO refactor ?!?
             if len(self.scans) > 1:
                 self.window.thumbs.clear()
                 for s in self.scans:
-                    thumb = self._generate_thumb(
-                        dataset.load_scan_thumb(s))
+                    thumb = self.display.generate_thumb(
+                        dataset.get_thumbnail(s))
                     self.window.thumbs.add_thumb(thumb)
-
-            self._load_scan(self.current_scan,  dataset)
-            self._set_current_scan(self.current_scan)
-
+            
+            self.clear()
             self.dataset = dataset
+
+            self._load_scan(self.current_scan, dataset)
+            self._set_current_scan(self.current_scan)
         
             self.window.info.update_path(self.path)
 
@@ -146,31 +123,23 @@ class PySeus(QApplication):
             QMessageBox.warning(self.window, "Pyseus", 
                 e)
 
-    def deload(self):
+    def clear(self):
         self.dataset = None
-        self.scans = []
-        self.current_scan = -1
-        self.slices = []
-        self.current_slice = -1
+        self.slice = -1
         self.window.view.set(None)
         self.window.thumbs.clear()
-        self.clear_roi()
+        self.clear_tool()
 
     def refresh(self):
         """Refresh the displayed image."""
-        if self.current_slice == -1: return
+        if self.slice == -1: return
 
-        tmp = self.display.prepare(self.slices[self.current_slice].copy())
-
-        image = QImage(tmp.data, tmp.shape[1],
-                       tmp.shape[0], tmp.strides[0],
-                       QImage.Format_Grayscale8)
-        pixmap = QPixmap.fromImage(image)
+        pixmap = self.display.get_pixmap(dataset.pixeldata(self.slice))
 
         if not self.tool is None:
             pixmap = self.tool.draw_overlay(pixmap)
 
-        self.window.view.set(pixmap)
+        self.window.view.set(pixmap) # @TODO Refactor ?!?
 
     def set_mode(self, mode):
         """Set the mode with the slug `mode` as current."""
@@ -185,33 +154,25 @@ class PySeus(QApplication):
     def recalculate(self):
         """Recalculate the current function."""
         if not self.tool is None:
-            self.tool.recalculate(self.slices[self.current_slice])
+            self.tool.recalculate(self.slices[self.slice])
 
-    def _load_scan(self, key, dataset=None):
-        dataset = self.dataset if dataset is None else dataset
-        
-        try:
-            self.slices = dataset.load_scan(self.scans[key])
+    def _load_scan(self, key):
+        pixeldata = self.dataset.pixeldata
+        # make sure the new scan has enough slices
+        if self.slice >= len(pixeldata) or self.slice == -1:
+            self._set_current_slice(len(pixeldata) // 2)
 
-            # make sure the new scan has enough slices
-            if self.current_slice >= len(self.slices) or self.current_slice == -1:
-                self._set_current_slice(len(self.slices) // 2)
+        self.window.meta.update_meta(dataset.metadata(), 
+            len(self.dataset.metadata) > 0)
 
-            self.metadata = dataset.load_metadata(self.scans[key])
-            key_meta = dataset.get_metadata()
-            self.window.meta.update_meta(key_meta, len(self.metadata) > 0)
-
-            self.display.setup_window(self.slices[self.current_slice])
-            self.refresh()
-            self.window.view.zoom_fit()
-        except LoadError as e:
-            QMessageBox.warning(self.window, "Pyseus", 
-                e)
+        self.display.setup_window(pixeldata[self.slice])
+        self.refresh()
+        self.window.view.zoom_fit()
 
     def select_slice(self, sid, relative=False):
-        if self.path == "": return
+        if self.dataset is None: return
 
-        new_slice = self.current_slice + sid if relative == True else sid
+        new_slice = self.slice + sid if relative == True else sid
         if 0 <= new_slice < len(self.slices):
             self._set_current_slice(new_slice)
             self.refresh()
@@ -219,7 +180,7 @@ class PySeus(QApplication):
     
     def _set_current_slice(self, sid):
         self.window.info.update_slice(sid, len(self.slices))
-        self.current_slice = sid
+        self.slice = sid
 
     def select_scan(self, sid, relative=False):
         if self.path == "": return
@@ -238,32 +199,16 @@ class PySeus(QApplication):
         self.window.info.update_scan(self.scans[sid])
         self.current_scan = sid
 
-    def rotate(self, axis, steps=1, refresh=True):
-        if axis == -1:  # reset
-            self._load_scan(self.current_scan)
-
-        else:
-            if axis == 0 and len(self.slices) > 2:  # x-axis
-                self.slices = numpy.asarray(numpy.swapaxes(self.slices, 0, 2))
-                self._set_current_slice(len(self.slices) // 2)
-                
-            elif axis == 1 and len(self.slices) > 2:  # y-axis
-                self.slices = numpy.asarray(numpy.rot90(self.slices))
-                self._set_current_slice(len(self.slices) // 2)
-
-            elif axis == 2:  # z-axis
-                self.slices = numpy.asarray([numpy.rot90(slice) for slice in self.slices])
-
-        if steps > 1: self.rotate(axis, steps-1, refresh)
-
-        if refresh:
-            self.refresh()
-            self.window.view.zoom_fit()
-            self.tool.clear()
-    
-    def clear_roi(self):
-        if not self.tool is None: self.tool.clear()
+    def rotate(self, axis):
+        self.dataset.rotate(axis)
+        self.refresh()
+        self.window.view.zoom_fit()
+        self.tool.clear()
 
     def show_metadata_window(self):
-        self.meta_window = MetaWindow(self, self.metadata)
+        self.meta_window = MetaWindow(self, self.dataset.metadata)
         self.meta_window.show()
+
+    def clear_tool(self):
+        if not self.tool is None:
+            self.too.clear()

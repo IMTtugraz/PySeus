@@ -13,20 +13,15 @@ from .base import BaseFormat, LoadError
 class H5(BaseFormat):
     """Support for HDF5 files."""
 
-    def __init__(self, app):
-        BaseFormat.__init__(self)
-        self.app = app
-
-    EXTENSIONS = (".h5", ".hdf5")
-
     @classmethod
-    def check_file(cls, path):
+    def can_handle(cls, path):
         _, ext = os.path.splitext(path)
-        return ext in cls.EXTENSIONS
+        return ext.lower() in (".h5", ".hdf5")
+
+    def __init__(self):
+        BaseFormat.__init__(self)
 
     def load_file(self, path):
-        self.path = path
-
         with h5py.File(path, "r") as f:
 
             nodes = []
@@ -37,61 +32,65 @@ class H5(BaseFormat):
             f.visititems(_walk)
 
             if len(nodes) == 1:
-                self.ds_path = nodes[0]
+                self._dspath = nodes[0]
             
             else:
                 dialog = H5Explorer(nodes)
                 choice = dialog.exec()
                 if choice == QDialog.Accepted:
-                    self.ds_path = dialog.result()
+                    self._dspath = dialog.result()
                 else:
-                    return "", [], -1
+                    return False
             
-            self.dimensions = len(f[self.ds_path].dims)
-            if 2 <= self.dimensions <= 3:  # single or multiple slices
-                return path, [0], 0
-            elif self.dimensions == 4:  # multiple scans
-                return path, list(range(0, len(f[self.ds_path])-1)), 0
-            elif self.dimensions == 5:
+            self.path = path
+            self.dims = len(f[self._dspath].dims)
+
+            if 2 <= self.dims <= 3:  # single or multiple slices
+                self.scans = [0]
+
+            elif self.dims == 4:  # multiple scans
+                self.scans = list(range(0, len(f[self._dspath])-1))
+
+            elif self.dims == 5:
                 QMessageBox.warning(self.app.window, "Pyseus", 
                     "The selected dataset ist 5-dimensional. The first two dimensions will be concatenated.")
-                scan_count = f[self.ds_path].shape[0]*f[self.ds_path].shape[1]
-                return path, list(range(0, scan_count-1)), 0
+                scan_count = f[self._dspath].shape[0]*f[self._dspath].shape[1]
+                self.scans = list(range(0, scan_count-1))
+
             else:
-                raise LoadError("Invalid dataset '{}' in '{}': Wrong dimensions.".format(self.ds_path, path))
-    
-    def load_scan(self, scan):
-        with h5py.File(self.path, "r") as f:
-            if self.dimensions == 2:  # single slice
-                return numpy.asarray([f[self.ds_path]])
-            if self.dimensions == 3:  # multiple slices
-                return numpy.asarray(f[self.ds_path])
-            elif self.dimensions == 4:  # multiple scans
-                return numpy.asarray(f[self.ds_path][scan])
-            elif self.dimensions == 5:
-                q, r = divmod(scan, f[self.ds_path].shape[1])
-                return numpy.asarray(f[self.ds_path][q][r])
+                raise LoadError("Invalid dataset '{}' in '{}': Wrong dimensions.".format(self._dspath, path))
+            
+            self.load_scan(0)
+            return True
 
-
-    def load_scan_thumb(self, scan):
+    def _get_pixeldata(self, scan):
         with h5py.File(self.path, "r") as f:
-            scan = f[self.ds_path][scan]
-            return numpy.asarray(scan[len(scan) // 2])
+            if self.dims == 2:  # single slice
+                return numpy.asarray([f[self._dspath]])
+
+            if self.dims == 3:  # multiple slices
+                return numpy.asarray(f[self._dspath])
+
+            elif self.dims == 4:  # multiple scans
+                return numpy.asarray(f[self._dspath][scan])
+
+            elif self.dims == 5:
+                q, r = divmod(scan, f[self._dspath].shape[1])
+                return numpy.asarray(f[self._dspath][q][r])
     
-    def load_metadata(self, scan):
+    def _get_metadata(self, scan):
         metadata = {}
-        
+
         with h5py.File(self.path, "r") as f:
-            for a in f[self.ds_path].attrs:
+            for a in f[self._dspath].attrs:
                 metadata[a[0]] = a[1]
         
         return metadata
 
-    def get_metadata(self, keys=None):
-        if self.app.metadata is None:
-            self.app.metadata = self.load_metadata()
-        meta = self.app.metadata
+    def get_thumbnail(self, scan):
+        return _get_pixeldata(scan)
 
+    def metadata(self, keys=None):
         key_map = {
             "pys:patient": "PatientName",
             "pys:series": "SeriesDescription",
@@ -102,8 +101,7 @@ class H5(BaseFormat):
             "pys:alpha": "FlipAngle"
         }
 
-        # keys starting with "_" are ignored unless specificially requested
-        if keys is None: keys = [k for k in key_map.keys() if k[0] != "_"]
+        if keys is [None]: keys = key_map.keys()
 
         if isinstance(keys, str): keys = [keys]
 
@@ -119,8 +117,11 @@ class H5(BaseFormat):
 
         return meta_set
     
-    def get_pixel_spacing(axis=None):
-        meta = self.app.metadata
+    def pixeldata(self, slice=None):
+        if slice is None:
+            return self.pixeldata.copy()
+        else:
+            return self.pixeldata[slice].copy()
         
 
 

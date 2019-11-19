@@ -61,3 +61,17 @@ class DisplayHelper():
     def set_mode(self, mode):
         self.mode = mode
         self.app.refresh()
+
+    def generate_thumb(self, data):
+        thumb_size = int(settings["ui"]["thumb_size"])
+        thumb_data = cv2.resize(data, (thumb_size, thumb_size))
+
+        self.setup_window(thumb_data)
+        return self.prepare(thumb_data)
+
+    def get_pixmap(self, data):
+        tmp = self.prepare(data)
+
+        image = QImage(tmp.data, tmp.shape[1], tmp.shape[0], tmp.strides[0],
+                       QImage.Format_Grayscale8)
+        pixmap = QPixmap.fromImage(image)

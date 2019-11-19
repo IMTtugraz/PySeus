@@ -111,10 +111,10 @@ class MainWindow(QMainWindow):
         ami(self.explore_menu, "Nex&t Slice", partial(self._action_slice, 1), "PgUp")
         ami(self.explore_menu, "P&revious Slice", partial(self._action_slice, -1), "PgDown")
         self.explore_menu.addSeparator()
-        ami(self.explore_menu, "Rotate z", partial(self._action_rotate, 2, 1), "Ctrl+E")
-        ami(self.explore_menu, "Rotate x", partial(self._action_rotate, 1, 1), "Ctrl+R")
-        ami(self.explore_menu, "Rotate y", partial(self._action_rotate, 0, 1), "Ctrl+T")
-        ami(self.explore_menu, "Reset Rotation", partial(self._action_rotate, -1, 1), "Ctrl+Z")
+        ami(self.explore_menu, "Rotate z", partial(self._action_rotate, 2), "Ctrl+E")
+        ami(self.explore_menu, "Rotate x", partial(self._action_rotate, 1), "Ctrl+R")
+        ami(self.explore_menu, "Rotate y", partial(self._action_rotate, 0), "Ctrl+T")
+        ami(self.explore_menu, "Reset Rotation", partial(self._action_rotate, -1), "Ctrl+Z")
         self.explore_menu.addSeparator()
         ami(self.explore_menu, "Next &Scan", partial(self._action_scan, 1), "Alt+PgUp")
         ami(self.explore_menu, "Previous Sc&an", partial(self._action_scan, -1), "Alt+PgDown")
@@ -195,10 +195,10 @@ class MainWindow(QMainWindow):
         # @TODO x_factor if xf < yf or xf * width * zoom_factor < viewport_x
 
     def _action_roi_clear(self):
-        self.app.clear_roi()
+        self.app.clear_tool()
     
-    def _action_rotate(self, axis, steps):
-        self.app.rotate(axis, steps)
+    def _action_rotate(self, axis):
+        self.app.rotate(axis)
 
 
 class SidebarHeading(QLabel):

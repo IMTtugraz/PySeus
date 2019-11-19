@@ -2,11 +2,24 @@ class BaseFormat():
     """Defines the basic functionality for file / data formats."""
 
     def __init__(self):
-        pass
+        self.path = ""
+        """..."""
+
+        self.scans = []
+        """..."""
+
+        self.scan = None
+        """..."""
+
+        self.metadata = {}
+        """..."""
+
+        self.pixeldata = None
+        """..."""
 
     @classmethod
-    def check_file(cls, path):
-        """See if the format can handle the file at `path`."""
+    def can_handle(cls, path):
+        """Determines if the format class can handle the file at `path`."""
         pass
 
     def load_file(self, path):
@@ -14,24 +27,36 @@ class BaseFormat():
         pass
     
     def load_scan(self, scan):
-        """Attempt to load the scan `scan`."""
-        pass
-    
-    def load_scan_thumb(self, scan):
-        """Attempt to load the thumbnail for scan `scan`."""
-        pass
-    
-    def load_metadata(self, scan):
         """..."""
+        self.pixeldata = self._get_pixeldata(scan)
+        self.metadata = self._get_metadata(scan)
+        self.scan = scan
+
+    def rotate(self, axis):
+        if axis == -1:  # reset
+            self.load_scan(self.scan)
+
+        else:
+            if axis == 0 and len(self.pixeldata) > 2:  # x-axis
+                self.pixeldata = numpy.asarray(numpy.swapaxes(self.pixeldata, 0, 2))
+                self._set_current_slice(len(self.pixeldata) // 2)
+                
+            elif axis == 1 and len(self.pixeldata) > 2:  # y-axis
+                self.pixeldata = numpy.asarray(numpy.rot90(self.pixeldata))
+                self._set_current_slice(len(self.pixeldata) // 2)
+
+            elif axis == 2:  # z-axis
+                self.pixeldata = numpy.asarray([numpy.rot90(slice) for slice in self.pixeldata])
+
+    def metadata(self, keys=None):
+        """Returns specific metadata items; returns standard list of most important metadata"""
         pass
-    
-    def get_metadata(self, keys=None):
-        """..."""
-        pass
-    
-    def get_spacing(axis=None):
-        """..."""
-        pass
+
+    def pixeldata(self, slice=-1):
+        """Returns pixeldata of current scan; should always be used if data is to be processed further"""
+
+# @TODO redo interface here
+
 
 
 class LoadError(Exception):

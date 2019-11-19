@@ -17,10 +17,10 @@ from context import pyseus
 # pyseus.load(data)
 
 # HDF5
-# pyseus.load("./samples/sample.h5")
+pyseus.load("./samples/sample.h5")
 
 # DICOM
-pyseus.load("./samples/sample.dcm/0000.dcm")
+# pyseus.load("./samples/sample.dcm/0000.dcm")
 
 # NIfTI
 # pyseus.load("./samples/sample.nii")
