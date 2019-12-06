@@ -4,6 +4,7 @@ from PySide2.QtWidgets import QLabel, QScrollArea
 
 import numpy
 
+
 class ViewWidget(QScrollArea):
     """The widget providing an image viewport."""
 
@@ -37,8 +38,8 @@ class ViewWidget(QScrollArea):
 
     def zoom(self, factor, relative=True):
         """Zoom"""
-        if self.app.dataset == None or (relative
-                and not (0.1 <= self.zoom_factor * factor <= 100)):
+        if self.app.dataset is None \
+                or (relative and (0.1 >= self.zoom_factor * factor >= 100)):
             return
 
         self.zoom_factor = self.zoom_factor * factor if relative else factor
@@ -51,13 +52,14 @@ class ViewWidget(QScrollArea):
         h_scroll = int(factor * self.horizontalScrollBar().value() +
                        ((factor-1) * self.horizontalScrollBar().pageStep()/2))
         self.horizontalScrollBar().setValue(h_scroll)
-    
+
     def zoom_fit(self):
         """Zoom Fit"""
         image = self.view.pixmap().size()
         viewport = self.size()
 
-        if image.height() == 0 or image.width == 0: return
+        if image.height() == 0 or image.width() == 0:
+            return
 
         v_zoom = viewport.height() / image.height()
         h_zoom = viewport.width() / image.width()
@@ -66,7 +68,8 @@ class ViewWidget(QScrollArea):
     def mousePressEvent(self, event):
         """Handle pan, window and RoI functionality on mouse button down."""
 
-        if(event.buttons() == QtCore.Qt.LeftButton and event.modifiers() == Qt.NoModifier):
+        if(event.buttons() == QtCore.Qt.LeftButton
+                and event.modifiers() == Qt.NoModifier):
             self.mouse_action = "PAN"
 
         elif(event.buttons() == QtCore.Qt.MiddleButton):
@@ -110,22 +113,26 @@ class ViewWidget(QScrollArea):
                 else self.view.width()
             y_pos = event.pos().y() if event.pos().y() <= self.view.height() \
                 else self.view.height()
-            if not self.app.tool is None:
-                self.app.tool.end_roi( int(x_pos / self.zoom_factor),
-                    int(y_pos / self.zoom_factor) )
+            if self.app.tool is not None:
+                self.app.tool.end_roi(int(x_pos / self.zoom_factor),
+                                      int(y_pos / self.zoom_factor))
             self.app.refresh()
 
     def _view_mousePressEvent(self, event):
-        if(event.buttons() == QtCore.Qt.LeftButton and event.modifiers() == Qt.ControlModifier):
+        if(event.buttons() == QtCore.Qt.LeftButton
+                and event.modifiers() == Qt.ControlModifier):
             self.mouse_action = "ROI"
             self.last_position = event.pos()
-            if not self.app.tool is None:
-                self.app.tool.start_roi( int(event.pos().x() / self.zoom_factor),
-                    int(event.pos().y() / self.zoom_factor))
+
+            if self.app.tool is not None:
+                x_pos = event.pos().x()
+                y_pos = event.pos().y()
+                self.app.tool.start_roi(int(x_pos / self.zoom_factor),
+                                        int(y_pos / self.zoom_factor))
 
         else:
             self.mousePressEvent(event)
-    
+
     def _view_mouseMoveEvent(self, event):
         self.mouseMoveEvent(event)
 

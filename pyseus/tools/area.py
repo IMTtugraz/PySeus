@@ -1,7 +1,7 @@
 import numpy
 from functools import partial
 
-from PySide2.QtGui import QFont, QImage, QPixmap, QPainter, QColor, QPen
+from PySide2.QtGui import QPainter, QColor, QPen
 
 from .base import BaseTool
 
@@ -12,7 +12,7 @@ class AreaTool(BaseTool):
     def __init__(self, app):
         BaseTool.__init__(self)
         self.app = app
-        self.roi = [0,0,0,0]
+        self.roi = [0, 0, 0, 0]
 
     @classmethod
     def setup_menu(cls, app, menu, ami):
@@ -21,13 +21,14 @@ class AreaTool(BaseTool):
     def start_roi(self, x, y):
         self.roi[0] = x
         self.roi[1] = y
-    
+
     def end_roi(self, x, y):
         self.roi[2] = x
         self.roi[3] = y
 
     def draw_overlay(self, pixmap):
-        if self.roi == [0,0,0,0]: return pixmap
+        if self.roi == [0, 0, 0, 0]:
+            return pixmap
 
         painter = QPainter(pixmap)
         pen = QPen(QColor("red"))

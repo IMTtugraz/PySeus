@@ -1,5 +1,6 @@
 from PySide2.QtCore import QSize
-from PySide2.QtWidgets import QSizePolicy, QFormLayout, QHBoxLayout, QVBoxLayout, QFrame, QLabel, QSpinBox, QScrollArea, QLineEdit, QPushButton
+from PySide2.QtWidgets import QSizePolicy, QFormLayout, QHBoxLayout, \
+                              QVBoxLayout, QFrame, QLabel, QLineEdit
 
 from pyseus.settings import settings
 
@@ -41,6 +42,6 @@ class InfoWidget(QFrame):
 
     def update_scan(self, scan):
         self.scan.setText("{}".format(scan))
-    
+
     def update_path(self, path):
         self.path.setText(path)

@@ -1,6 +1,8 @@
 import numpy
 
-from .base import BaseFormat
+from PySide2.QtWidgets import QMessageBox
+
+from .base import BaseFormat, LoadError
 
 
 class Raw(BaseFormat):
@@ -10,13 +12,12 @@ class Raw(BaseFormat):
         BaseFormat.__init__(self)
 
     @classmethod
-    def can_handle(cls, path):    
+    def can_handle(cls, path):
         return False
 
     def load(self, data):
-        try:
-            self.data = numpy.asarray(data)
-        except e:
+        self.data = numpy.asarray(data)
+        if not isinstance(self.data, numpy.ndarray):
             raise LoadError("Invalid data.")
 
         self.path = "<data>"
@@ -28,12 +29,13 @@ class Raw(BaseFormat):
             self.scans = list(range(0, len(f[self.ds_path])-1))
 
         elif self.data.ndim == 5:
-            QMessageBox.warning(self.window, "Pyseus", 
-                "The selected dataset ist 5-dimensional. The first two dimensions will be concatenated.")
+            message = ("The selected dataset ist 5-dimensional. "
+                       "The first two dimensions will be concatenated.")
+            QMessageBox.warning(self.window, "Pyseus", message)
             scan_count = f[self.ds_path].shape[0]*f[self.ds_path].shape[1]
-            
+
             self.scans = list(range(0, scan_count-1))
-        
+
         self.scan = 0
         return True
 

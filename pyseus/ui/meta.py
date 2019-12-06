@@ -1,5 +1,6 @@
 from PySide2.QtCore import Qt, QSize
-from PySide2.QtWidgets import QDialog, QSizePolicy, QFormLayout, QHBoxLayout, QVBoxLayout, QFrame, QLabel, QSpinBox, QScrollArea, QLineEdit, QPushButton
+from PySide2.QtWidgets import QDialog, QSizePolicy, QFormLayout, QVBoxLayout, \
+                              QFrame, QLabel, QScrollArea, QLineEdit
 
 from pyseus.settings import settings
 
@@ -30,8 +31,8 @@ class MetaWidget(QScrollArea):
 
     def update_meta(self, data, more=True):
         self._reset_ui()
-        
-        if not data is None and len(data) > 0:
+
+        if data is not None and len(data) > 0:
             for k in sorted(data.keys()):
                 value = QLineEdit(str(data[k]))
                 self.table.addRow(k, value)
@@ -53,7 +54,8 @@ class MetaWindow(QDialog):
     def __init__(self, app, data):
         QDialog.__init__(self)
         self.setWindowTitle("Metadata")
-        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        self.setWindowFlags(self.windowFlags()
+                            & ~Qt.WindowContextHelpButtonHint)
 
         self.setLayout(QVBoxLayout())
         widget = MetaWidget(app)

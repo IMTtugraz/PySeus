@@ -1,8 +1,6 @@
 import os
-import numpy
 
 from PySide2.QtWidgets import QApplication, QMessageBox
-from PySide2.QtGui import QFont, QImage, QPixmap, QPainter, QColor, QPen
 
 from pyseus import settings
 from pyseus import DisplayHelper
@@ -35,15 +33,15 @@ class PySeus(QApplication):
         self.window = MainWindow(self)
         """Window"""
 
-        self.display = DisplayHelper(self)
+        self.display = DisplayHelper()
         """DisplayHelper"""
 
         self.slice = -1
         """Current Slice"""
 
         # Stylesheet
-        style_path = os.path.abspath(os.path.join(os.path.dirname(__file__),
-            "./ui/" + settings["ui"]["style"] + ".qss"))
+        style_path = "./ui/" + settings["ui"]["style"] + ".qss"
+        style_path = os.path.join(os.path.dirname(__file__), style_path)
         with open(style_path, "r") as stylesheet:
             self.setStyleSheet(stylesheet.read())
 
@@ -60,7 +58,7 @@ class PySeus(QApplication):
                 self.new_dataset = f()
                 break
 
-        if not self.new_dataset is None:
+        if self.new_dataset is not None:
             self._setup_dataset(path)
 
         else:
@@ -96,7 +94,7 @@ class PySeus(QApplication):
 
         except LoadError as e:
             QMessageBox.warning(self.window, "Pyseus", str(e))
-        
+
         self.window.info.update_path(self.dataset.path)
 
     def set_mode(self, mode):
@@ -107,25 +105,28 @@ class PySeus(QApplication):
 
     def refresh(self):
         """Refresh the displayed image."""
-        if self.slice == -1: return
+        if self.slice == -1:
+            return
 
-        pixmap = self.display.get_pixmap(self.dataset.get_pixeldata(self.slice))
+        pixmap = self.display.get_pixmap(
+                        self.dataset.get_pixeldata(self.slice))
 
-        if not self.tool is None:
+        if self.tool is not None:
             pixmap = self.tool.draw_overlay(pixmap)
 
-        self.window.view.set(pixmap) # @TODO Refactor ?!?
+        self.window.view.set(pixmap)  # @TODO Refactor ?!?
 
     def recalculate(self):
         """Recalculate the current function."""
-        if not self.tool is None:
+        if self.tool is not None:
             self.tool.recalculate(
                 self.display.prepare_without_window(self.slices[self.slice]))
 
     def select_scan(self, sid, relative=False):
-        if self.dataset is None: return
+        if self.dataset is None:
+            return
 
-        new_scan = self.dataset.scan + sid if relative == True else sid
+        new_scan = self.dataset.scan + sid if relative is True else sid
         if 0 <= new_scan < len(self.dataset.scans):
             self.clear_tool()
             self._load_scan(new_scan)
@@ -133,7 +134,8 @@ class PySeus(QApplication):
     def _load_scan(self, sid=None):
         old_sid = self.dataset.scan
 
-        if sid == None: sid = self.dataset.scan
+        if sid is None:
+            sid = self.dataset.scan
         self.dataset.load_scan(sid)
 
         pixeldata = self.dataset.pixeldata
@@ -142,11 +144,13 @@ class PySeus(QApplication):
             self._set_slice(len(pixeldata) // 2)
 
         if len(self.dataset.scans) > 1:
-            self.window.thumbs.thumbs[old_sid].setStyleSheet("border: 1px solid transparent")
-            self.window.thumbs.thumbs[sid].setStyleSheet("border: 1px solid #aaa")
+            old_thumb = self.window.thumbs.thumbs[old_sid]
+            new_thumb = self.window.thumbs.thumbs[sid]
+            old_thumb.setStyleSheet("border: 1px solid transparent")
+            new_thumb.setStyleSheet("border: 1px solid #aaa")
 
-        self.window.meta.update_meta(self.dataset.get_metadata(), 
-            len(self.dataset.metadata) > 0)
+        self.window.meta.update_meta(self.dataset.get_metadata(),
+                                     len(self.dataset.metadata) > 0)
         self.window.info.update_scan(self.dataset.scans[sid])
 
         self.display.setup_window(pixeldata[self.slice])
@@ -154,14 +158,15 @@ class PySeus(QApplication):
         self.window.view.zoom_fit()
 
     def select_slice(self, sid, relative=False):
-        if self.dataset is None: return
+        if self.dataset is None:
+            return
 
-        new_slice = self.slice + sid if relative == True else sid
+        new_slice = self.slice + sid if relative is True else sid
         if 0 <= new_slice < len(self.dataset.pixeldata):
             self._set_slice(new_slice)
             self.refresh()
             self.recalculate()
-    
+
     def _set_slice(self, sid):
         self.window.info.update_slice(sid, len(self.dataset.pixeldata))
         self.slice = sid
@@ -178,7 +183,7 @@ class PySeus(QApplication):
         self.clear_tool()
 
     def clear_tool(self):
-        if not self.tool is None:
+        if self.tool is not None:
             self.tool.clear()
 
     def rotate(self, axis):

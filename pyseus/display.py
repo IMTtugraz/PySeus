@@ -9,13 +9,10 @@ from pyseus import settings
 class DisplayHelper():
     """A collection of display helper functions."""
 
-    def __init__(self, app):
-        self.app = app
-        
+    def __init__(self):
         self.mode = 0
         """Determines wheter amplitude (0) or phase (1) from the data is used.
         Default ist amplitude (0)."""
-
 
     def prepare(self, data):
         """Prepare data for display or analysis (see `prepare_without_window`)
@@ -24,7 +21,6 @@ class DisplayHelper():
         data = self.prepare_without_window(data)
         data = self.apply_window(data)
         return data
-
 
     def prepare_without_window(self, data):
         """Prepare data for display or analysis.
@@ -35,9 +31,8 @@ class DisplayHelper():
             data = numpy.angle(data).astype(float)
         elif self.mode == 0:
             data = numpy.absolute(data).astype(float)
-        
-        return data
 
+        return data
 
     def apply_window(self, data):
         """Apply current window settings to `data`."""
@@ -49,10 +44,9 @@ class DisplayHelper():
         elif self.mode == 0:
             data -= self.black  # align black to 0
             data *= 255 / (self.white - self.black)  # scale white to 255
-        
+
         data = data.clip(0, 255)
         return data.astype(numpy.int8).copy()
-
 
     def setup_window(self, data):
         """Analyze data and set window boundary conditions (min, max)."""
@@ -62,13 +56,11 @@ class DisplayHelper():
         self.data_max = numpy.amax(data)
         self.reset_window()
 
-   
     def reset_window(self):
         """Reset the window to cover the entire range of values in the data."""
 
         self.black = self.data_min
         self.white = self.data_max
-
 
     def move_window(self, steps):
         """Move the window up / down; results in a darker / lighter image.
@@ -78,7 +70,6 @@ class DisplayHelper():
         step_size = float(settings["window"]["move_step"])
         self.black += delta * step_size * steps
         self.white += delta * step_size * steps
-
 
     def scale_window(self, steps):
         """Shrink / widen the window; results in higher / lower contrast.
@@ -92,20 +83,17 @@ class DisplayHelper():
             self.black = new_black
             self.white = new_white
 
-
     def adjust_window(self, move_steps, scale_steps):
         """Move and scale the window simultaneously."""
 
         self.move_window(move_steps)
         self.scale_window(scale_steps)
 
-
     def set_mode(self, mode):
         """Set the display mode to Amplitude (1) or phase (0)."""
 
         self.mode = mode
         self.app.refresh()
-
 
     def generate_thumb(self, data):
         """Resize data for use as a thumbnail.
@@ -115,16 +103,15 @@ class DisplayHelper():
 
         thumb_size = int(settings["ui"]["thumb_size"])
         thumb = cv2.resize(data.astype(numpy.uint8), (thumb_size, thumb_size))
-        
-        return thumb
 
+        return thumb
 
     def get_pixmap(self, data):
         """Convert `data` into a QPixmap object."""
 
         tmp = self.prepare(data)
-        image = QImage(tmp.data, tmp.shape[1], tmp.shape[0], tmp.data.strides[0],
-                       QImage.Format_Grayscale8)
+        image = QImage(tmp.data, tmp.shape[1], tmp.shape[0],
+                       tmp.data.strides[0], QImage.Format_Grayscale8)
         pixmap = QPixmap.fromImage(image)
 
         return pixmap

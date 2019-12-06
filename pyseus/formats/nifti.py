@@ -2,7 +2,7 @@ import nibabel
 import numpy
 import os
 
-from .base import BaseFormat, LoadError
+from .base import BaseFormat
 
 
 class NIfTI(BaseFormat):
@@ -21,7 +21,7 @@ class NIfTI(BaseFormat):
         self.file = nibabel.load(path)
 
         shape = self.file.header.get_data_shape()
-        scan_count = 0 if len(shape) <= 3 else shape[3]        
+        scan_count = 0 if len(shape) <= 3 else shape[3]
         self.scans = list(range(0, scan_count))
 
         self.scan = 0
@@ -29,13 +29,13 @@ class NIfTI(BaseFormat):
 
     def _get_pixeldata(self, scan):
         data = self.file.get_fdata()
-        scan_data = numpy.swapaxes(data[:,:,:,scan], 0, 2)
+        scan_data = numpy.swapaxes(data[:, :, :, scan], 0, 2)
         return numpy.asarray(scan_data)
-    
+
     def get_thumbnail(self, scan):
         scan_data = self._get_pixeldata(scan)
-        return scan_data[ len(scan_data) // 2 ]
-    
+        return scan_data[len(scan_data) // 2]
+
     def _get_metadata(self, scan):
         metadata = {}
         header = self.file.header.items()
@@ -55,17 +55,17 @@ class NIfTI(BaseFormat):
         }
 
         return super().get_metadata(keys, key_map)
-    
-    def get_pixel_spacing(axis=None):
-        meta = self.app.metadata
-        
-        if "pixdim" in meta.keys():
-            pixdim = meta["pixdim"]
-            if "xyzt_units" in meta.keys():
+
+    def get_pixel_spacing(self, axis=None):
+        if "pixdim" in self.metadata.keys():
+            pixdim = self.metadata["pixdim"]
+            if "xyzt_units" in self.metadata.keys():
                 # @TODO convert units
                 pass
         else:
-            pixdim = [1,1,1]
+            pixdim = [1, 1, 1]
 
-        if axis is None: return pixdim[0:2]
-        else: return pixdim[axis]
+        if axis is None:
+            return pixdim[0:2]
+        else:
+            return pixdim[axis]

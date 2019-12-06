@@ -1,8 +1,6 @@
 """...
 """
 
-import numpy
-
 from context import pyseus
 
 
@@ -13,6 +11,7 @@ from context import pyseus
 # pyseus.load("./samples/sample.npy")
 
 # Numpy (array)
+# import numpy
 # data = numpy.load("./samples/sample.npy")
 # pyseus.load(data)
 

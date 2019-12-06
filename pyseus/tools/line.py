@@ -2,9 +2,8 @@ from functools import partial
 
 from PySide2.QtCore import Qt, QMargins
 from PySide2.QtCharts import QtCharts
-from PySide2.QtGui import QFont, QImage, QPixmap, QPainter, QColor, QPen
-from PySide2.QtWidgets import QApplication, QDialog, QLabel, QLayout, \
-        QVBoxLayout, QDialogButtonBox, QTreeWidget, QTreeWidgetItem
+from PySide2.QtGui import QPainter, QColor, QPen
+from PySide2.QtWidgets import QDialog, QVBoxLayout
 
 from .base import BaseTool
 
@@ -15,9 +14,9 @@ class LineTool(BaseTool):
     def __init__(self, app):
         BaseTool.__init__(self)
         self.app = app
-        self.roi = [0,0,0,0]
+        self.roi = [0, 0, 0, 0]
         self.window = LineEvalWindow()
-    
+
     @classmethod
     def setup_menu(cls, app, menu, ami):
         ami(menu, "&Line Eval", partial(cls.start, app))
@@ -25,20 +24,21 @@ class LineTool(BaseTool):
     def start_roi(self, x, y):
         self.roi[0] = x
         self.roi[1] = y
-    
+
     def end_roi(self, x, y):
         self.roi[2] = x
         self.roi[3] = y
 
     def draw_overlay(self, pixmap):
-        if self.roi == [0,0,0,0]: return pixmap
+        if self.roi == [0, 0, 0, 0]:
+            return pixmap
 
         painter = QPainter(pixmap)
 
         pen = QPen(QColor("green"))
         pen.setWidth(1)
         painter.setPen(pen)
-        painter.drawLine(self.roi[0], self.roi[1], self.roi[2], 
+        painter.drawLine(self.roi[0], self.roi[1], self.roi[2],
                          self.roi[3])
 
         painter.end()
@@ -64,7 +64,8 @@ class LineEvalWindow(QDialog):
     def __init__(self):
         QDialog.__init__(self)
         self.setWindowTitle("Line Eval")
-        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        self.setWindowFlags(self.windowFlags()
+                            & ~Qt.WindowContextHelpButtonHint)
 
         self.setLayout(QVBoxLayout())
 
@@ -72,11 +73,12 @@ class LineEvalWindow(QDialog):
         self.resize(320, 320)
 
     def load_data(self, data):
-        if hasattr(self, "view"): self.view.deleteLater()
+        if hasattr(self, "view"):
+            self.view.deleteLater()
 
         series = QtCharts.QLineSeries()
         for k, v in enumerate(data):
-            series.append(k,v)
+            series.append(k, v)
 
         self.view = QtCharts.QChartView()
         self.view.setRenderHint(QPainter.Antialiasing)

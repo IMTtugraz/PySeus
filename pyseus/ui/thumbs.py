@@ -1,9 +1,8 @@
 from functools import partial
 
 from PySide2.QtCore import QSize
-from PySide2.QtGui import QImage, QPixmap
 from PySide2.QtWidgets import QLabel, QScrollArea, QSizePolicy, \
-    QVBoxLayout, QFrame, QSpacerItem
+                              QVBoxLayout, QFrame
 
 from pyseus.settings import settings
 
@@ -37,13 +36,13 @@ class ThumbsWidget(QScrollArea):
         thumb = QLabel()
         # thumb.setProperty("role", "current_scan")
         thumb.setPixmap(pixmap)
-        thumb.mousePressEvent = partial(self._thumb_clicked, 
+        thumb.mousePressEvent = partial(self._thumb_clicked,
                                         len(self.thumbs))
         thumb.setProperty("role", "scan_thumb")
         thumb.setMaximumWidth(int(settings["ui"]["thumb_size"])+2)
 
         self.thumbs.append(thumb)
-        self.wrapper.layout().insertWidget(self.wrapper.layout().count()-1, 
+        self.wrapper.layout().insertWidget(self.wrapper.layout().count()-1,
                                            thumb)
 
         self.updateGeometry()
@@ -52,7 +51,7 @@ class ThumbsWidget(QScrollArea):
         for t in self.thumbs:
             t.deleteLater()
         self.thumbs = []
-    
+
     def _thumb_clicked(self, thumb, event):
         self.app.select_scan(thumb)
 
@@ -60,4 +59,4 @@ class ThumbsWidget(QScrollArea):
         if self.thumbs:
             return QSize(int(settings["ui"]["thumb_size"])+25, 0)
         else:
-            return QSize(0,0)
+            return QSize(0, 0)

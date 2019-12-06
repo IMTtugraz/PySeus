@@ -10,7 +10,7 @@ class BaseTool():
 
     def start_roi(self, x, y):
         pass
-    
+
     def end_roi(self, x, y):
         pass
 
@@ -21,5 +21,5 @@ class BaseTool():
         pass
 
     def recalculate(self, data, roi):
-        """Evaluates the frame data in a given RoI and returns a result string."""
+        """Evaluates the data in a given region of interest."""
         pass
