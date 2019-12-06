@@ -37,7 +37,7 @@ class ViewWidget(QScrollArea):
 
     def zoom(self, factor, relative=True):
         """Zoom"""
-        if self.app.path == "" or (relative
+        if self.app.dataset == None or (relative
                 and not (0.1 <= self.zoom_factor * factor <= 100)):
             return
 
@@ -56,6 +56,9 @@ class ViewWidget(QScrollArea):
         """Zoom Fit"""
         image = self.view.pixmap().size()
         viewport = self.size()
+
+        if image.height() == 0 or image.width == 0: return
+
         v_zoom = viewport.height() / image.height()
         h_zoom = viewport.width() / image.width()
         self.zoom(min(v_zoom, h_zoom)*0.99, False)
@@ -83,7 +86,7 @@ class ViewWidget(QScrollArea):
     def mouseMoveEvent(self, event):
         """Handle pan, window and RoI functionality on mouse move."""
 
-        self.app.show_status("")
+        self.app.window.show_status("")
 
         if(self.mouse_action == "PAN"):
             vertical = self.verticalScrollBar().value() \
@@ -130,10 +133,10 @@ class ViewWidget(QScrollArea):
                  + event.pos().x()) // self.zoom_factor)
         y = int((self.verticalScrollBar().value()
                  + event.pos().y()) // self.zoom_factor)
-        shape = self.app.slices[self.app.current_slice].shape
+        shape = self.app.dataset.pixeldata[self.app.slice].shape
         if(x < shape[0] and y < shape[1]):
-            val = self.app.slices[self.app.current_slice][x, y]
-            self.app.show_status("{} x {}  -  {:.4g}".format(x, y, val))
+            val = self.app.dataset.pixeldata[self.app.slice][x, y]
+            self.app.window.show_status("{} x {}  -  {:.4g}".format(x, y, val))
 
     def _view_mouseReleaseEvent(self, event):
         self.mouseReleaseEvent(event)

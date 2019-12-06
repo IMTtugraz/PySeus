@@ -3,7 +3,7 @@ import numpy
 from .base import BaseFormat
 
 
-class Raw(BaseFormat):
+class NumPy(BaseFormat):
     """Support for NumPy array data and files."""
 
     def __init__(self, app):
@@ -11,10 +11,19 @@ class Raw(BaseFormat):
         self.app = app
 
     @classmethod
-    def can_handle(cls, path):    
-        return False
+    def can_handle(cls, path):
+        try:
+            numpy.load(path, None, False)
+            return True
+        
+        except:        
+            return False
 
-    def load(self, data):
+    def load(self, file):
+        data = numpy.load(file, None, False)
+        return self.load_data(data)
+
+    def load_data(self, data):
         try:
             self.data = numpy.asarray(data)
         except e:

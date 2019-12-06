@@ -15,11 +15,11 @@ class NIfTI():
     EXTENSIONS = (".nii")
 
     @classmethod
-    def check_file(cls, path):
+    def can_handle(cls, path):
         _, ext = os.path.splitext(path)
         return ext in cls.EXTENSIONS
 
-    def load_file(self, path):
+    def load(self, path):
         self.file = nibabel.load(path)
         shape = self.file.header.get_data_shape()
         scan_count = 0 if len(shape) <= 3 else shape[3]

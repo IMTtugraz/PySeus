@@ -65,7 +65,7 @@ class MainWindow(QMainWindow):
 
         wrapper.layout().addWidget(sidebar)
 
-        self.setup_menu()
+        self._setup_menu()
 
         self.statusBar().setSizeGripEnabled(False)
 
@@ -75,7 +75,7 @@ class MainWindow(QMainWindow):
         geometry = self.app.desktop().availableGeometry(self)
         self.resize(geometry.width() * 0.6, geometry.height() * 0.6)
 
-    def add_menu_item(self, menu, title, callback, shortcut=""):
+    def _add_menu_item(self, menu, title, callback, shortcut=""):
         """Create menu item (DRY wrapper function)."""
         action = QAction(title, self)
         if(shortcut != ""):
@@ -84,8 +84,8 @@ class MainWindow(QMainWindow):
         menu.addAction(action)
         return action
 
-    def setup_menu(self):
-        ami = self.add_menu_item
+    def _setup_menu(self):
+        ami = self._add_menu_item
         menu_bar = self.menuBar()
 
         self.file_menu = menu_bar.addMenu("&File")
@@ -121,17 +121,12 @@ class MainWindow(QMainWindow):
 
         self.functions_menu = menu_bar.addMenu("&Evaluate")
         for f in self.app.tools:
-            f.setup_menu(self.app, self.functions_menu, self.add_menu_item)
+            f.setup_menu(self.app, self.functions_menu, self._add_menu_item)
         self.functions_menu.addSeparator()
         ami(self.functions_menu, "&Clear RoI", self._action_roi_clear, "Esc")
 
         # About action is its own top level menu
         ami(menu_bar, "&About", self._action_about)
-
-    def add_function_to_menu(self, key, function):
-        "Add a entry in `Evals` menu for `function`."
-        self.add_menu_item(self.functions_menu, function.MENU_NAME,
-                           partial(self._action_set_function, key))
 
     def _action_quit(self):
         sys.exit()
@@ -188,17 +183,21 @@ class MainWindow(QMainWindow):
     def _action_scan(self, step):
         self.app.select_scan(step, True)
 
-    def resizeEvent(self, event):
-        x_factor = event.size().width() / event.oldSize().width()
-        y_factor = event.size().height() / event.oldSize().height()
-        self.view.zoom(x_factor, True)
-        # @TODO x_factor if xf < yf or xf * width * zoom_factor < viewport_x
-
     def _action_roi_clear(self):
         self.app.clear_tool()
     
     def _action_rotate(self, axis):
         self.app.rotate(axis)
+
+    def show_status(self, message):
+        """Display `message` in status bar."""
+        self.statusBar().showMessage(message)
+
+    def resizeEvent(self, event):
+        x_factor = event.size().width() / event.oldSize().width()
+        y_factor = event.size().height() / event.oldSize().height()
+        self.view.zoom(x_factor, True)
+        # @TODO x_factor if xf < yf or xf * width * zoom_factor < viewport_x
 
 
 class SidebarHeading(QLabel):

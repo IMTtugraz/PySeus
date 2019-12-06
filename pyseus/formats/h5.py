@@ -21,7 +21,7 @@ class H5(BaseFormat):
     def __init__(self):
         BaseFormat.__init__(self)
 
-    def load_file(self, path):
+    def load(self, path):
         with h5py.File(path, "r") as f:
 
             nodes = []
