@@ -20,7 +20,7 @@ from context import pyseus
 # pyseus.load("./samples/sample.h5")
 
 # DICOM
-pyseus.load("./samples/sample.dcm/0000.dcm")
+# pyseus.load("./samples/sample.dcm/0000.dcm")
 
 # NIfTI
-# pyseus.load("./samples/sample.nii")
+pyseus.load("./samples/sample.nii")

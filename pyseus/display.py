@@ -1,4 +1,5 @@
 import numpy
+import cv2
 
 from PySide2.QtGui import QImage, QPixmap
 
@@ -110,11 +111,12 @@ class DisplayHelper():
         """Resize data for use as a thumbnail.
         Thumbnail size is controlled in settings.ini."""
 
-        thumb_size = int(settings["ui"]["thumb_size"])
-        thumb_data = cv2.resize(data, (thumb_size, thumb_size))
+        self.setup_window(data)
 
-        self.setup_window(thumb_data)
-        return self.prepare(thumb_data)
+        thumb_size = int(settings["ui"]["thumb_size"])
+        thumb = cv2.resize(data.astype(numpy.uint8), (thumb_size, thumb_size))
+        
+        return thumb
 
 
     def get_pixmap(self, data):

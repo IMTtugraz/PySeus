@@ -31,14 +31,7 @@ class ThumbsWidget(QScrollArea):
         self.setWidgetResizable(True)
         self.setWidget(self.wrapper)
 
-    def add_thumb(self, data):
-        data = self.app.display.prepare(data.copy())
-
-        image = QImage(data.data, data.shape[1],
-                       data.shape[0], data.strides[0],
-                       QImage.Format_Grayscale8)
-
-        pixmap = QPixmap.fromImage(image)
+    def add_thumb(self, pixmap):
         pixmap = pixmap.scaledToWidth(int(settings["ui"]["thumb_size"]))
 
         thumb = QLabel()

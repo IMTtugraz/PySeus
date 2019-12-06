@@ -1,6 +1,5 @@
 import os
 import numpy
-import cv2
 
 from PySide2.QtWidgets import QApplication, QMessageBox
 from PySide2.QtGui import QFont, QImage, QPixmap, QPainter, QColor, QPen
@@ -70,7 +69,7 @@ class PySeus(QApplication):
     def load_data(self, data):
         """Try to load `data`."""
 
-        self.new_dataset = Raw(self)
+        self.new_dataset = Raw()
         self._setup_dataset(data)
 
     def _setup_dataset(self, arg):
@@ -78,16 +77,17 @@ class PySeus(QApplication):
             if not self.new_dataset.load(arg):  # canceled by user
                 return
 
-            if len(self.new_dataset.scans) > 1:
-                self.window.thumbs.clear()
-                for s in self.new_dataset.scans:
-                    thumb = self.display.generate_thumb(
-                        self.new_dataset.get_thumbnail(s))
-                    self.window.thumbs.add_thumb(thumb)
-
             self.clear()
             self.dataset = self.new_dataset
             del self.new_dataset
+
+            if len(self.dataset.scans) > 1:
+                self.window.thumbs.clear()
+                for s in self.dataset.scans:
+                    thumb = self.display.generate_thumb(
+                        self.dataset.get_thumbnail(s))
+                    pixmap = self.display.get_pixmap(thumb)
+                    self.window.thumbs.add_thumb(pixmap)
 
             self._load_scan()
 
@@ -127,7 +127,7 @@ class PySeus(QApplication):
 
         new_scan = self.dataset.scan + sid if relative == True else sid
         if 0 <= new_scan < len(self.dataset.scans):
-            self.clear_roi()
+            self.clear_tool()
             self._load_scan(new_scan)
 
     def _load_scan(self, sid=None):

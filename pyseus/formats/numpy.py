@@ -1,4 +1,5 @@
 import numpy
+import os
 
 from .base import BaseFormat
 
@@ -6,9 +7,8 @@ from .base import BaseFormat
 class NumPy(BaseFormat):
     """Support for NumPy array data and files."""
 
-    def __init__(self, app):
+    def __init__(self):
         BaseFormat.__init__(self)
-        self.app = app
 
     @classmethod
     def can_handle(cls, path):
@@ -19,38 +19,41 @@ class NumPy(BaseFormat):
         except:        
             return False
 
-    def load(self, file):
-        data = numpy.load(file, None, False)
-        return self.load_data(data)
-
-    def load_data(self, data):
+    def load(self, path):
         try:
+            data = numpy.load(path, None, False)
             self.data = numpy.asarray(data)
         except e:
             raise LoadError("Invalid data.")
 
-        path = "<data>"
+        self.path = os.path.abspath(path)
 
         if 2 <= self.data.ndim <= 3:
-            return path, [0], 0
+            self.scans = [0]
+
         elif self.data.ndim == 4:
-            return path, list(range(0, len(f[self.ds_path])-1)), 0
+            self.scans = list(range(0, len(f[self.ds_path])-1))
+
         elif self.data.ndim == 5:
             QMessageBox.warning(self.window, "Pyseus", 
                 "The selected dataset ist 5-dimensional. The first two dimensions will be concatenated.")
             scan_count = f[self.ds_path].shape[0]*f[self.ds_path].shape[1]
-            return path, list(range(0, scan_count-1)), 0
+            
+            self.scans = list(range(0, scan_count-1))
+        
+        self.scan = 0
+        return True
 
     def load_scan(self, scan):
         if self.data.ndim == 2:  # single slice
-            return numpy.asarray([self.data])
-        if self.data.ndim == 3:  # multiple slices
-            return numpy.asarray(self.data)
+            self.pixeldata = numpy.asarray([self.data])
+
+        elif self.data.ndim == 3:  # multiple slices
+            self.pixeldata = numpy.asarray(self.data)
+
         elif self.data.ndim == 4:  # multiple scans
-            return numpy.asarray(self.data[scan])
+            self.pixeldata = numpy.asarray(self.data[scan])
+
         elif self.data.ndim == 5:
             q, r = divmod(scan, self.data.shape[1])
-            return numpy.asarray(self.data[q][r])
-
-    def load_metadata(self, scan):
-        return {}
+            self.pixeldata = numpy.asarray(self.data[q][r])

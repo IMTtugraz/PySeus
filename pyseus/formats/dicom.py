@@ -35,21 +35,22 @@ class DICOM(BaseFormat):
 
             if has_dcm and d != "localizer":
                 self.scans.append(d)
-        
+
         self.scan = self.scans.index(os.path.basename(slice_level))
 
         if len(self.scans) > 1:
-            load_all = QMessageBox.question(self.app.window, "Pyseus", 
+            load_all = QMessageBox.question(None, "Pyseus", 
                 "{} scans detected. Do you want to load all scans?".format(len(self.scans)))
-            
+
             if load_all is QMessageBox.StandardButton.No:
                 self.scans = [self.scans[current_scan]]
                 self.scan = 0        
-        
+
         return True
 
     def load_scan(self, key=None):
         if key == None: key = self.scan
+        else: self.scan = key
 
         slices = []
         scan_dir = os.path.join(self.scan_level, self.scans[key])
@@ -76,11 +77,12 @@ class DICOM(BaseFormat):
         
         self.pixeldata = numpy.asarray(slice_data)
 
-    def load_scan_thumb(self, key):
+    def get_thumbnail(self, key):
         slices = []
         scan_dir = os.path.join(self.scan_level, key)
         for f in os.listdir(scan_dir):
-            if f.endswith(DICOM.EXTENSIONS): 
+            _, ext = os.path.splitext(f)
+            if ext.lower() in (".dcm"):
                 slice = (f, pydicom.filereader.read_file(
                     os.path.join(scan_dir,f), specific_tags=["SliceLocation"]))
                 slices.append(slice)
@@ -97,7 +99,8 @@ class DICOM(BaseFormat):
         slice = None
         scan_dir = os.path.join(self.scan_level, scan)
         for f in os.listdir(scan_dir):
-            if f.endswith(DICOM.EXTENSIONS): 
+            _, ext = os.path.splitext(f)
+            if ext.lower() in (".dcm"):
                 slice = pydicom.read_file(os.path.join(scan_dir,f), defer_size=0)
                 self._load_file_metadata(slice)
     
@@ -112,10 +115,6 @@ class DICOM(BaseFormat):
         self.metadata = metadata
 
     def get_metadata(self, keys=None):
-        if self.metadata is None:
-            self.load_metadata()
-        meta = self.metadata
-
         key_map = {
             "pys:patient": "PatientName",
             "pys:series": "SeriesDescription",
@@ -126,22 +125,7 @@ class DICOM(BaseFormat):
             "pys:alpha": "FlipAngle"
         }
 
-        # keys starting with "_" are ignored unless specificially requested
-        if keys is None: keys = [k for k in key_map.keys() if k[0] != "_"]
-
-        if isinstance(keys, str): keys = [keys]
-
-        meta_set = {}
-        for key in keys:
-            if key in key_map:
-                real_key = key_map[key]
-                if real_key in meta.keys():
-                    meta_set[real_key] = meta[real_key]
-            else:
-                if key in meta.keys():
-                    meta_set[key] = meta[key]
-
-        return meta_set
+        return super().get_metadata(keys, key_map)
     
     def get_spacing(self, axis=None):
         if self.app.metadata is None:

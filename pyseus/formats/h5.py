@@ -53,14 +53,14 @@ class H5(BaseFormat):
 
             elif self.dims == 5:
                 QMessageBox.warning(self.app.window, "Pyseus", 
-                    "The selected dataset ist 5-dimensional. The first two dimensions will be concatenated.")
+                    "The selected dataset is 5-dimensional. The first two dimensions will be concatenated.")
                 scan_count = f[self._dspath].shape[0]*f[self._dspath].shape[1]
                 self.scans = list(range(0, scan_count-1))
 
             else:
                 raise LoadError("Invalid dataset '{}' in '{}': Wrong dimensions.".format(self._dspath, path))
-            
-            self.load_scan(0)
+
+            self.scan = 0
             return True
 
     def _get_pixeldata(self, scan):
@@ -88,9 +88,9 @@ class H5(BaseFormat):
         return metadata
 
     def get_thumbnail(self, scan):
-        return _get_pixeldata(scan)
+        return self._get_pixeldata(scan)
 
-    def metadata(self, keys=None):
+    def get_metadata(self, keys=None):
         key_map = {
             "pys:patient": "PatientName",
             "pys:series": "SeriesDescription",
@@ -101,23 +101,10 @@ class H5(BaseFormat):
             "pys:alpha": "FlipAngle"
         }
 
-        if keys is [None]: keys = key_map.keys()
+        return super().get_metadata(keys, key_map)
 
-        if isinstance(keys, str): keys = [keys]
-
-        meta_set = {}
-        for key in keys:
-            if key in key_map:
-                real_key = key_map[key]
-                if real_key in meta.keys():
-                    meta_set[real_key] = meta[real_key]
-            else:
-                if key in meta.keys():
-                    meta_set[key] = meta[key]
-
-        return meta_set
     
-    def pixeldata(self, slice=None):
+    def get_pixeldata(self, slice=None):
         if slice is None:
             return self.pixeldata.copy()
         else:
