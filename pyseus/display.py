@@ -7,12 +7,12 @@ from pyseus import settings
 
 
 class DisplayHelper():
-    """A collection of display helper functions."""
+    """A collection of helper functions for displaying image data."""
 
     def __init__(self):
         self.mode = 0
-        """Determines wheter amplitude (0) or phase (1) from the data is used.
-        Default ist amplitude (0)."""
+        """Determines wheter amplitude (0) or phase (1) information from the 
+        data is used. Default ist amplitude (0)."""
 
     def prepare(self, data):
         """Prepare data for display or analysis (see `prepare_without_window`)
@@ -64,7 +64,7 @@ class DisplayHelper():
 
     def move_window(self, steps):
         """Move the window up / down; results in a darker / lighter image.
-        Step size is controlled in settings.ini."""
+        Step size is controlled in `settings.ini`."""
 
         delta = self.data_max - self.data_min
         step_size = float(settings["window"]["move_step"])
@@ -73,7 +73,7 @@ class DisplayHelper():
 
     def scale_window(self, steps):
         """Shrink / widen the window; results in higher / lower contrast.
-        Step size is controlled in settings.ini."""
+        Step size is controlled in `settings.ini`."""
 
         delta = self.data_max - self.data_min
         step_size = float(settings["window"]["scale_step"])
@@ -90,14 +90,14 @@ class DisplayHelper():
         self.scale_window(scale_steps)
 
     def set_mode(self, mode):
-        """Set the display mode to Amplitude (1) or phase (0)."""
+        """Set the display mode to amplitude (1) or phase (0)."""
 
         self.mode = mode
         self.app.refresh()
 
     def generate_thumb(self, data):
         """Resize data for use as a thumbnail.
-        Thumbnail size is controlled in settings.ini."""
+        Thumbnail size is controlled in `settings.ini`."""
 
         self.setup_window(data)
 

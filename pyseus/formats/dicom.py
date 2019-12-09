@@ -8,10 +8,23 @@ from .base import BaseFormat, LoadError
 
 
 class DICOM(BaseFormat):
-    """Support for DICOM files."""
+    """Support for DICOM files.
+
+    Currently, only .dcm files are supported.
+    Metadata, pixelspacing, scale and orientation are all supported."""
 
     def __init__(self):
         BaseFormat.__init__(self)
+
+        self.meta_keymap = {
+            "pys:patient": "PatientName",
+            "pys:series": "SeriesDescription",
+            "pys:sequence": "SequenceName",
+            "pys:matrix": "AcquisitionMatrix",
+            "pys:tr": "RepetitionTime",
+            "pys:te": "EchoTime",
+            "pys:alpha": "FlipAngle"
+        }
 
     @classmethod
     def can_handle(cls, path):
@@ -50,14 +63,9 @@ class DICOM(BaseFormat):
 
         return True
 
-    def load_scan(self, key=None):
-        if key is None:
-            key = self.scan
-        else:
-            self.scan = key
-
+    def load_scan(self, scan):
         slices = []
-        scan_dir = os.path.join(self.scan_level, self.scans[key])
+        scan_dir = os.path.join(self.scan_level, self.scans[scan])
         for f in os.listdir(scan_dir):
             _, ext = os.path.splitext(f)
             if ext.lower() in (".dcm"):
@@ -68,23 +76,22 @@ class DICOM(BaseFormat):
         slice_count = len(slices)
         slices = [s for s in slices if hasattr(s, "SliceLocation")]
 
-        self._load_file_metadata(slices[0])
-
         if slice_count > 0 and len(slices) == 0:
             raise LoadError("DICOM files are missing SliceLocation data.")
 
         slices = sorted(slices, key=lambda s: s.SliceLocation)
 
-        slice_data = []
+        pixeldata = []
         for s in slices:
             if "PixelData" in s:
-                slice_data.append(s.pixel_array)
+                pixeldata.append(s.pixel_array)
 
-        self.pixeldata = numpy.asarray(slice_data)
+        self.pixeldata = numpy.asarray(pixeldata)
+        self.metadata = self.get_scan_metadata(scan)
 
-    def get_thumbnail(self, key):
+    def get_scan_thumbnail(self, scan):
         slices = []
-        scan_dir = os.path.join(self.scan_level, key)
+        scan_dir = os.path.join(self.scan_level, scan)
         for f in os.listdir(scan_dir):
             _, ext = os.path.splitext(f)
             if ext.lower() in (".dcm"):
@@ -101,40 +108,25 @@ class DICOM(BaseFormat):
 
         return numpy.asarray(thumb_slice.pixel_array)
 
-    def load_metadata(self, scan):
+    def get_scan_metadata(self, scan):
+        metadata = {}
         slice = None
-        scan_dir = os.path.join(self.scan_level, scan)
+
+        scan_dir = os.path.join(self.scan_level, self.scans[scan])
         for f in os.listdir(scan_dir):
             _, ext = os.path.splitext(f)
             if ext.lower() in (".dcm"):
                 slice = pydicom.read_file(os.path.join(scan_dir, f),
-                                          defer_size=0)
-                self._load_file_metadata(slice)
+                                          defer_size=0)                
 
-    def _load_file_metadata(self, slice):
-        metadata = {}
+                ignore = ["PixelData"]
+                for e in slice:
+                    if e.keyword not in ignore and not e.keyword == "":
+                        metadata[e.keyword] = e.value
 
-        ignore = ["PixelData"]
-        for e in slice:
-            if e.keyword not in ignore and not e.keyword == "":
-                metadata[e.keyword] = e.value
+        return metadata
 
-        self.metadata = metadata
-
-    def get_metadata(self, keys=None):
-        key_map = {
-            "pys:patient": "PatientName",
-            "pys:series": "SeriesDescription",
-            "pys:sequence": "SequenceName",
-            "pys:matrix": "AcquisitionMatrix",
-            "pys:tr": "RepetitionTime",
-            "pys:te": "EchoTime",
-            "pys:alpha": "FlipAngle"
-        }
-
-        return super().get_metadata(keys, key_map)
-
-    def get_spacing(self, axis=None):
+    def get_pixelspacing(self, axis=None):
         if self.app.metadata is None:
             self.app.metadata = self.load_metadata()
         meta = self.app.metadata
