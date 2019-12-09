@@ -6,10 +6,17 @@ from .base import BaseFormat
 
 
 class NIfTI(BaseFormat):
-    """Support for NIfTI files."""
+    """Support for NIfTI files.
+    
+    Currently, only NIFTI-2 single files are supported.
+    Metadata, pixelspacing, scale and orientation are all supported."""
 
     def __init__(self):
         BaseFormat.__init__(self)
+
+        self.meta_keymap = {
+            "pys:descr": "descrip"
+        }
 
     @classmethod
     def can_handle(cls, path):
@@ -27,36 +34,19 @@ class NIfTI(BaseFormat):
         self.scan = 0
         return True
 
-    def _get_pixeldata(self, scan):
+    def get_scan_pixeldata(self, scan):
         data = self.file.get_fdata()
         scan_data = numpy.swapaxes(data[:, :, :, scan], 0, 2)
         return numpy.asarray(scan_data)
 
-    def get_thumbnail(self, scan):
-        scan_data = self._get_pixeldata(scan)
-        return scan_data[len(scan_data) // 2]
-
-    def _get_metadata(self, scan):
+    def get_scan_metadata(self, scan):
         metadata = {}
         header = self.file.header.items()
         for key, value in header:
             metadata[key] = value
         return metadata
 
-    def get_metadata(self, keys=None):
-        key_map = {
-            "pys:patient": "PatientName",
-            "pys:series": "SeriesDescription",
-            "pys:sequence": "SequenceName",
-            "pys:matrix": "AcquisitionMatrix",
-            "pys:tr": "RepetitionTime",
-            "pys:te": "EchoTime",
-            "pys:alpha": "FlipAngle"
-        }
-
-        return super().get_metadata(keys, key_map)
-
-    def get_pixel_spacing(self, axis=None):
+    def get_pixelspacing(self, axis=None):
         if "pixdim" in self.metadata.keys():
             pixdim = self.metadata["pixdim"]
             if "xyzt_units" in self.metadata.keys():
@@ -69,3 +59,9 @@ class NIfTI(BaseFormat):
             return pixdim[0:2]
         else:
             return pixdim[axis]
+
+    def get_scale(self):
+        pass
+
+    def get_orientation(self):
+        pass

@@ -1,5 +1,7 @@
-"""Functions provide specific information about a region-of-interest
-in the data.
+"""Tools provide different ways to evaluate data.
+
+All tools extend the *BaseTool* class, guaranteeing basic functionality
+of marking regions of interest, and displaying results.
 """
 
 from .base import BaseTool
