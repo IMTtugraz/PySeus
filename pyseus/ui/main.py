@@ -3,9 +3,8 @@ import webbrowser
 from functools import partial
 import os
 
-from PySide2.QtCore import Qt
-from PySide2.QtWidgets import QMainWindow, QAction, \
-    QLabel, QFileDialog, QFrame, QVBoxLayout, QHBoxLayout, QSpinBox
+from PySide2.QtWidgets import QMainWindow, QAction, QLabel, QFileDialog, \
+                              QFrame, QVBoxLayout, QHBoxLayout
 
 from .view import ViewWidget
 from .console import ConsoleWidget
@@ -22,22 +21,22 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("PySEUS")
 
         self.app = app
-        """Holds reference to front controller."""
+        """Reference to front controller."""
 
         self.thumbs = ThumbsWidget(app)
-        """@TODO"""
+        """Reference to thumbs widget."""
 
         self.view = ViewWidget(app)
-        """@TODO"""
+        """Reference to view widget."""
 
         self.info = InfoWidget(app)
-        """@TODO"""
+        """Reference to info sidebar widget."""
 
         self.meta = MetaWidget(app)
-        """@TODO"""
+        """Reference to meta sidebar widget."""
 
         self.console = ConsoleWidget(app)
-        """@TODO"""
+        """Reference to console sidebar widget."""
 
         # Default path for file open dialoge
         self._open_path = ""
@@ -76,7 +75,7 @@ class MainWindow(QMainWindow):
         self.resize(geometry.width() * 0.6, geometry.height() * 0.6)
 
     def add_menu_item(self, menu, title, callback, shortcut=""):
-        """Create menu item (DRY wrapper function)."""
+        """Create menu item (helper function)."""
         action = QAction(title, self)
         if(shortcut != ""):
             action.setShortcut(shortcut)
@@ -85,6 +84,8 @@ class MainWindow(QMainWindow):
         return action
 
     def setup_menu(self):
+        """Setup the menu bar. Items in the *Evaluate* menu are created 
+        in the `setup_menu` function of tool classes."""
         ami = self.add_menu_item
         menu_bar = self.menuBar()
 
@@ -93,14 +94,16 @@ class MainWindow(QMainWindow):
         ami(self.file_menu, "&Quit", self._action_quit, "Ctrl+Q")
 
         self.view_menu = menu_bar.addMenu("&View")
-        ami(self.view_menu, "&Amplitude", partial(self._action_mode, 0), "")
-        ami(self.view_menu, "&Phase", partial(self._action_mode, 1), "")
+        ami(self.view_menu, "&Amplitude", partial(self._action_mode, 0), "F1")
+        ami(self.view_menu, "&Phase", partial(self._action_mode, 1), "F2")
         self.view_menu.addSeparator()
+
         ami(self.view_menu, "Zoom &in", self._action_zoom_in, "+")
         ami(self.view_menu, "Zoom &out", self._action_zoom_out, "-")
         ami(self.view_menu, "Zoom to &fit", self._action_zoom_fit, "#")
         ami(self.view_menu, "Reset &Zoom", self._action_zoom_reset, "0")
         self.view_menu.addSeparator()
+
         ami(self.view_menu, "&Lower Window", self._action_win_lower, "q")
         ami(self.view_menu, "&Raise Window", self._action_win_raise, "w")
         ami(self.view_menu, "&Shrink Window", self._action_win_shrink, "a")
@@ -108,39 +111,55 @@ class MainWindow(QMainWindow):
         ami(self.view_menu, "Reset &Window", self._action_win_reset, "d")
 
         self.explore_menu = menu_bar.addMenu("E&xplore")
-        ami(self.explore_menu, "Nex&t Slice", partial(self._action_slice, 1), "PgUp")
-        ami(self.explore_menu, "P&revious Slice", partial(self._action_slice, -1), "PgDown")
+        ami(self.explore_menu, "Nex&t Slice",
+            partial(self._action_slice, 1), "PgUp")
+        ami(self.explore_menu, "P&revious Slice",
+            partial(self._action_slice, -1), "PgDown")
         self.explore_menu.addSeparator()
-        ami(self.explore_menu, "Rotate z", partial(self._action_rotate, 2, 1), "Ctrl+E")
-        ami(self.explore_menu, "Rotate x", partial(self._action_rotate, 1, 1), "Ctrl+R")
-        ami(self.explore_menu, "Rotate y", partial(self._action_rotate, 0, 1), "Ctrl+T")
-        ami(self.explore_menu, "Reset Rotation", partial(self._action_rotate, -1, 1), "Ctrl+Z")
+
+        ami(self.explore_menu, "Rotate z",
+            partial(self._action_rotate, 2), "Ctrl+E")
+        ami(self.explore_menu, "Rotate x",
+            partial(self._action_rotate, 1), "Ctrl+R")
+        ami(self.explore_menu, "Rotate y",
+            partial(self._action_rotate, 0), "Ctrl+T")
+        ami(self.explore_menu, "Reset Rotation",
+            partial(self._action_rotate, -1), "Ctrl+Z")
         self.explore_menu.addSeparator()
-        ami(self.explore_menu, "Next &Scan", partial(self._action_scan, 1), "Alt+PgUp")
-        ami(self.explore_menu, "Previous Sc&an", partial(self._action_scan, -1), "Alt+PgDown")
+
+        ami(self.explore_menu, "Next &Scan",
+            partial(self._action_scan, 1), "Alt+PgUp")
+        ami(self.explore_menu, "Previous Sc&an",
+            partial(self._action_scan, -1), "Alt+PgDown")
 
         self.functions_menu = menu_bar.addMenu("&Evaluate")
         for f in self.app.tools:
             f.setup_menu(self.app, self.functions_menu, self.add_menu_item)
         self.functions_menu.addSeparator()
-        ami(self.functions_menu, "&Clear RoI", self._action_roi_clear, "Esc")
+        ami(self.functions_menu, "&Clear RoI", self._action_tool_clear, "Esc")
 
         # About action is its own top level menu
         ami(menu_bar, "&About", self._action_about)
 
-    def add_function_to_menu(self, key, function):
-        "Add a entry in `Evals` menu for `function`."
-        self.add_menu_item(self.functions_menu, function.MENU_NAME,
-                           partial(self._action_set_function, key))
+    def show_status(self, message):
+        """Display `message` in status bar."""
+        self.statusBar().showMessage(message)
+
+    def resizeEvent(self, event):
+        """Keep viewport centered and adjust zoom on window resize."""
+        x_factor = event.size().width() / event.oldSize().width()
+        # y_factor = event.size().height() / event.oldSize().height()
+        # @TODO x_factor if xf < yf or xf * width * zoom_factor < viewport_x
+        self.view.zoom(x_factor, True)
 
     def _action_quit(self):
         sys.exit()
 
     def _action_open(self):
         path, filter = QFileDialog.getOpenFileName(None, "Open file",
-                           self._open_path, "*.*")
+                                                   self._open_path, "*.*")
 
-        if path != "":
+        if not path == "":
             self._open_path = os.path.dirname(path)
             self.app.load_file(path)
 
@@ -184,24 +203,19 @@ class MainWindow(QMainWindow):
 
     def _action_slice(self, step):
         self.app.select_slice(step, True)
-    
+
     def _action_scan(self, step):
         self.app.select_scan(step, True)
 
-    def resizeEvent(self, event):
-        x_factor = event.size().width() / event.oldSize().width()
-        y_factor = event.size().height() / event.oldSize().height()
-        self.view.zoom(x_factor, True)
-        # @TODO x_factor if xf < yf or xf * width * zoom_factor < viewport_x
-
-    def _action_roi_clear(self):
-        self.app.clear_roi()
+    def _action_tool_clear(self):
+        self.app.clear_tool()
     
     def _action_rotate(self, axis, steps):
         self.app.rotate(axis, steps)
 
 
 class SidebarHeading(QLabel):
+    """Widget for sidebar separators and headings."""
 
     def __init__(self, text="", first=False):
         QLabel.__init__(self)

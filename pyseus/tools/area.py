@@ -1,18 +1,19 @@
 import numpy
 from functools import partial
 
-from PySide2.QtGui import QFont, QImage, QPixmap, QPainter, QColor, QPen
+from PySide2.QtGui import QPainter, QColor, QPen
 
 from .base import BaseTool
 
 
 class AreaTool(BaseTool):
-    """Displays basic statistics (min, max, med, avg) for the RoI."""
+    """Evaluates data in a simple RoI."""
 
     def __init__(self, app):
         BaseTool.__init__(self)
         self.app = app
-        self.roi = [0,0,0,0]
+        self.roi = [0, 0, 0, 0]
+        """Coordinates of the current region of interest."""
 
     @classmethod
     def setup_menu(cls, app, menu, ami):
@@ -21,13 +22,14 @@ class AreaTool(BaseTool):
     def start_roi(self, x, y):
         self.roi[0] = x
         self.roi[1] = y
-    
+
     def end_roi(self, x, y):
         self.roi[2] = x
         self.roi[3] = y
 
     def draw_overlay(self, pixmap):
-        if self.roi == [0,0,0,0]: return pixmap
+        if self.roi == [0, 0, 0, 0]:
+            return pixmap
 
         painter = QPainter(pixmap)
         pen = QPen(QColor("red"))
@@ -40,7 +42,7 @@ class AreaTool(BaseTool):
         return pixmap
 
     def clear(self):
-        self.roi = None
+        self.roi = [0, 0, 0, 0]
 
     def recalculate(self, data):
         xmin = numpy.minimum(self.roi[0], self.roi[2])

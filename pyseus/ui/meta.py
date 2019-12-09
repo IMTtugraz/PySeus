@@ -1,11 +1,12 @@
 from PySide2.QtCore import Qt, QSize
-from PySide2.QtWidgets import QDialog, QSizePolicy, QFormLayout, QHBoxLayout, QVBoxLayout, QFrame, QLabel, QSpinBox, QScrollArea, QLineEdit, QPushButton
+from PySide2.QtWidgets import QDialog, QSizePolicy, QFormLayout, QVBoxLayout, \
+                              QFrame, QLabel, QScrollArea, QLineEdit
 
 from pyseus.settings import settings
 
 
 class MetaWidget(QScrollArea):
-    """The widget for metadata."""
+    """The widget for metadata display."""
 
     def __init__(self, app):
         QScrollArea.__init__(self)
@@ -13,6 +14,7 @@ class MetaWidget(QScrollArea):
         self._reset_ui()
 
     def _reset_ui(self):
+        """Remove all metadata rows and reset the layout."""
         table = QFrame()
         table.setLayout(QFormLayout())
         self.table = table.layout()
@@ -26,12 +28,14 @@ class MetaWidget(QScrollArea):
         self.updateGeometry()
 
     def minimumSizeHint(self):
+        """Return widget size to ensure unifrom sidebar width."""
         return QSize(int(settings["ui"]["sidebar_size"]), 100)
 
     def update_meta(self, data, more=True):
+        """Set the displayed metadata; if `more` is True, display a button to show all metadata."""
         self._reset_ui()
-        
-        if not data is None and len(data) > 0:
+
+        if data is not None and len(data) > 0:
             for k in sorted(data.keys()):
                 value = QLineEdit(str(data[k]))
                 self.table.addRow(k, value)
@@ -44,16 +48,18 @@ class MetaWidget(QScrollArea):
             self.table.addRow("No metadata available", None)
 
     def _show_more(self, event):
+        """Display a window showing all available metadata."""
         self.app.show_metadata_window()
 
 
 class MetaWindow(QDialog):
-    """..."""
+    """Window for displaying all available metadata."""
 
     def __init__(self, app, data):
         QDialog.__init__(self)
         self.setWindowTitle("Metadata")
-        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        self.setWindowFlags(self.windowFlags()
+                            & ~Qt.WindowContextHelpButtonHint)
 
         self.setLayout(QVBoxLayout())
         widget = MetaWidget(app)

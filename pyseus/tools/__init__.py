@@ -1,7 +1,9 @@
-"""Functions provide specific information about a region-of-interest
-in the data.
+"""Tools provide different ways to evaluate data.
+
+All tools extend the *BaseTool* class, guaranteeing basic functionality
+of marking regions of interest, and displaying results.
 """
 
-from .base import BaseTool  # noqa: F401
-from .area import AreaTool  # noqa: F401
-from .line import LineTool  # noqa: F401
+from .base import BaseTool
+from .area import AreaTool
+from .line import LineTool

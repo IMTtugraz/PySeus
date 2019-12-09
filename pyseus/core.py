@@ -1,269 +1,205 @@
 import os
-import numpy
-import cv2
 
 from PySide2.QtWidgets import QApplication, QMessageBox
-from PySide2.QtGui import QFont, QImage, QPixmap, QPainter, QColor, QPen
 
 from pyseus import settings
 from pyseus import DisplayHelper
 from pyseus.ui import MainWindow
-from pyseus.formats import Raw, H5, DICOM, NIfTI, LoadError
+from pyseus.formats import Raw, NumPy, H5, DICOM, NIfTI, LoadError
 from pyseus.tools import AreaTool, LineTool
 from pyseus.ui.meta import MetaWindow
 
+
 class PySeus(QApplication):
-    """The main application class acts as controller."""
+    """The main application class acts as front controller."""
 
     def __init__(self):
-        """Setup the GUI and default values."""
+        """Setup the application and default values."""
 
         QApplication.__init__(self)
 
-        self.formats = [H5, DICOM, NIfTI, Raw]
-        """Holds all avaiable data formats."""
+        self.dataset = None
+        """The current dataset object. See `Formats <development/formats>`_."""
+
+        self.formats = [H5, DICOM, NIfTI, NumPy, Raw]
+        """List of all avaiable data formats."""
 
         self.tools = [AreaTool, LineTool]
-        """Holds all avaiable evaluation tools."""
-
-        self.dataset = None
-        """Dataset"""
+        """List of all avaiable evaluation tools."""
 
         self.tool = None
-        """Tool"""
+        """The current tool object. See `Tools <development/tools>`_."""
 
         self.window = MainWindow(self)
-        """Window"""
+        """The main window object. See `Interface <development/interface>`_."""
 
-        self.display = DisplayHelper(self)
-        """DisplayHelper"""
+        self.display = DisplayHelper()
+        """The display helper object. See `Display <development/display>`_."""
 
-        self.path = ""
-        """Path"""
-
-        self.scans = []
-        """Scans"""
-
-        self.current_scan = -1
-        """Current Scan"""
-
-        self.slices = []
-        """Slices"""
-
-        self.current_slice = -1
-        """Current Slice"""
-
-        self.metadata = None
-        """Metadata"""
+        self.slice = -1
+        """Index of the current slice."""
 
         # Stylesheet
-        style_path = os.path.abspath(os.path.join(
-            os.path.dirname(__file__),
-            "./ui/" + settings["ui"]["style"] + ".qss"))
+        style_path = "./ui/" + settings["ui"]["style"] + ".qss"
+        style_path = os.path.join(os.path.dirname(__file__), style_path)
         with open(style_path, "r") as stylesheet:
             self.setStyleSheet(stylesheet.read())
 
-        self.font().setPixelSize(12)
+        self.font().setPixelSize(int(settings["ui"]["font_size"]))
 
         self.window.show()
 
     def load_file(self, path):
-        """Try to load file at `path`."""
+        """Try to load the file at `path`. See also `setup_dataset`."""
 
-        dataset = None
+        self.new_dataset = None
         for f in self.formats:
-            if f.check_file(path):
-                dataset = f(self)
+            if f.can_handle(path):
+                self.new_dataset = f()
                 break
-        
-        self.deload()
 
-        if not dataset is None:
-            try:
-                self.path, self.scans, self.current_scan = dataset.load_file(path)
-                if self.path == "": return
-
-                if len(self.scans) > 1:
-                    self.window.thumbs.clear()
-                    for s in self.scans:
-                        thumb = self._generate_thumb(
-                            dataset.load_scan_thumb(s))
-                        self.window.thumbs.add_thumb(thumb)
-
-                self._load_scan(self.current_scan,  dataset)
-                self._set_current_scan(self.current_scan)
-        
-                self.window.info.update_path(self.path)
-
-                self.dataset = dataset
-
-            except OSError as e:
-                QMessageBox.warning(self.window, "Pyseus", 
-                    str(e))
-            except LoadError as e:
-                QMessageBox.warning(self.window, "Pyseus", 
-                    e)
+        if self.new_dataset is not None:
+            self.setup_dataset(path)
 
         else:
-            QMessageBox.warning(self.window, "Pyseus", 
-                "Unknown file format.")
-
-    def _generate_thumb(self, data):
-        thumb_size = int(settings["ui"]["thumb_size"])
-        thumb_data = cv2.resize(data, (thumb_size, thumb_size))
-
-        self.display.setup_window(thumb_data)
-        return self.display.prepare(thumb_data)
+            QMessageBox.warning(self.window, "Pyseus", "Unknown file format.")
 
     def load_data(self, data):
-        """Try to load `data`."""
-        self.deload()
+        """Try to load `data`. See also `setup_dataset`."""
 
-        dataset = Raw(self)
-        
+        self.new_dataset = Raw()
+        self.setup_dataset(data)
+
+    def setup_dataset(self, arg):
+        """Setup a new dataset: Load scan list, generate thumbnails and load default scan."""
         try:
-            self.path, self.scans, self.current_scan = dataset.load_data(data)
-            if self.path == "": return
+            if not self.new_dataset.load(arg):  # canceled by user
+                return
 
-            if len(self.scans) > 1:
+            self.clear()
+            self.dataset = self.new_dataset
+            del self.new_dataset
+
+            if len(self.dataset.scans) > 1:
                 self.window.thumbs.clear()
-                for s in self.scans:
-                    thumb = self._generate_thumb(
-                        dataset.load_scan_thumb(s))
-                    self.window.thumbs.add_thumb(thumb)
+                for s in self.dataset.scans:
+                    thumb = self.display.generate_thumb(
+                        self.dataset.get_scan_thumbnail(s))
+                    pixmap = self.display.get_pixmap(thumb)
+                    self.window.thumbs.add_thumb(pixmap)
 
-            self._load_scan(self.current_scan,  dataset)
-            self._set_current_scan(self.current_scan)
-
-            self.dataset = dataset
-        
-            self.window.info.update_path(self.path)
+            self.load_scan()
 
         except OSError as e:
-            QMessageBox.warning(self.window, "Pyseus", 
-                str(e))
+            QMessageBox.warning(self.window, "Pyseus", str(e))
+
         except LoadError as e:
-            QMessageBox.warning(self.window, "Pyseus", 
-                e)
+            QMessageBox.warning(self.window, "Pyseus", str(e))
 
-    def deload(self):
-        self.dataset = None
-        self.scans = []
-        self.current_scan = -1
-        self.slices = []
-        self.current_slice = -1
-        self.window.view.set(None)
-        self.window.thumbs.clear()
-        self.clear_roi()
-
-    def refresh(self):
-        """Refresh the displayed image."""
-        if self.current_slice == -1: return
-
-        tmp = self.display.prepare(self.slices[self.current_slice].copy())
-
-        image = QImage(tmp.data, tmp.shape[1],
-                       tmp.shape[0], tmp.strides[0],
-                       QImage.Format_Grayscale8)
-        pixmap = QPixmap.fromImage(image)
-
-        if not self.tool is None:
-            pixmap = self.tool.draw_overlay(pixmap)
-
-        self.window.view.set(pixmap)
+        self.window.info.update_path(self.dataset.path)
 
     def set_mode(self, mode):
-        """Set the mode with the slug `mode` as current."""
+        """Set display mode to amplitude (0) or phase (1)."""
         self.display.mode = mode
         self.display.reset_window()
         self.refresh()
 
-    def show_status(self, message):
-        """Display `message` in status bar."""
-        self.window.statusBar().showMessage(message)
+    def refresh(self):
+        """Refresh the displayed image."""
+        if self.slice == -1:
+            return
+
+        pixmap = self.display.get_pixmap(
+                        self.dataset.get_pixeldata(self.slice))
+
+        if self.tool is not None:
+            pixmap = self.tool.draw_overlay(pixmap)
+
+        self.window.view.set(pixmap)  # @TODO Refactor ?!?
 
     def recalculate(self):
-        """Recalculate the current function."""
-        if not self.tool is None:
-            self.tool.recalculate(self.slices[self.current_slice])
-
-    def _load_scan(self, key, dataset=None):
-        dataset = self.dataset if dataset is None else dataset
-        
-        try:
-            self.slices = dataset.load_scan(self.scans[key])
-
-            # make sure the new scan has enough slices
-            if self.current_slice >= len(self.slices) or self.current_slice == -1:
-                self._set_current_slice(len(self.slices) // 2)
-
-            self.metadata = dataset.load_metadata(self.scans[key])
-            key_meta = dataset.get_metadata()
-            self.window.meta.update_meta(key_meta, len(self.metadata) > 0)
-
-            self.display.setup_window(self.slices[self.current_slice])
-            self.refresh()
-            self.window.view.zoom_fit()
-        except LoadError as e:
-            QMessageBox.warning(self.window, "Pyseus", 
-                e)
-
-    def select_slice(self, sid, relative=False):
-        if self.path == "": return
-
-        new_slice = self.current_slice + sid if relative == True else sid
-        if 0 <= new_slice < len(self.slices):
-            self._set_current_slice(new_slice)
-            self.refresh()
-            self.recalculate()
-    
-    def _set_current_slice(self, sid):
-        self.window.info.update_slice(sid, len(self.slices))
-        self.current_slice = sid
+        """Refresh the active evaluation tool."""
+        if self.tool is not None:
+            self.tool.recalculate(
+                self.display.prepare_without_window(self.slices[self.slice]))
 
     def select_scan(self, sid, relative=False):
-        if self.path == "": return
+        """Select and load a scan from the current dataset. See also `load_scan`."""
+        if self.dataset is None:
+            return
 
-        new_scan = self.current_scan + sid if relative == True else sid
-        if 0 <= new_scan < len(self.scans):
-            self.clear_roi()
-            self._set_current_scan(new_scan)
-            self._load_scan(new_scan)
-    
-    def _set_current_scan(self, sid):
-        if len(self.scans) > 1:
-            self.window.thumbs.thumbs[self.current_scan].setStyleSheet("border: 1px solid transparent")
-            self.window.thumbs.thumbs[sid].setStyleSheet("border: 1px solid #aaa")
-        
-        self.window.info.update_scan(self.scans[sid])
-        self.current_scan = sid
+        new_scan = self.dataset.scan + sid if relative is True else sid
+        if 0 <= new_scan < len(self.dataset.scans):
+            self.clear_tool()
+            self.load_scan(new_scan)
 
-    def rotate(self, axis, steps=1, refresh=True):
-        if axis == -1:  # reset
-            self._load_scan(self.current_scan)
+    def load_scan(self, sid=None):
+        """Load a scan from the current dataset."""
+        old_sid = self.dataset.scan
 
-        else:
-            if axis == 0 and len(self.slices) > 2:  # x-axis
-                self.slices = numpy.asarray(numpy.swapaxes(self.slices, 0, 2))
-                self._set_current_slice(len(self.slices) // 2)
-                
-            elif axis == 1 and len(self.slices) > 2:  # y-axis
-                self.slices = numpy.asarray(numpy.rot90(self.slices))
-                self._set_current_slice(len(self.slices) // 2)
+        if sid is None:
+            sid = self.dataset.scan
+        self.dataset.load_scan(sid)
 
-            elif axis == 2:  # z-axis
-                self.slices = numpy.asarray([numpy.rot90(slice) for slice in self.slices])
+        pixeldata = self.dataset.pixeldata
+        # make sure the new scan has enough slices
+        if self.slice >= len(pixeldata) or self.slice == -1:
+            self._set_slice(len(pixeldata) // 2)
 
-        if steps > 1: self.rotate(axis, steps-1, refresh)
+        if len(self.dataset.scans) > 1:
+            old_thumb = self.window.thumbs.thumbs[old_sid]
+            new_thumb = self.window.thumbs.thumbs[sid]
+            old_thumb.setStyleSheet("border: 1px solid transparent")
+            new_thumb.setStyleSheet("border: 1px solid #aaa")
 
-        if refresh:
+        self.window.meta.update_meta(self.dataset.get_metadata("DEFAULT"),
+                                     len(self.dataset.metadata) > 0)
+        self.window.info.update_scan(self.dataset.scans[sid])
+
+        self.display.setup_window(pixeldata[self.slice])
+        self.refresh()
+        self.window.view.zoom_fit()
+
+    def select_slice(self, sid, relative=False):
+        """Select and display a slice from the current scan."""
+        if self.dataset is None:
+            return
+
+        new_slice = self.slice + sid if relative is True else sid
+        if 0 <= new_slice < len(self.dataset.pixeldata):
+            self._set_slice(new_slice)
             self.refresh()
-            self.window.view.zoom_fit()
-            self.tool.clear()
-    
-    def clear_roi(self):
-        if not self.tool is None: self.tool.clear()
+            self.recalculate()
+
+    def _set_slice(self, sid):
+        """Set the current slice index."""
+        self.window.info.update_slice(sid, len(self.dataset.pixeldata))
+        self.slice = sid
 
     def show_metadata_window(self):
-        self.meta_window = MetaWindow(self, self.metadata)
+        """Show the metadata window (pyseus.ui.meta.MetaWindow)."""
+        self.meta_window = MetaWindow(self, self.dataset.metadata)
         self.meta_window.show()
+
+    def clear(self):
+        """Reset the application."""
+        self.dataset = None
+        self.slice = -1
+        self.window.view.set(None)
+        self.window.thumbs.clear()
+        self.clear_tool()
+
+    def clear_tool(self):
+        """Reset the active evaluation tool."""
+        if self.tool is not None:
+            self.tool.clear()
+
+    def rotate(self, axis):
+        """Rotate the pixeldata of the current scan in 3D."""
+        self.dataset.rotate(axis)
+        if not axis == 2:
+            self._set_slice(len(self.dataset.pixeldata) // 2)
+
+        self.refresh()
+        self.window.view.zoom_fit()
+        self.clear_tool()

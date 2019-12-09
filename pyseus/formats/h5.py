@@ -1,127 +1,116 @@
 import h5py
 import numpy
-from functools import partial
 import os
 
 from PySide2.QtCore import Qt
-from PySide2.QtWidgets import QApplication, QDialog, QLabel, QLayout, \
-        QVBoxLayout, QDialogButtonBox, QMessageBox, QListWidget, QListWidgetItem
+from PySide2.QtWidgets import QDialog, QLabel, QLayout, QVBoxLayout, \
+                              QDialogButtonBox, QMessageBox, \
+                              QListWidget, QListWidgetItem
 
 from .base import BaseFormat, LoadError
 
 
 class H5(BaseFormat):
-    """Support for HDF5 files."""
+    """Support for HDF5 files.
 
-    def __init__(self, app):
-        BaseFormat.__init__(self)
-        self.app = app
-
-    EXTENSIONS = (".h5", ".hdf5")
+    Metadata, pixelspacing, scale and orientation are all supported."""
 
     @classmethod
-    def check_file(cls, path):
+    def can_handle(cls, path):
         _, ext = os.path.splitext(path)
-        return ext in cls.EXTENSIONS
+        return ext.lower() in (".h5", ".hdf5")
 
-    def load_file(self, path):
-        self.path = path
+    def __init__(self):
+        BaseFormat.__init__(self)
+        
+        self.meta_keymap = {
+            "pys:patient": ["PatientName"],
+            "pys:series": ["SeriesDescription"],
+            "pys:sequence": ["SequenceName"],
+            "pys:matrix": ["AcquisitionMatrix"],
+            "pys:tr": ["RepetitionTime"],
+            "pys:te": ["EchoTime"],
+            "pys:alpha": ["FlipAngle"]
+        }
 
+    def load(self, path):
         with h5py.File(path, "r") as f:
 
             nodes = []
+
             def _walk(name, item):
                 if isinstance(item, h5py.Dataset):
                     nodes.append(name)
-            
+
             f.visititems(_walk)
 
             if len(nodes) == 1:
-                self.ds_path = nodes[0]
-            
+                self._dspath = nodes[0]
+
             else:
                 dialog = H5Explorer(nodes)
                 choice = dialog.exec()
                 if choice == QDialog.Accepted:
-                    self.ds_path = dialog.result()
+                    self._dspath = dialog.result()
                 else:
-                    return "", [], -1
-            
-            self.dimensions = len(f[self.ds_path].dims)
-            if 2 <= self.dimensions <= 3:  # single or multiple slices
-                return path, [0], 0
-            elif self.dimensions == 4:  # multiple scans
-                return path, list(range(0, len(f[self.ds_path])-1)), 0
-            elif self.dimensions == 5:
-                QMessageBox.warning(self.app.window, "Pyseus", 
-                    "The selected dataset ist 5-dimensional. The first two dimensions will be concatenated.")
-                scan_count = f[self.ds_path].shape[0]*f[self.ds_path].shape[1]
-                return path, list(range(0, scan_count-1)), 0
+                    return False
+
+            self.path = path
+            self.dims = len(f[self._dspath].dims)
+
+            if 2 <= self.dims <= 3:  # single or multiple slices
+                self.scans = [0]
+
+            elif self.dims == 4:  # multiple scans
+                self.scans = list(range(0, len(f[self._dspath])-1))
+
+            elif self.dims == 5:
+                message = ("The selected dataset is 5-dimensional."
+                           "The first two dimensions will be concatenated.")
+                QMessageBox.warning(self.app.window, "Pyseus", message)
+                scan_count = f[self._dspath].shape[0]*f[self._dspath].shape[1]
+                self.scans = list(range(0, scan_count-1))
+
             else:
-                raise LoadError("Invalid dataset '{}' in '{}': Wrong dimensions.".format(self.ds_path, path))
-    
-    def load_scan(self, scan):
-        with h5py.File(self.path, "r") as f:
-            if self.dimensions == 2:  # single slice
-                return numpy.asarray([f[self.ds_path]])
-            if self.dimensions == 3:  # multiple slices
-                return numpy.asarray(f[self.ds_path])
-            elif self.dimensions == 4:  # multiple scans
-                return numpy.asarray(f[self.ds_path][scan])
-            elif self.dimensions == 5:
-                q, r = divmod(scan, f[self.ds_path].shape[1])
-                return numpy.asarray(f[self.ds_path][q][r])
+                message = "Invalid dataset '{}' in '{}': Wrong dimensions." \
+                          .format(self._dspath, path)
+                raise LoadError(message)
 
+            self.scan = 0
+            return True
 
-    def load_scan_thumb(self, scan):
+    def get_scan_pixeldata(self, scan):
         with h5py.File(self.path, "r") as f:
-            scan = f[self.ds_path][scan]
-            return numpy.asarray(scan[len(scan) // 2])
-    
-    def load_metadata(self, scan):
+            if self.dims == 2:  # single slice
+                return numpy.asarray([f[self._dspath]])
+
+            if self.dims == 3:  # multiple slices
+                return numpy.asarray(f[self._dspath])
+
+            elif self.dims == 4:  # multiple scans
+                return numpy.asarray(f[self._dspath][scan])
+
+            elif self.dims == 5:
+                q, r = divmod(scan, f[self._dspath].shape[1])
+                return numpy.asarray(f[self._dspath][q][r])
+
+    def get_scan_metadata(self, scan):
         metadata = {}
-        
+
         with h5py.File(self.path, "r") as f:
-            for a in f[self.ds_path].attrs:
+            for a in f[self._dspath].attrs:
                 metadata[a[0]] = a[1]
-        
+
         return metadata
 
-    def get_metadata(self, keys=None):
-        if self.app.metadata is None:
-            self.app.metadata = self.load_metadata()
-        meta = self.app.metadata
+    def get_pixelspacing(self, axis=None):
+        return [1,1,1]
 
-        key_map = {
-            "pys:patient": "PatientName",
-            "pys:series": "SeriesDescription",
-            "pys:sequence": "SequenceName",
-            "pys:matrix": "AcquisitionMatrix",
-            "pys:tr": "RepetitionTime",
-            "pys:te": "EchoTime",
-            "pys:alpha": "FlipAngle"
-        }
+    def get_scale(self):
+        return 0
 
-        # keys starting with "_" are ignored unless specificially requested
-        if keys is None: keys = [k for k in key_map.keys() if k[0] != "_"]
-
-        if isinstance(keys, str): keys = [keys]
-
-        meta_set = {}
-        for key in keys:
-            if key in key_map:
-                real_key = key_map[key]
-                if real_key in meta.keys():
-                    meta_set[real_key] = meta[real_key]
-            else:
-                if key in meta.keys():
-                    meta_set[key] = meta[key]
-
-        return meta_set
-    
-    def get_pixel_spacing(axis=None):
-        meta = self.app.metadata
-        
+    def get_orientation(self):
+        return 0
 
 
 class H5Explorer(QDialog):
@@ -130,8 +119,9 @@ class H5Explorer(QDialog):
     def __init__(self, items):
         QDialog.__init__(self)
         self.setWindowTitle("Select Dataset")
-        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
-        self.setWindowModality(Qt.ApplicationModal)  
+        self.setWindowFlags(self.windowFlags()
+                            & ~Qt.WindowContextHelpButtonHint)
+        self.setWindowModality(Qt.ApplicationModal)
 
         self.label = QLabel("Choose the dataset to load:")
         self.label.setStyleSheet("color: #000")
@@ -140,7 +130,8 @@ class H5Explorer(QDialog):
         for i in items:
             self.view.addItem(QListWidgetItem(i))
 
-        self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel);
+        self.buttons = QDialogButtonBox(QDialogButtonBox.Ok
+                                        | QDialogButtonBox.Cancel)
         self.buttons.accepted.connect(self._button_ok)
         self.buttons.rejected.connect(self._button_cancel)
 
@@ -150,15 +141,15 @@ class H5Explorer(QDialog):
         layout.addWidget(self.view)
         layout.addWidget(self.buttons)
         self.setLayout(layout)
-    
+
     def _button_ok(self):
         """Handles button click on OK"""
         self.accept()
-    
+
     def _button_cancel(self):
         """Handles button click on Cancel"""
         self.reject()
-    
+
     def result(self):
         """Returns the selected element"""
         return self.view.currentItem().text()
