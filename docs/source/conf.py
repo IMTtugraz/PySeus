@@ -12,7 +12,6 @@
 #
 import os
 import sys
-print(__file__ + "../pyseus")
 sys.path.insert(0, os.path.abspath("../../"))
 
 
@@ -31,6 +30,12 @@ master_doc = 'index'
 # extensions coming with Sphinx (named "sphinx.ext.*") or your custom
 # ones.
 extensions = ["sphinx.ext.autodoc"]
+
+# Add any extension configuration here.
+autodoc_default_options = {
+    "exclude-members": "__weakref__, __dict__, __module__, __init__",
+    "member-order": "groupwise"
+}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -55,7 +60,7 @@ html_theme_options = {
     "style_nav_header_background": "",
     "collapse_navigation": True,
     "sticky_navigation": True,
-    "navigation_depth": 2,
+    "navigation_depth": 3,
     "includehidden": True,
     "titles_only": False
 }

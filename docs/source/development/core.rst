@@ -1,14 +1,11 @@
 Core
-====
-
-Public functions
-----------------
+####
 
 .. autofunction:: pyseus.load()
 
 
-PySeus Class
-------------
+Application Class
+=================
 
 .. autoclass:: pyseus.PySeus
    :members:

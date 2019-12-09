@@ -1,24 +1,32 @@
-.. _functions:
+.. _tools:
 
-Functions
-=========
+Tools
+#####
 
-.. automodule:: pyseus.functions
+.. automodule:: pyseus.tools
 
-.. autoclass:: pyseus.functions.BaseFct
-   :members:
-   :undoc-members:
-   :private-members:
-   :special-members:
+.. autoclass:: pyseus.tools.BaseTool
+  :members:
 
-Built-in Functions
-------------------
+Built-in Tools
+==============
 
-.. autoclass:: pyseus.functions.RoIFct
+Area Tool
+---------
 
-.. autoclass:: pyseus.functions.StatsFct
+.. autoclass:: pyseus.tools.AreaTool
+  :members: roi
 
-Custom functions
-----------------
+Line Tool
+---------
 
-Just extend the *BaseFct* Class and add the function to the `pyseus.functions` list.
+.. autoclass:: pyseus.tools.LineTool
+  :members: line
+
+.. autoclass:: pyseus.tools.line.LineToolWindow
+  :members: load_data
+
+Custom Tools
+============
+
+Just extend the *BaseTool* Class and add the class to the `pyseus.tools` list.
