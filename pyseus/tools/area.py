@@ -7,13 +7,12 @@ from .base import BaseTool
 
 
 class AreaTool(BaseTool):
-    """Evaluates data in a simple RoI."""
+    """Displays basic statistics (min, max, med, avg) for the RoI."""
 
     def __init__(self, app):
         BaseTool.__init__(self)
         self.app = app
         self.roi = [0, 0, 0, 0]
-        """Coordinates of the current region of interest."""
 
     @classmethod
     def setup_menu(cls, app, menu, ami):
@@ -42,7 +41,7 @@ class AreaTool(BaseTool):
         return pixmap
 
     def clear(self):
-        self.roi = [0, 0, 0, 0]
+        self.roi = None
 
     def recalculate(self, data):
         xmin = numpy.minimum(self.roi[0], self.roi[2])

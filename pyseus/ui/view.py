@@ -12,42 +12,38 @@ class ViewWidget(QScrollArea):
         QScrollArea.__init__(self)
         self.app = app
 
-        self.image = QLabel()
-        self.image.setScaledContents(True)
-        self.image.setMouseTracking(True)
-        self.image.mouseMoveEvent = self.mouseMoveEvent_over_image
-        self.image.mousePressEvent = self.mousePressEvent_over_image
-        self.image.mouseReleaseEvent = self.mouseReleaseEvent_over_image
+        self.view = QLabel()
+        self.view.setScaledContents(True)
+        self.view.setMouseTracking(True)
+        self.view.mouseMoveEvent = self._view_mouseMoveEvent
+        self.view.mousePressEvent = self._view_mousePressEvent
+        self.view.mouseReleaseEvent = self._view_mouseReleaseEvent
 
         self.zoom_factor = 1
-        """The current zoom factor of the image."""
-
         self.mouse_action = 0
-        """The current action on mouse move. Can be ROI, WINDOW or PAN."""
 
         self.setMouseTracking(True)
         self.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
-        self.setWidget(self.image)
+        self.setWidget(self.view)
 
         # Hide scrollbars
         self.horizontalScrollBar().setStyleSheet("QScrollBar { height: 0 }")
         self.verticalScrollBar().setStyleSheet("QScrollBar { width: 0 }")
 
     def set(self, pixmap):
-        """Display the iamge in `pixmap`."""
-        self.image.setPixmap(pixmap)
+        # if pixmap is None:
+        #     self.view.clear()
+        # else:
+        self.view.setPixmap(pixmap)
 
     def zoom(self, factor, relative=True):
-        """Set the zoom level for the displayed image.
-        By default, the new zoom factor will be relative to the current zoom factor.
-        If `relative` is set to False, `factor` will be used as the new zoom factor."""
-
+        """Zoom"""
         if self.app.dataset is None \
                 or (relative and (0.1 >= self.zoom_factor * factor >= 100)):
             return
 
         self.zoom_factor = self.zoom_factor * factor if relative else factor
-        self.image.resize(self.zoom_factor * self.image.pixmap().size())
+        self.view.resize(self.zoom_factor * self.view.pixmap().size())
 
         v_scroll = int(factor * self.verticalScrollBar().value() +
                        ((factor-1) * self.verticalScrollBar().pageStep()/2))
@@ -58,9 +54,8 @@ class ViewWidget(QScrollArea):
         self.horizontalScrollBar().setValue(h_scroll)
 
     def zoom_fit(self):
-        """Zoom the displayed image to fit the available viewport."""
-
-        image = self.image.pixmap().size()
+        """Zoom Fit"""
+        image = self.view.pixmap().size()
         viewport = self.size()
 
         if image.height() == 0 or image.width() == 0:
@@ -71,7 +66,7 @@ class ViewWidget(QScrollArea):
         self.zoom(min(v_zoom, h_zoom)*0.99, False)
 
     def mousePressEvent(self, event):
-        """Handle pan and window functionality on mouse button down."""
+        """Handle pan, window and RoI functionality on mouse button down."""
 
         if(event.buttons() == QtCore.Qt.LeftButton
                 and event.modifiers() == Qt.NoModifier):
@@ -83,7 +78,7 @@ class ViewWidget(QScrollArea):
         self.last_position = event.screenPos()
 
     def mouseReleaseEvent(self, event):
-        """Handle RoI functionality on mouse button up."""
+        """Handle pan, window and RoI functionality on mouse button up."""
 
         if(self.mouse_action == "ROI"):
             self.app.recalculate()
@@ -114,18 +109,16 @@ class ViewWidget(QScrollArea):
             self.app.refresh()
 
         elif(self.mouse_action == "ROI"):
-            x_pos = event.pos().x() if event.pos().x() <= self.image.width() \
-                else self.image.width()
-            y_pos = event.pos().y() if event.pos().y() <= self.image.height() \
-                else self.image.height()
+            x_pos = event.pos().x() if event.pos().x() <= self.view.width() \
+                else self.view.width()
+            y_pos = event.pos().y() if event.pos().y() <= self.view.height() \
+                else self.view.height()
             if self.app.tool is not None:
                 self.app.tool.end_roi(int(x_pos / self.zoom_factor),
                                       int(y_pos / self.zoom_factor))
             self.app.refresh()
 
-    def mousePressEvent_over_image(self, event):
-        """Handle RoI functionality on mouse button down over the image.
-        Hands off contorl to `mousePressEvent` when appropriate."""
+    def _view_mousePressEvent(self, event):
         if(event.buttons() == QtCore.Qt.LeftButton
                 and event.modifiers() == Qt.ControlModifier):
             self.mouse_action = "ROI"
@@ -140,10 +133,7 @@ class ViewWidget(QScrollArea):
         else:
             self.mousePressEvent(event)
 
-    def mouseMoveEvent_over_image(self, event):
-        """Handle value display functionality on mouse move over the image.
-        Call `mouseMoveEvent` for pan, window and RoI functionality."""
-
+    def _view_mouseMoveEvent(self, event):
         self.mouseMoveEvent(event)
 
         x = int((self.horizontalScrollBar().value()
@@ -155,17 +145,11 @@ class ViewWidget(QScrollArea):
             val = self.app.dataset.pixeldata[self.app.slice][x, y]
             self.app.window.show_status("{} x {}  -  {:.4g}".format(x, y, val))
 
-    def mouseReleaseEvent_over_image(self, event):
-        """Call `mouseReleaseEvent` on mouse button up for RoI functionality."""
-        
+    def _view_mouseReleaseEvent(self, event):
         self.mouseReleaseEvent(event)
 
     def wheelEvent(self, event):
-        """Handle scroll wheel events in the viewport.
-        Scroll - Change current slice up or down.
-        Alt+Scroll - Change current scan up or down.
-        Strg+Scroll - Zoom the current image in or out."""
-
+        """Wheel Event Handler."""
         if event.modifiers() == Qt.NoModifier:
             slice = int(numpy.sign(event.delta()))
             self.app.select_slice(slice, True)

@@ -11,9 +11,7 @@ from .base import BaseFormat, LoadError
 
 
 class H5(BaseFormat):
-    """Support for HDF5 files.
-
-    Metadata, pixelspacing, scale and orientation are all supported."""
+    """Support for HDF5 files."""
 
     @classmethod
     def can_handle(cls, path):
@@ -22,16 +20,6 @@ class H5(BaseFormat):
 
     def __init__(self):
         BaseFormat.__init__(self)
-        
-        self.meta_keymap = {
-            "pys:patient": ["PatientName"],
-            "pys:series": ["SeriesDescription"],
-            "pys:sequence": ["SequenceName"],
-            "pys:matrix": ["AcquisitionMatrix"],
-            "pys:tr": ["RepetitionTime"],
-            "pys:te": ["EchoTime"],
-            "pys:alpha": ["FlipAngle"]
-        }
 
     def load(self, path):
         with h5py.File(path, "r") as f:
@@ -79,7 +67,7 @@ class H5(BaseFormat):
             self.scan = 0
             return True
 
-    def get_scan_pixeldata(self, scan):
+    def _get_pixeldata(self, scan):
         with h5py.File(self.path, "r") as f:
             if self.dims == 2:  # single slice
                 return numpy.asarray([f[self._dspath]])
@@ -94,7 +82,7 @@ class H5(BaseFormat):
                 q, r = divmod(scan, f[self._dspath].shape[1])
                 return numpy.asarray(f[self._dspath][q][r])
 
-    def get_scan_metadata(self, scan):
+    def _get_metadata(self, scan):
         metadata = {}
 
         with h5py.File(self.path, "r") as f:
@@ -103,14 +91,27 @@ class H5(BaseFormat):
 
         return metadata
 
-    def get_pixelspacing(self, axis=None):
-        return [1,1,1]
+    def get_thumbnail(self, scan):
+        return self._get_pixeldata(scan)
 
-    def get_scale(self):
-        return 0
+    def get_metadata(self, keys=None):
+        key_map = {
+            "pys:patient": "PatientName",
+            "pys:series": "SeriesDescription",
+            "pys:sequence": "SequenceName",
+            "pys:matrix": "AcquisitionMatrix",
+            "pys:tr": "RepetitionTime",
+            "pys:te": "EchoTime",
+            "pys:alpha": "FlipAngle"
+        }
 
-    def get_orientation(self):
-        return 0
+        return super().get_metadata(keys, key_map)
+
+    def get_pixeldata(self, slice=None):
+        if slice is None:
+            return self.pixeldata.copy()
+        else:
+            return self.pixeldata[slice].copy()
 
 
 class H5Explorer(QDialog):

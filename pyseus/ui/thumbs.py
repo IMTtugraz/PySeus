@@ -8,7 +8,7 @@ from pyseus.settings import settings
 
 
 class ThumbsWidget(QScrollArea):
-    """The widget for scan thumbnail display."""
+    """The widget for thumb thumbnail display."""
 
     def __init__(self, app):
         QScrollArea.__init__(self)
@@ -31,7 +31,6 @@ class ThumbsWidget(QScrollArea):
         self.setWidget(self.wrapper)
 
     def add_thumb(self, pixmap):
-        """Add the thumbnail in `pixmap` to the widget."""
         pixmap = pixmap.scaledToWidth(int(settings["ui"]["thumb_size"]))
 
         thumb = QLabel()
@@ -49,17 +48,14 @@ class ThumbsWidget(QScrollArea):
         self.updateGeometry()
 
     def clear(self):
-        """Remove all thumbnails."""
         for t in self.thumbs:
             t.deleteLater()
         self.thumbs = []
 
     def _thumb_clicked(self, thumb, event):
-        """Trigger `app.select_scan` when a thumbnail is clicked."""
         self.app.select_scan(thumb)
 
     def minimumSizeHint(self):
-        """Return widget size; width should be `thumb_size + scrollbar_width` or 0 if there are no thumbnails."""
         if self.thumbs:
             return QSize(int(settings["ui"]["thumb_size"])+25, 0)
         else:

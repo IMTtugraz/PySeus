@@ -5,7 +5,7 @@ from pyseus.settings import settings
 
 
 class ConsoleWidget(QTextEdit):
-    """The widget for generic text output."""
+    """The widget for generic text output (eg. eval results)."""
 
     def __init__(self, app):
         QTextEdit.__init__(self)
@@ -18,10 +18,8 @@ class ConsoleWidget(QTextEdit):
         self.updateGeometry()
 
     def minimumSizeHint(self):
-        """Return widget size to ensure unifrom sidebar width."""
         return QSize(int(settings["ui"]["sidebar_size"]), 100)
 
     def print(self, text):
-        """Print a simple text message to the console."""
         self.append(text)
         self.verticalScrollBar().setValue(self.verticalScrollBar().maximum())
