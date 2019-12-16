@@ -45,35 +45,35 @@ class H5(BaseFormat):
             f.visititems(_walk)
 
             if len(nodes) == 1:
-                self._dspath = nodes[0]
+                self._subpath = nodes[0]
 
             else:
                 dialog = H5Explorer(nodes)
                 choice = dialog.exec()
                 if choice == QDialog.Accepted:
-                    self._dspath = dialog.result()
+                    self._subpath = dialog.result()
                 else:
                     return False
 
             self.path = path
-            self.dims = len(f[self._dspath].dims)
+            self.dims = len(f[self._subpath].dims)
 
             if 2 <= self.dims <= 3:  # single or multiple slices
                 self.scans = [0]
 
             elif self.dims == 4:  # multiple scans
-                self.scans = list(range(0, len(f[self._dspath])-1))
+                self.scans = list(range(0, len(f[self._subpath])-1))
 
             elif self.dims == 5:
                 message = ("The selected dataset is 5-dimensional."
                            "The first two dimensions will be concatenated.")
                 QMessageBox.warning(self.app.window, "Pyseus", message)
-                scan_count = f[self._dspath].shape[0]*f[self._dspath].shape[1]
+                scan_count = f[self._subpath].shape[0]*f[self._subpath].shape[1]
                 self.scans = list(range(0, scan_count-1))
 
             else:
                 message = "Invalid dataset '{}' in '{}': Wrong dimensions." \
-                          .format(self._dspath, path)
+                          .format(self._subpath, path)
                 raise LoadError(message)
 
             self.scan = 0
@@ -82,23 +82,23 @@ class H5(BaseFormat):
     def get_scan_pixeldata(self, scan):
         with h5py.File(self.path, "r") as f:
             if self.dims == 2:  # single slice
-                return numpy.asarray([f[self._dspath]])
+                return numpy.asarray([f[self._subpath]])
 
             if self.dims == 3:  # multiple slices
-                return numpy.asarray(f[self._dspath])
+                return numpy.asarray(f[self._subpath])
 
             elif self.dims == 4:  # multiple scans
-                return numpy.asarray(f[self._dspath][scan])
+                return numpy.asarray(f[self._subpath][scan])
 
             elif self.dims == 5:
-                q, r = divmod(scan, f[self._dspath].shape[1])
-                return numpy.asarray(f[self._dspath][q][r])
+                q, r = divmod(scan, f[self._subpath].shape[1])
+                return numpy.asarray(f[self._subpath][q][r])
 
     def get_scan_metadata(self, scan):
         metadata = {}
 
         with h5py.File(self.path, "r") as f:
-            for a in f[self._dspath].attrs:
+            for a in f[self._subpath].attrs:
                 metadata[a[0]] = a[1]
 
         return metadata

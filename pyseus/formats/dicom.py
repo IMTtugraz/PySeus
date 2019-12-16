@@ -52,14 +52,14 @@ class DICOM(BaseFormat):
 
         self.scan = self.scans.index(os.path.basename(slice_level))
 
-        if len(self.scans) > 1:
-            message = "{} scans detected. Do you want to load all scans?" \
-                      .format(len(self.scans))
-            load_all = QMessageBox.question(None, "Pyseus", message)
+        # if len(self.scans) > 1:
+        #     message = "{} scans detected. Do you want to load all scans?" \
+        #               .format(len(self.scans))
+        #     load_all = QMessageBox.question(None, "Pyseus", message)
 
-            if load_all is QMessageBox.StandardButton.No:
-                self.scans = [self.scans[self.scan]]
-                self.scan = 0
+        #    if load_all is QMessageBox.StandardButton.No:
+        #        self.scans = [self.scans[self.scan]]
+        #        self.scan = 0
 
         return True
 
@@ -89,9 +89,11 @@ class DICOM(BaseFormat):
         self.pixeldata = numpy.asarray(pixeldata)
         self.metadata = self.get_scan_metadata(scan)
 
+        return True
+
     def get_scan_thumbnail(self, scan):
         slices = []
-        scan_dir = os.path.join(self.scan_level, scan)
+        scan_dir = os.path.join(self.scan_level, self.scans[scan])
         for f in os.listdir(scan_dir):
             _, ext = os.path.splitext(f)
             if ext.lower() in (".dcm"):
@@ -127,18 +129,14 @@ class DICOM(BaseFormat):
         return metadata
 
     def get_pixelspacing(self, axis=None):
-        if self.app.metadata is None:
-            self.app.metadata = self.load_metadata()
-        meta = self.app.metadata
-
         pixel_spacing = [1, 1, 1]
-        if "PixelSpacing" in meta.keys():
-            pixel_spacing = meta["PixelSpacing"]
+        if "PixelSpacing" in self.metadata.keys():
+            pixel_spacing = list(self.metadata["PixelSpacing"])
 
         return pixel_spacing
 
     def get_scale(self):
-        pass
+        return 0
 
     def get_orientation(self):
-        pass
+        return 0

@@ -41,9 +41,14 @@ class BaseFormat():
         """Load the scan with the ID `scan`, and set self.scan to the scan ID 
         on success or throw an exception.
         By default, uses *get_scan_pixeldata* and *get_scan_metadata*."""
-        self.pixeldata = self.get_scan_pixeldata(scan)
-        self.metadata = self.get_scan_metadata(scan)
-        self.scan = scan
+        try:
+            self.pixeldata = self.get_scan_pixeldata(scan)
+            self.metadata = self.get_scan_metadata(scan)
+            self.scan = scan
+        except LoadError:
+            return False
+        else:
+            return True
 
     def get_scan_pixeldata(self, scan):
         pass

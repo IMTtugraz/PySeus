@@ -48,10 +48,7 @@ class NIfTI(BaseFormat):
 
     def get_pixelspacing(self, axis=None):
         if "pixdim" in self.metadata.keys():
-            pixdim = self.metadata["pixdim"]
-            if "xyzt_units" in self.metadata.keys():
-                # @TODO convert units
-                pass
+            pixdim = list(self.metadata["pixdim"])
         else:
             pixdim = [1, 1, 1]
 
@@ -61,7 +58,11 @@ class NIfTI(BaseFormat):
             return pixdim[axis]
 
     def get_scale(self):
-        pass
+        if "xyzt_units" in self.metadata.keys():
+            # @TODO return real value, convert units
+            return 1
+        else:
+            return 0
 
     def get_orientation(self):
-        pass
+        return 0

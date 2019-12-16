@@ -71,7 +71,8 @@ class PySeus(QApplication):
         self.setup_dataset(data)
 
     def setup_dataset(self, arg):
-        """Setup a new dataset: Load scan list, generate thumbnails and load default scan."""
+        """Setup a new dataset: Load scan list, generate thumbnails and load
+        default scan."""
         try:
             if not self.new_dataset.load(arg):  # canceled by user
                 return
@@ -80,13 +81,23 @@ class PySeus(QApplication):
             self.dataset = self.new_dataset
             del self.new_dataset
 
-            if len(self.dataset.scans) > 1:
+            if len(self.dataset.scans) > 1 \
+                    and isinstance(self.dataset, DICOM):
+                message = "{} scans detected. Do you want to load all?" \
+                        .format(len(self.dataset.scans))
+                load_all = QMessageBox.question(None, "Pyseus", message)
+
                 self.window.thumbs.clear()
-                for s in self.dataset.scans:
-                    thumb = self.display.generate_thumb(
-                        self.dataset.get_scan_thumbnail(s))
-                    pixmap = self.display.get_pixmap(thumb)
-                    self.window.thumbs.add_thumb(pixmap)
+                if load_all is QMessageBox.StandardButton.Yes:
+                    for s in range(0, len(self.dataset.scans)):
+                        thumb = self.display.generate_thumb(
+                            self.dataset.get_scan_thumbnail(s))
+                        pixmap = self.display.get_pixmap(thumb)
+                        self.window.thumbs.add_thumb(pixmap)
+                else:
+                    single_scan = self.dataset.scans[self.dataset.scan]
+                    self.dataset.scans = [single_scan]
+                    self.dataset.scan = 0
 
             self.load_scan()
 

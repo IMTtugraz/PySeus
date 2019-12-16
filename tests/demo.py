@@ -33,4 +33,4 @@ def demo_nifti():
 
 
 if __name__ == "__main__":
-    demo_h5_2()
+    demo_dicom_2()
