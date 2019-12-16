@@ -13,6 +13,3 @@ docs/build/*
 
 # Ignore local backups
 backup/*
-
-# Ignore tests (for now)
-tests/*
