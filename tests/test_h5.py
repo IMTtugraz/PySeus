@@ -26,8 +26,9 @@ def test_load():
 def test_data():
     assert isinstance(dataset.get_pixeldata(), numpy.ndarray)
     assert isinstance(dataset.get_metadata(), dict)
-    assert isinstance(dataset.get_pixelspacing(), list)
-    assert isinstance(dataset.get_scale(), int)
+    assert isinstance(dataset.get_spacing(), list)
+    assert isinstance(dataset.get_scale(), float)
+    assert isinstance(dataset.get_units(), str)
     assert isinstance(dataset.get_orientation(), int)
 
 # def test_errors():

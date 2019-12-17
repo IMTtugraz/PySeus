@@ -42,8 +42,8 @@ class BaseFormat():
         on success or throw an exception.
         By default, uses *get_scan_pixeldata* and *get_scan_metadata*."""
         try:
-            self.pixeldata = self.get_scan_pixeldata(scan)
             self.metadata = self.get_scan_metadata(scan)
+            self.pixeldata = self.get_scan_pixeldata(scan)
             self.scan = scan
         except LoadError:
             return False
@@ -99,14 +99,17 @@ class BaseFormat():
         else:
             return self.pixeldata[slice].copy()
 
-    def get_pixelspacing(self, axis=None):
+    def get_spacing(self, axis=None):
         """Return the pixel aspect ratio, if available.
         Otherweise, return 1:1:1."""
         return [1,1,1]
 
     def get_scale(self):
         """Return the actual size of a pixel, if available. Otherwise, return 0."""
-        return 0
+        return 0.0
+
+    def get_units(self):
+        return ""
 
     def get_orientation(self):
         """Return the default image orientation, if available. Otherwise, return 0."""

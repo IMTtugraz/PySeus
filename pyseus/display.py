@@ -46,7 +46,7 @@ class DisplayHelper():
             data *= 255 / (self.white - self.black)  # scale white to 255
 
         data = data.clip(0, 255)
-        return data.astype(numpy.int8).copy()
+        return data.astype(numpy.uint8).copy()
 
     def setup_window(self, data):
         """Analyze data and set window boundary conditions (min, max)."""
@@ -102,7 +102,7 @@ class DisplayHelper():
         self.setup_window(data)
 
         thumb_size = int(settings["ui"]["thumb_size"])
-        thumb = cv2.resize(data.astype(numpy.uint8), (thumb_size, thumb_size))
+        thumb = cv2.resize(data, (thumb_size, thumb_size))
 
         return thumb
 

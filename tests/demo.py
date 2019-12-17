@@ -4,7 +4,7 @@
 from context import pyseus
 
 
-def demo_basic():
+def demo():
     pyseus.load()
 
 def demo_numpy():
@@ -31,6 +31,10 @@ def demo_dicom_2():
 def demo_nifti():
     pyseus.load("./samples/sample.nii")
 
+def test():
+    pyseus.load("C:/Users/Christoph/Desktop/filtered_func_data.nii/"
+                "filtered_func_data.nii")
+
 
 if __name__ == "__main__":
-    demo_h5()
+    demo_dicom_2()

@@ -137,6 +137,8 @@ class MainWindow(QMainWindow):
             partial(self._action_scan, 1), "Alt+PgUp")
         ami(self.explore_menu, "Previous Sc&an",
             partial(self._action_scan, -1), "Alt+PgDown")
+        self.explore_menu.addSeparator()
+        ami(self.explore_menu, "Timelapse", self._action_timelapse, "Ctrl+#")
 
         self.functions_menu = menu_bar.addMenu("&Evaluate")
         for f in self.app.tools:
@@ -221,6 +223,10 @@ class MainWindow(QMainWindow):
 
     def _action_flip(self, direction):
         self.app.flip(direction)
+
+    def _action_timelapse(self):
+        self.app.toggle_timelapse()
+
 
 class SidebarHeading(QLabel):
     """Widget for sidebar separators and headings."""

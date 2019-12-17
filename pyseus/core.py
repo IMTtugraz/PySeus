@@ -1,5 +1,6 @@
 import os
 
+from PySide2.QtCore import SIGNAL, QTimer
 from PySide2.QtWidgets import QApplication, QMessageBox
 
 from pyseus import settings
@@ -38,6 +39,9 @@ class PySeus(QApplication):
 
         self.slice = -1
         """Index of the current slice."""
+
+        self.timer = QTimer()
+        """Timer for timelapse view."""
 
         # Stylesheet
         style_path = "./ui/" + settings["ui"]["style"] + ".qss"
@@ -81,8 +85,7 @@ class PySeus(QApplication):
             self.dataset = self.new_dataset
             del self.new_dataset
 
-            if len(self.dataset.scans) > 1 \
-                    and isinstance(self.dataset, DICOM):
+            if len(self.dataset.scans) > 1:
                 message = "{} scans detected. Do you want to load all?" \
                         .format(len(self.dataset.scans))
                 load_all = QMessageBox.question(None, "Pyseus", message)
@@ -101,13 +104,11 @@ class PySeus(QApplication):
 
             self.load_scan()
 
-        except OSError as e:
-            QMessageBox.warning(self.window, "Pyseus", str(e))
-
         except LoadError as e:
             QMessageBox.warning(self.window, "Pyseus", str(e))
 
-        self.window.info.update_path(self.dataset.path)
+        else:
+            self.window.info.update_path(self.dataset.path)
 
     def set_mode(self, mode):
         """Set display mode to amplitude (0) or phase (1)."""
@@ -221,3 +222,13 @@ class PySeus(QApplication):
 
         self.refresh()
         self.clear_tool()
+
+    def toggle_timelapse(self):
+        if self.timer.isActive():
+            self.timer.stop()
+        else:
+            self.timer.timeout.connect(self._timelapse_next)
+            self.timer.start(int(settings["timelapse"]["interval"]))
+
+    def _timelapse_next(self):
+        self.select_scan(1, True)
