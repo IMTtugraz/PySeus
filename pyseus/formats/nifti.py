@@ -47,13 +47,12 @@ class NIfTI(BaseFormat):
         return metadata
 
     def get_pixelspacing(self, axis=None):
+        pixdim = [1, 1, 1]
         if "pixdim" in self.metadata.keys():
             pixdim = list(self.metadata["pixdim"])
-        else:
-            pixdim = [1, 1, 1]
 
         if axis is None:
-            return pixdim[0:2]
+            return pixdim[0:2]  # ignore time axis @ pixdim[3] if present
         else:
             return pixdim[axis]
 

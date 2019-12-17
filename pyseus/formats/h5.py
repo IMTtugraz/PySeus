@@ -104,7 +104,16 @@ class H5(BaseFormat):
         return metadata
 
     def get_pixelspacing(self, axis=None):
-        return [1,1,1]
+        pixel_spacing = [1, 1, 1]
+        if "PixelSpacing" in self.metadata.keys():
+            pixel_spacing = list(self.metadata["PixelSpacing"])
+        elif "pixdim" in self.metadata.keys():
+            pixel_spacing = list(self.metadata["pixdim"])
+
+        if axis is None:
+            return pixel_spacing[0:2]
+        else:
+            return pixel_spacing[axis]
 
     def get_scale(self):
         return 0

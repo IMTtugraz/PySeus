@@ -214,3 +214,10 @@ class PySeus(QApplication):
         self.refresh()
         self.window.view.zoom_fit()
         self.clear_tool()
+
+    def flip(self, direction):
+        """Flip the pixeldata of the current scan."""
+        self.dataset.flip(direction)
+
+        self.refresh()
+        self.clear_tool()

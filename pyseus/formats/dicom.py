@@ -133,10 +133,13 @@ class DICOM(BaseFormat):
         if "PixelSpacing" in self.metadata.keys():
             pixel_spacing = list(self.metadata["PixelSpacing"])
 
-        return pixel_spacing
+        if axis is None:
+            return pixel_spacing[0:2]
+        else:
+            return pixel_spacing[axis]
 
     def get_scale(self):
-        return 0
+        return 0.001  # DICOM always uses mm here
 
     def get_orientation(self):
         return 0

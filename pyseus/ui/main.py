@@ -123,7 +123,13 @@ class MainWindow(QMainWindow):
             partial(self._action_rotate, 1), "Ctrl+R")
         ami(self.explore_menu, "Rotate y",
             partial(self._action_rotate, 0), "Ctrl+T")
-        ami(self.explore_menu, "Reset Rotation",
+        self.explore_menu.addSeparator()
+        ami(self.explore_menu, "Flip L/R",
+            partial(self._action_flip, 1), "Ctrl+D")
+        ami(self.explore_menu, "Flip U/D",
+            partial(self._action_flip, 0), "Ctrl+F")
+        self.explore_menu.addSeparator()
+        ami(self.explore_menu, "Reset Scan",
             partial(self._action_rotate, -1), "Ctrl+Z")
         self.explore_menu.addSeparator()
 
@@ -210,9 +216,11 @@ class MainWindow(QMainWindow):
     def _action_tool_clear(self):
         self.app.clear_tool()
     
-    def _action_rotate(self, axis, steps):
-        self.app.rotate(axis, steps)
+    def _action_rotate(self, axis):
+        self.app.rotate(axis)
 
+    def _action_flip(self, direction):
+        self.app.flip(direction)
 
 class SidebarHeading(QLabel):
     """Widget for sidebar separators and headings."""

@@ -129,6 +129,20 @@ class BaseFormat():
                 self.pixeldata = numpy.asarray([numpy.rot90(slice)
                                                for slice in self.pixeldata])
 
+    def flip(self, direction):
+        """Flip the currently loaded pixeldata."""
+        if direction == -1:  # reset
+            self.load_scan(self.scan)
+
+        else:
+            if direction == 0:  # horizontal
+                self.pixeldata = numpy.asarray([numpy.flipud(slice)
+                                               for slice in self.pixeldata])
+
+            elif direction == 1:  # vertical
+                self.pixeldata = numpy.asarray([numpy.fliplr(slice)
+                                               for slice in self.pixeldata])
+
 
 class LoadError(Exception):
     """Raised when an error is encountered loading a file or scan."""
