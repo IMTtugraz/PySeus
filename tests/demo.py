@@ -37,4 +37,4 @@ def test():
 
 
 if __name__ == "__main__":
-    demo_dicom_2()
+    test()
