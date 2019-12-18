@@ -2,7 +2,7 @@ class BaseTool():
     """Defines the basic functionality for RoI evaluation functions."""
 
     def __init__(self, app):
-        pass
+        self.app = app
 
     @classmethod
     def setup_menu(cls, app, menu, ami):

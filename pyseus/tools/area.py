@@ -10,8 +10,8 @@ class AreaTool(BaseTool):
     """Evaluates data in a simple RoI."""
 
     def __init__(self, app):
-        BaseTool.__init__(self)
-        self.app = app
+        BaseTool.__init__(self, app)
+
         self.roi = [0, 0, 0, 0]
         """Coordinates of the current region of interest."""
 
