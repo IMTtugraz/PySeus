@@ -29,7 +29,7 @@ def test_data():
     assert isinstance(dataset.get_spacing(), list)
     assert isinstance(dataset.get_scale(), float)
     assert isinstance(dataset.get_units(), str)
-    assert isinstance(dataset.get_orientation(), int)
+    assert isinstance(dataset.get_orientation(), list)
 
 # def test_errors():
 #     with pytest.raises(formats.LoadError) as error:

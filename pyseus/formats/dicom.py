@@ -142,7 +142,11 @@ class DICOM(BaseFormat):
         return 0.001  # DICOM always uses mm here
 
     def get_units(self):
-        pass
+        if "PixelSpacing" in self.metadata.keys():
+            return "{}*".format(self.metadata["PixelSpacing"])
+            # not accounting for Rescale Intercept, Rescale Slope
+        else:
+            return "1"
 
     def get_orientation(self):
         return 0

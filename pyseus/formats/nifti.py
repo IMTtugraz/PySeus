@@ -35,7 +35,8 @@ class NIfTI(BaseFormat):
         return True
 
     def get_scan_pixeldata(self, scan):
-        data = self.file.get_fdata()
+        canonical = nibabel.as_closest_canonical(self.file)
+        data = canonical.get_fdata()
         scan_data = numpy.swapaxes(data[:, :, :, scan], 0, 2)
         return numpy.asarray(scan_data)
 
@@ -49,7 +50,7 @@ class NIfTI(BaseFormat):
     def get_spacing(self, axis=None):
         pixdim = [1, 1, 1]
         if "pixdim" in self.metadata.keys():
-            pixdim = list(self.metadata["pixdim"])
+            pixdim = list(self.metadata["pixdim"])[1:4]
 
         if axis is None:
             return pixdim[0:2]  # ignore time axis @ pixdim[3] if present
@@ -58,13 +59,25 @@ class NIfTI(BaseFormat):
 
     def get_scale(self):
         if "xyzt_units" in self.metadata.keys():
-            # @TODO return real value, convert units
-            return 1.0
+            pixdim = min(self.get_spacing())  # units per pixel
+            if self.metadata["xyzt_units"] & 1:
+                return 1.0 * pixdim
+            elif self.metadata["xyzt_units"] & 2:
+                return 0.001 * pixdim
+            elif self.metadata["xyzt_units"] & 3:
+                return 0.000001 * pixdim
         else:
             return 0.0
 
     def get_units(self):
-        pass
+        return "1"
 
     def get_orientation(self):
-        return 0
+        # uses only sform (affine transform) but ignores qform
+        # @see https://nipy.org/nibabel/image_orientation.html
+        # @see https://nifti.nimh.nih.gov/nifti-1/documentation/nifti1fields/nifti1fields_pages/qsform.html
+        if "sform_code" in self.metadata.keys() \
+                and self.metadata["sform_code"] > 0:
+            return list(nibabel.aff2axcodes(self.file))
+
+        return ["R", "A", "S"]

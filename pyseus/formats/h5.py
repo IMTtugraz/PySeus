@@ -119,7 +119,7 @@ class H5(BaseFormat):
         return 0.0
 
     def get_units(self):
-        pass
+        return ""
 
     def get_orientation(self):
         return 0

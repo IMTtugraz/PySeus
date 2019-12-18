@@ -112,8 +112,8 @@ class BaseFormat():
         return ""
 
     def get_orientation(self):
-        """Return the default image orientation, if available. Otherwise, return 0."""
-        return 0
+        """Return the default image orientation, if available. Otherwise, return RAS."""
+        orientation = ["R", "A", "S"]
 
     def rotate(self, axis):
         """Rotate the currently loaded pixeldata in 3D."""
