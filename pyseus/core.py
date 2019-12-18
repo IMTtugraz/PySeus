@@ -1,4 +1,5 @@
 import os
+import cv2
 
 from PySide2.QtCore import SIGNAL, QTimer
 from PySide2.QtWidgets import QApplication, QMessageBox
@@ -121,8 +122,21 @@ class PySeus(QApplication):
         if self.slice == -1:
             return
 
-        pixmap = self.display.get_pixmap(
-                        self.dataset.get_pixeldata(self.slice))
+        data = self.dataset.get_pixeldata(self.slice)
+
+        # @TODO move to DisplayHelper (refactor data flow in preparation)
+        spacing = self.dataset.get_spacing()
+        if spacing[0] != spacing [1]:
+            if spacing[0] > spacing[1]:
+                size = (int(data.shape[0]*spacing[0]/spacing[1]), 
+                        int(data.shape[1]))
+            else:
+                size = (int(data.shape[0]), 
+                        int(data.shape[1]*spacing[1]/spacing[0]))
+
+            data = cv2.resize(data, size)
+
+        pixmap = self.display.get_pixmap(data)
 
         if self.tool is not None:
             pixmap = self.tool.draw_overlay(pixmap)
@@ -132,8 +146,9 @@ class PySeus(QApplication):
     def recalculate(self):
         """Refresh the active evaluation tool."""
         if self.tool is not None:
+            slice = self.dataset.get_pixeldata(self.slice)
             self.tool.recalculate(
-                self.display.prepare_without_window(self.slices[self.slice]))
+                self.display.prepare_without_window(slice))
 
     def select_scan(self, sid, relative=False):
         """Select and load a scan from the current dataset. See also `load_scan`."""

@@ -22,10 +22,9 @@ class DisplayHelper():
         data = self.apply_window(data)
         return data
 
-    def prepare_without_window(self, data):
+    def prepare_without_window(self, data, scaling=None):
         """Prepare data for display or analysis.
-        Use amplitude or phase data occording to the current display mode
-        and apply pixel scaling."""
+        Use amplitude or phase data occording to the current display mode."""
 
         if self.mode == 1:
             data = numpy.angle(data).astype(float)
@@ -103,6 +102,7 @@ class DisplayHelper():
 
         thumb_size = int(settings["ui"]["thumb_size"])
         thumb = cv2.resize(data, (thumb_size, thumb_size))
+        # @TODO preserve AR (calculate height, width separately)
 
         return thumb
 
