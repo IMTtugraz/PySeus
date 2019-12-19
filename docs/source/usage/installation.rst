@@ -1,5 +1,5 @@
-Install
-=======
+Installation
+============
 
 Download the latest version from `GitHub <https://github.com/calmer/PySEUS>`_.
 

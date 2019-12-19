@@ -1,5 +1,5 @@
-Evaluate
-========
+Evaluating
+==========
 
 PySeus provides a simple way to evaluate image data via **tools**.
 

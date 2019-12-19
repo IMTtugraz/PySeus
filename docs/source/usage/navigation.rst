@@ -1,5 +1,5 @@
-Navigate
-########
+Navigation
+##########
 
 Depending on whether you are viewing 2D, 3D or higher dimensional data, 
 different options to navigate and visualize that data are available.
