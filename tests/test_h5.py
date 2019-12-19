@@ -11,7 +11,7 @@ from pyseus import formats
 dataset = formats.H5()
 
 def test_h5_load():
-    assert dataset.load("./samples/sample.h5") == True
+    assert dataset.load("./tests/samples/sample.h5") == True
     assert isinstance(dataset.path, str)
     assert isinstance(dataset.scans, list)
     assert isinstance(dataset.scan, int)
