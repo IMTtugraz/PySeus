@@ -11,7 +11,7 @@ from pyseus import formats
 dataset = formats.NumPy()
 
 def test_numpy_load():
-    assert dataset.load("./samples/sample.npy") == True
+    assert dataset.load("./tests/samples/sample.npy") == True
     assert isinstance(dataset.path, str)
     assert isinstance(dataset.scans, list)
     assert isinstance(dataset.scan, int)
