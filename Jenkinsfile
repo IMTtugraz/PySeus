@@ -22,7 +22,8 @@ pipeline {
 
     stage('Unittests') {
       steps {
-        sh 'pytest --junitxml results.xml --cov=pyseus tests/'
+        sh 'cd tests'
+        sh 'pytest --junitxml ../results.xml --cov=pyseus .'
         sh 'coverage xml'
       }
     }
