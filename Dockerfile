@@ -11,8 +11,7 @@ RUN apt-get update
 RUN apt-get install -y python3 && \
     apt-get install -y python3-pip && \
     apt-get install -y python3-tk && \
-    apt-get install -y ocl-icd* opencl-headers &&\
-    apt-get install -y libclfft* &&\
+    apt-get install -y libsm6 libxext6 libxrender-dev &&\
     apt-get install -y git
 
 ENV JENKINS_HOME /var/jenkins_home
