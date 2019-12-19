@@ -128,6 +128,8 @@ class MainWindow(QMainWindow):
             partial(self._action_flip, 1), "Ctrl+D")
         ami(self.explore_menu, "Flip U/D",
             partial(self._action_flip, 0), "Ctrl+F")
+        ami(self.explore_menu, "Flip F/B",
+            partial(self._action_flip, 2), "Ctrl+G")
         self.explore_menu.addSeparator()
         ami(self.explore_menu, "Reset Scan",
             partial(self._action_rotate, -1), "Ctrl+Z")
