@@ -9,8 +9,8 @@ RUN apt-get update
 RUN apt-get install -y python3 && \
     apt-get install -y python3-pip && \
     apt-get install -y python3-tk && \
-    apt-get install -y libsm6 libxext6 libxrender-dev &&\
-    apt-get install -y git &&\
+    apt-get install -y git && \
+    apt-get install -y libsm6 libxext6 libxrender-dev && \
     apt-get install -y libgl1-mesa-glx
 
 ENV JENKINS_HOME /var/jenkins_home
@@ -27,4 +27,3 @@ RUN pip3 install cython &&\
     pip3 install pytest-cov &&\
     pip3 install pylint &&\
     pip3 install pylint_junit
-
