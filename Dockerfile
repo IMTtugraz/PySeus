@@ -1,5 +1,5 @@
 #Download base image python buster
-FROM nvidia/opencl
+FROM ubuntu:18.04
 
 ENV DEBIAN_FRONTEND=noninteractive 
 ENV DEBCONF_NONINTERACTIVE_SEEN=true
