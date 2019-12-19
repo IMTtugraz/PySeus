@@ -52,6 +52,8 @@ class DICOM(BaseFormat):
 
         self.scan = self.scans.index(os.path.basename(slice_level))
 
+        # Currently handled in core
+        #
         # if len(self.scans) > 1:
         #     message = "{} scans detected. Do you want to load all scans?" \
         #               .format(len(self.scans))
@@ -88,6 +90,7 @@ class DICOM(BaseFormat):
 
         self.pixeldata = numpy.asarray(pixeldata)
         self.metadata = self.get_scan_metadata(scan)
+        self.scan = scan
 
         return True
 
@@ -148,5 +151,8 @@ class DICOM(BaseFormat):
         else:
             return "1"
 
-    def get_orientation(self):
-        return 0
+    def get_orientation(self):#
+        if "DisplaySetPatientOrientation" in self.metadata.keys():
+            (right, bottom) = self.metadata["DisplaySetPatientOrientation"]
+
+        return []

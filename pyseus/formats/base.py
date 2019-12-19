@@ -113,7 +113,7 @@ class BaseFormat():
 
     def get_orientation(self):
         """Return the default image orientation, if available. Otherwise, return RAS."""
-        orientation = ["R", "A", "S"]
+        return []
 
     def rotate(self, axis):
         """Rotate the currently loaded pixeldata in 3D."""
@@ -145,6 +145,9 @@ class BaseFormat():
             elif direction == 1:  # vertical
                 self.pixeldata = numpy.asarray([numpy.fliplr(slice)
                                                for slice in self.pixeldata])
+            
+            elif direction == 2:  # back-front
+                self.pixeldata = numpy.asarray(numpy.flipud(self.pixeldata))
 
 
 class LoadError(Exception):

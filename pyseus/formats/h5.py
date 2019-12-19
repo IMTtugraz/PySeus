@@ -122,7 +122,7 @@ class H5(BaseFormat):
         return ""
 
     def get_orientation(self):
-        return 0
+        return []
 
 
 class H5Explorer(QDialog):

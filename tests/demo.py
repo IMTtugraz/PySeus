@@ -31,10 +31,9 @@ def demo_dicom_2():
 def demo_nifti():
     pyseus.load("./samples/sample.nii")
 
-def test():
-    pyseus.load("C:/Users/Christoph/Desktop/filtered_func_data.nii/"
-                "filtered_func_data.nii")
+def demo_nifti_2():
+    pyseus.load("C:/temp/sample_huge.nii")
 
 
 if __name__ == "__main__":
-    test()
+    demo_dicom_2()

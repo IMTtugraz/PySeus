@@ -78,6 +78,8 @@ class NIfTI(BaseFormat):
         # @see https://nifti.nimh.nih.gov/nifti-1/documentation/nifti1fields/nifti1fields_pages/qsform.html
         if "sform_code" in self.metadata.keys() \
                 and self.metadata["sform_code"] > 0:
-            return list(nibabel.aff2axcodes(self.file))
+            orientation = list(nibabel.aff2axcodes(self.file.affine))
+            # @TODO convert to RAS notation
+            return orientation
 
         return ["R", "A", "S"]
