@@ -11,7 +11,7 @@ RUN apt-get install -y python3 && \
     apt-get install -y python3-tk && \
     apt-get install -y libsm6 libxext6 libxrender-dev &&\
     apt-get install -y git &&\
-    apt-get install -y ibgl1-mesa-glx
+    apt-get install -y libgl1-mesa-glx
 
 ENV JENKINS_HOME /var/jenkins_home
 ENV JENKINS_SLAVE_AGENT_PORT 50000
