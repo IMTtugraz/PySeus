@@ -21,10 +21,7 @@ RUN ls -lah /var/jenkins_home
 
 ENV PATH="/var/jenkins_home/.local:${PATH}"
 
-RUN pip3 install cython 
-RUN pip3 install pyopencl
-RUN git clone https://github.com/geggo/gpyfft.git &&\
-    pip3 install gpyfft/. &&\
+RUN pip3 install cython &&\
     pip3 install pytest &&\
     pip3 install pytest-cov &&\
     pip3 install pylint &&\
