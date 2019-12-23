@@ -20,7 +20,7 @@ class Raw(BaseFormat):
     def load(self, data):
         self.data = numpy.asarray(data)
         valid = isinstance(self.data, numpy.ndarray) and \
-                numpy.issubdtype(self.data.dtype, numpy.number)
+            numpy.issubdtype(self.data.dtype, numpy.number)
         if not valid:
             raise LoadError("Invalid data.")
 
