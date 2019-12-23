@@ -12,7 +12,7 @@ dataset = formats.DICOM()
 
 
 def test_dicom_load():
-    assert dataset.load("./tests/samples/sample.dcm/0000.dcm") is True
+    assert dataset.load("./tests/samples/sample.dcm/0000.DCM") is True
     assert isinstance(dataset.path, str)
     assert isinstance(dataset.scans, list)
     assert isinstance(dataset.scan, int)
