@@ -59,7 +59,8 @@ class ThumbsWidget(QScrollArea):
         self.app.select_scan(thumb)
 
     def minimumSizeHint(self):
-        """Return widget size; width should be `thumb_size + scrollbar_width` or 0 if there are no thumbnails."""
+        """Return widget size; width should be `thumb_size + scrollbar_width`
+        or 0 if there are no thumbnails."""
         if self.thumbs:
             return QSize(int(settings["ui"]["thumb_size"])+25, 0)
         else:

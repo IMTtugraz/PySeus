@@ -38,7 +38,7 @@ class BaseFormat():
         pass
 
     def load_scan(self, scan):
-        """Load the scan with the ID `scan`, and set self.scan to the scan ID 
+        """Load the scan with the ID `scan`, and set self.scan to the scan ID
         on success or throw an exception.
         By default, uses *get_scan_pixeldata* and *get_scan_metadata*."""
         try:
@@ -52,7 +52,7 @@ class BaseFormat():
 
     def get_scan_pixeldata(self, scan):
         pass
-    
+
     def get_scan_metadata(self, scan):
         pass
 
@@ -92,8 +92,10 @@ class BaseFormat():
         return meta_set
 
     def get_pixeldata(self, slice=-1):
-        """Return pixeldata of current scan. By default, the entire 3D pixeldata is returned.
-        If `slice` is set, a 2D array of `pixeldata[slice]` is returned."""
+        """Return pixeldata of current scan. By default, the entire 3D
+        pixeldata is returned. If `slice` is set, a 2D array of
+        `pixeldata[slice]` is returned."""
+
         if slice == -1:
             return self.pixeldata.copy()
         else:
@@ -102,17 +104,18 @@ class BaseFormat():
     def get_spacing(self, axis=None):
         """Return the pixel aspect ratio, if available.
         Otherweise, return 1:1:1."""
-        return [1,1,1]
+        return [1, 1, 1]
 
     def get_scale(self):
-        """Return the actual size of a pixel, if available. Otherwise, return 0."""
+        """Return the actual size of a pixel, if available.
+        Otherwise, return 0."""
         return 0.0
 
     def get_units(self):
         return ""
 
     def get_orientation(self):
-        """Return the default image orientation, if available. Otherwise, return RAS."""
+        """Return the default image orientation, if available."""
         return []
 
     def rotate(self, axis):
@@ -145,9 +148,19 @@ class BaseFormat():
             elif direction == 1:  # vertical
                 self.pixeldata = numpy.asarray([numpy.fliplr(slice)
                                                for slice in self.pixeldata])
-            
+
             elif direction == 2:  # back-front
                 self.pixeldata = numpy.asarray(numpy.flipud(self.pixeldata))
+
+    def scan_count(self):
+        return len(self.scans)
+
+    def slice_count(self, scan=None):
+        if scan is None:
+            return len(self.pixeldata)
+        else:
+            pass
+            # @TODO determine slice count for arbitrary scans
 
 
 class LoadError(Exception):

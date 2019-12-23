@@ -1,5 +1,5 @@
 from PySide2.QtCore import QSize
-from PySide2.QtWidgets import QSizePolicy, QFormLayout, QHBoxLayout, \
+from PySide2.QtWidgets import QSizePolicy, QFormLayout, \
                               QVBoxLayout, QFrame, QLabel, QLineEdit
 
 from pyseus.settings import settings

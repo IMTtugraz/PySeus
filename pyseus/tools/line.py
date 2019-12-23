@@ -60,7 +60,7 @@ class LineTool(BaseTool):
             y = round(self.line[1] + (height)*i / int(distance*10))
             result.append(data[y][x])
 
-        axes = [self.app.dataset.get_scale(), 
+        axes = [self.app.dataset.get_scale(),
                 self.app.dataset.get_units()]
 
         self.window.load_data(result, axes)

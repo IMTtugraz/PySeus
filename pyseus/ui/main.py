@@ -71,7 +71,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(wrapper)
 
         # Window dimensions
-        geometry = self.app.desktop().availableGeometry(self)
+        geometry = self.app.qt.desktop().availableGeometry(self)
         self.resize(geometry.width() * 0.6, geometry.height() * 0.6)
 
     def add_menu_item(self, menu, title, callback, shortcut=""):
@@ -84,7 +84,7 @@ class MainWindow(QMainWindow):
         return action
 
     def setup_menu(self):
-        """Setup the menu bar. Items in the *Evaluate* menu are created 
+        """Setup the menu bar. Items in the *Evaluate* menu are created
         in the `setup_menu` function of tool classes."""
         ami = self.add_menu_item
         menu_bar = self.menuBar()
@@ -209,7 +209,7 @@ class MainWindow(QMainWindow):
         self.app.refresh()
 
     def _action_mode(self, mode):
-        self.app.display.set_mode(mode)
+        self.app.set_mode(mode)
 
     def _action_slice(self, step):
         self.app.select_slice(step, True)
@@ -219,7 +219,7 @@ class MainWindow(QMainWindow):
 
     def _action_tool_clear(self):
         self.app.clear_tool()
-    
+
     def _action_rotate(self, axis):
         self.app.rotate(axis)
 

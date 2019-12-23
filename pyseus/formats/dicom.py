@@ -2,7 +2,6 @@ import pydicom
 import numpy
 import os
 from natsort import natsorted
-from PySide2.QtWidgets import QMessageBox
 
 from .base import BaseFormat, LoadError
 
@@ -32,6 +31,9 @@ class DICOM(BaseFormat):
         return ext.lower() in (".dcm")
 
     def load(self, path):
+        if not os.path.isfile(path):
+            raise LoadError("File not found.")
+
         self.path = os.path.abspath(path)
 
         slice_level = os.path.abspath(os.path.dirname(path))
@@ -122,7 +124,7 @@ class DICOM(BaseFormat):
             _, ext = os.path.splitext(f)
             if ext.lower() in (".dcm"):
                 slice = pydicom.read_file(os.path.join(scan_dir, f),
-                                          defer_size=0)                
+                                          defer_size=0)
 
                 ignore = ["PixelData"]
                 for e in slice:
@@ -151,7 +153,7 @@ class DICOM(BaseFormat):
         else:
             return "1"
 
-    def get_orientation(self):#
+    def get_orientation(self):
         if "DisplaySetPatientOrientation" in self.metadata.keys():
             (right, bottom) = self.metadata["DisplaySetPatientOrientation"]
 

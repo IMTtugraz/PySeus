@@ -3,5 +3,6 @@ language: python
 install: pip install -r requirements.txt
 
 script:
-  - flake8 --exit-zero
+  - flake8 --exit-zero ./pyseus
+  - pylint --exit-zero ./pyseus
   - pytest

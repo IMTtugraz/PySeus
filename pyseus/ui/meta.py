@@ -32,7 +32,9 @@ class MetaWidget(QScrollArea):
         return QSize(int(settings["ui"]["sidebar_size"]), 100)
 
     def update_meta(self, data, more=True):
-        """Set the displayed metadata; if `more` is True, display a button to show all metadata."""
+        """Set the displayed metadata; if `more` is True, display a button to
+        show all metadata."""
+
         self._reset_ui()
 
         if data is not None and len(data) > 0:
@@ -69,5 +71,5 @@ class MetaWindow(QDialog):
         self.layout().addWidget(widget)
 
         # Window dimensions
-        geometry = app.desktop().availableGeometry(self)
+        geometry = app.qt.desktop().availableGeometry(self)
         self.resize(geometry.width() * 0.3, geometry.height() * 0.8)

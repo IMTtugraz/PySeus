@@ -22,7 +22,7 @@ class H5(BaseFormat):
 
     def __init__(self):
         BaseFormat.__init__(self)
-        
+
         self.meta_keymap = {
             "pys:patient": ["PatientName"],
             "pys:series": ["SeriesDescription"],
@@ -34,6 +34,9 @@ class H5(BaseFormat):
         }
 
     def load(self, path):
+        if not os.path.isfile(path):
+            raise LoadError("File not found.")
+
         with h5py.File(path, "r") as f:
 
             nodes = []
@@ -68,7 +71,8 @@ class H5(BaseFormat):
                 message = ("The selected dataset is 5-dimensional."
                            "The first two dimensions will be concatenated.")
                 QMessageBox.warning(self.app.window, "Pyseus", message)
-                scan_count = f[self._subpath].shape[0]*f[self._subpath].shape[1]
+                scan_count = (f[self._subpath].shape[0]
+                              * f[self._subpath].shape[1])
                 self.scans = list(range(0, scan_count-1))
 
             else:

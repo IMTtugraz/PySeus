@@ -10,18 +10,20 @@ from pyseus import formats
 
 dataset = formats.NIfTI()
 
+
 def test_nifti_load():
-    assert dataset.load("./tests/samples/sample.nii") == True
+    assert dataset.load("./tests/samples/sample.nii") is True
     assert isinstance(dataset.path, str)
     assert isinstance(dataset.scans, list)
     assert isinstance(dataset.scan, int)
 
-    assert dataset.load_scan(0) == True
+    assert dataset.load_scan(0) is True
     # uses get_scan_pixeldata and get_scan_metadata
     assert isinstance(dataset.pixeldata, numpy.ndarray)
     assert isinstance(dataset.metadata, dict)
 
     assert isinstance(dataset.get_scan_thumbnail(0), numpy.ndarray)
+
 
 def test_nifti_data():
     assert isinstance(dataset.get_pixeldata(), numpy.ndarray)
@@ -31,7 +33,8 @@ def test_nifti_data():
     assert isinstance(dataset.get_units(), str)
     assert isinstance(dataset.get_orientation(), list)
 
-# def test_nifti_errors():
-#     with pytest.raises(formats.LoadError) as error:
-#        dataset.load("./this/does/not/exist")
-#     assert error.type == formats.LoadError
+
+def test_nifti_errors():
+    with pytest.raises(formats.LoadError) as error:
+       dataset.load("./this/does/not/exist")
+    assert error.type == formats.LoadError

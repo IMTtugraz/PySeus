@@ -10,19 +10,20 @@ from pyseus import formats
 
 dataset = formats.Raw()
 
+
 def test_raw_load():
     data = numpy.load("./tests/samples/sample.npy")
-    assert dataset.load(data) == True
+    assert dataset.load(data) is True
     assert isinstance(dataset.path, str)
     assert isinstance(dataset.scans, list)
     assert isinstance(dataset.scan, int)
 
-    assert dataset.load_scan(0) == True
-    # uses get_scan_pixeldata and get_scan_metadata
+    assert dataset.load_scan(0) is True
     assert isinstance(dataset.pixeldata, numpy.ndarray)
     assert isinstance(dataset.metadata, dict)
 
     assert isinstance(dataset.get_scan_thumbnail(0), numpy.ndarray)
+
 
 def test_raw_data():
     assert isinstance(dataset.get_pixeldata(), numpy.ndarray)
@@ -32,8 +33,9 @@ def test_raw_data():
     assert isinstance(dataset.get_units(), str)
     assert isinstance(dataset.get_orientation(), list)
 
-# def test_raw_errors():
-#     with pytest.raises(formats.LoadError) as error:
-#        data = ["invalid", "data"]
-#        dataset.load(data)
-#     assert error.type == formats.LoadError
+
+def test_raw_errors():
+    with pytest.raises(formats.LoadError) as error:
+       data = ["invalid", "data"]
+       dataset.load(data)
+    assert error.type == formats.LoadError

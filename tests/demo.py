@@ -1,6 +1,8 @@
 """...
 """
 
+# flake8: noqa
+
 from context import pyseus
 
 
@@ -36,4 +38,4 @@ def demo_nifti_2():
 
 
 if __name__ == "__main__":
-    demo_dicom_2()
+    demo_nifti()

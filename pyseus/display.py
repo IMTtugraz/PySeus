@@ -11,8 +11,20 @@ class DisplayHelper():
 
     def __init__(self):
         self.mode = 0
-        """Determines wheter amplitude (0) or phase (1) information from the 
+        """Determines wheter amplitude (0) or phase (1) information from the
         data is used. Default ist amplitude (0)."""
+
+        self.data_min = 0
+        """Minimum value used for resetting the window."""
+
+        self.data_max = 1
+        """Maximum value used for resetting the window."""
+
+        self.black = 0
+        """Value translated to black (lower bound of window)."""
+
+        self.white = 1
+        """Value translated to white (upper bound of window)."""
 
     def prepare(self, data):
         """Prepare data for display or analysis (see `prepare_without_window`)
@@ -47,13 +59,21 @@ class DisplayHelper():
         data = data.clip(0, 255)
         return data.astype(numpy.uint8).copy()
 
-    def setup_window(self, data):
-        """Analyze data and set window boundary conditions (min, max)."""
+    def setup_data(self, data):
+        """Analyze data and set window and boundary conditions (min, max)."""
 
         data = numpy.absolute(data)
         self.data_min = numpy.amin(data)
         self.data_max = numpy.amax(data)
         self.reset_window()
+
+    def setup_window(self, data):
+        """Analyze data and set window (black, white). Used for temporary
+        changes in window settings like thumbnail generation."""
+
+        data = numpy.absolute(data)
+        self.black = numpy.amin(data)
+        self.white = numpy.amax(data)
 
     def reset_window(self):
         """Reset the window to cover the entire range of values in the data."""
@@ -92,7 +112,7 @@ class DisplayHelper():
         """Set the display mode to amplitude (1) or phase (0)."""
 
         self.mode = mode
-        self.app.refresh()
+        self.reset_window()
 
     def generate_thumb(self, data):
         """Resize data for use as a thumbnail.
@@ -109,9 +129,9 @@ class DisplayHelper():
     def get_pixmap(self, data):
         """Convert `data` into a QPixmap object."""
 
-        tmp = self.prepare(data)
-        image = QImage(tmp.data, tmp.shape[1], tmp.shape[0],
-                       tmp.data.strides[0], QImage.Format_Grayscale8)
+        data = self.prepare(data)
+        image = QImage(data.data, data.shape[1], data.shape[0],
+                       data.data.strides[0], QImage.Format_Grayscale8)
         pixmap = QPixmap.fromImage(image)
 
         return pixmap

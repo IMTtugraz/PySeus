@@ -8,7 +8,7 @@ from .base import BaseFormat, LoadError
 
 class NumPy(BaseFormat):
     """Support for NumPy files.
-    
+
     Currently, only .npy files are supported.
     Metadata, pixelspacing, scale and orientation are NOT supported."""
 

@@ -39,8 +39,10 @@ class ViewWidget(QScrollArea):
 
     def zoom(self, factor, relative=True):
         """Set the zoom level for the displayed image.
-        By default, the new zoom factor will be relative to the current zoom factor.
-        If `relative` is set to False, `factor` will be used as the new zoom factor."""
+
+        By default, the new zoom factor will be relative to the current
+        zoom factor. If `relative` is set to False, `factor` will be used as
+        the new zoom factor."""
 
         if self.app.dataset is None \
                 or (relative and (0.1 >= self.zoom_factor * factor >= 100)):
@@ -150,14 +152,17 @@ class ViewWidget(QScrollArea):
                  + event.pos().x()) // self.zoom_factor)
         y = int((self.verticalScrollBar().value()
                  + event.pos().y()) // self.zoom_factor)
-        shape = self.app.dataset.pixeldata[self.app.slice].shape
+        slice = self.app.dataset.get_pixeldata(self.app.slice)
+        shape = slice.shape
         if(x < shape[0] and y < shape[1]):
-            val = self.app.dataset.pixeldata[self.app.slice][x, y]
-            self.app.window.show_status("{} x {}  -  {:.4g}".format(x, y, val))
+            value = slice[x, y]
+            self.app.window.show_status("{} x {}  -  {:.4g}"
+                                        .format(x, y, value))
 
     def mouseReleaseEvent_over_image(self, event):
-        """Call `mouseReleaseEvent` on mouse button up for RoI functionality."""
-        
+        """Call `mouseReleaseEvent` on mouse button up for RoI
+        functionality."""
+
         self.mouseReleaseEvent(event)
 
     def wheelEvent(self, event):

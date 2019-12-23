@@ -2,12 +2,12 @@ import nibabel
 import numpy
 import os
 
-from .base import BaseFormat
+from .base import BaseFormat, LoadError
 
 
 class NIfTI(BaseFormat):
     """Support for NIfTI files.
-    
+
     Currently, only NIFTI-2 single files are supported.
     Metadata, pixelspacing, scale and orientation are all supported."""
 
@@ -24,6 +24,9 @@ class NIfTI(BaseFormat):
         return ext.lower() in (".nii")
 
     def load(self, path):
+        if not os.path.isfile(path):
+            raise LoadError("File not found.")
+
         self.path = path
         self.file = nibabel.load(path)
 
@@ -74,12 +77,10 @@ class NIfTI(BaseFormat):
 
     def get_orientation(self):
         # uses only sform (affine transform) but ignores qform
-        # @see https://nipy.org/nibabel/image_orientation.html
-        # @see https://nifti.nimh.nih.gov/nifti-1/documentation/nifti1fields/nifti1fields_pages/qsform.html
         if "sform_code" in self.metadata.keys() \
                 and self.metadata["sform_code"] > 0:
             orientation = list(nibabel.aff2axcodes(self.file.affine))
-            # @TODO convert to RAS notation
+            # @TODO convert to internal form
             return orientation
 
-        return ["R", "A", "S"]
+        return []
