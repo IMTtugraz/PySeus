@@ -1,16 +1,29 @@
-import pydicom
-import numpy
+"""Support for DICOM files.
+
+Classes
+-------
+
+**DICOM** - Class modeling DICOM datasets.
+"""
+
 import os
+import numpy
+
+import pydicom
 from natsort import natsorted
 
 from .base import BaseFormat, LoadError
 
 
 class DICOM(BaseFormat):
-    """Support for DICOM files.
+    """Class modeling DICOM datasets.
 
-    Currently, only .dcm files are supported.
-    Metadata, pixelspacing, scale and orientation are all supported."""
+    Supports multiple *.dcm*-files in standard directory structure; DICOMDIR
+    files are not supported.
+    Supports metadata, pixelspacing, scale, units and orientation.
+    """
+
+    EXTENSIONS = (".dcm", ".dicom")
 
     def __init__(self):
         BaseFormat.__init__(self)
@@ -25,10 +38,13 @@ class DICOM(BaseFormat):
             "pys:alpha": "FlipAngle"
         }
 
+        self.scan_level = ""
+        """Relative path to the current scan from *self.path* ."""
+
     @classmethod
     def can_handle(cls, path):
         _, ext = os.path.splitext(path)
-        return ext.lower() in (".dcm")
+        return ext.lower() in cls.EXTENSIONS
 
     def load(self, path):
         if not os.path.isfile(path):
@@ -40,17 +56,17 @@ class DICOM(BaseFormat):
         self.scan_level = os.path.abspath(os.path.join(slice_level, os.pardir))
 
         scan_dirs = next(os.walk(self.scan_level))[1]
-        for d in natsorted(scan_dirs):
+        for dir_ in natsorted(scan_dirs):
             has_dcm = False
-            for f in os.listdir(os.path.abspath(
-                                os.path.join(self.scan_level, d))):
-                _, ext = os.path.splitext(f)
-                if ext.lower() in (".dcm"):
+            for file_ in os.listdir(os.path.abspath(
+                                os.path.join(self.scan_level, dir_))):
+                _, ext = os.path.splitext(file_)
+                if ext.lower() in DICOM.EXTENSIONS:
                     has_dcm = True
                     break
 
-            if has_dcm and d != "localizer":
-                self.scans.append(d)
+            if has_dcm and dir_ != "localizer":
+                self.scans.append(dir_)
 
         self.scan = self.scans.index(os.path.basename(slice_level))
 
@@ -70,25 +86,25 @@ class DICOM(BaseFormat):
     def load_scan(self, scan):
         slices = []
         scan_dir = os.path.join(self.scan_level, self.scans[scan])
-        for f in os.listdir(scan_dir):
-            _, ext = os.path.splitext(f)
-            if ext.lower() in (".dcm"):
-                slice = pydicom.read_file(os.path.join(scan_dir, f),
-                                          defer_size=0)
-                slices.append(slice)
+        for file_ in os.listdir(scan_dir):
+            _, ext = os.path.splitext(file_)
+            if ext.lower() in DICOM.EXTENSIONS:
+                slice_ = pydicom.read_file(os.path.join(scan_dir, file_),
+                                           defer_size=0)
+                slices.append(slice_)
 
-        slice_count = len(slices)
+        file_count = len(slices)
         slices = [s for s in slices if hasattr(s, "SliceLocation")]
 
-        if slice_count > 0 and len(slices) == 0:
+        if file_count > 0 and not slices:
             raise LoadError("DICOM files are missing SliceLocation data.")
 
         slices = sorted(slices, key=lambda s: s.SliceLocation)
 
         pixeldata = []
-        for s in slices:
-            if "PixelData" in s:
-                pixeldata.append(s.pixel_array)
+        for slice_ in slices:
+            if "PixelData" in slice_:
+                pixeldata.append(slice_.pixel_array)
 
         self.pixeldata = numpy.asarray(pixeldata)
         self.metadata = self.get_scan_metadata(scan)
@@ -97,39 +113,53 @@ class DICOM(BaseFormat):
         return True
 
     def get_scan_thumbnail(self, scan):
+        # "Correct" implementation; current version guesses middle slice
+        # based on file names for performance reasons.
+        #
+        # slices = []
+        # scan_dir = os.path.join(self.scan_level, self.scans[scan])
+        # for file_ in os.listdir(scan_dir):
+        #     _, ext = os.path.splitext(file_)
+        #     if ext.lower() in DICOM.EXTENSIONS:
+        #         slice_ = (f, pydicom.filereader.read_file(
+        #             os.path.join(scan_dir, file_),
+        #             specific_tags=["SliceLocation"]))
+        #         slices.append(slice_)
+        #
+        # slices = [s for s in slices if hasattr(s[1], "SliceLocation")]
+        # slices = sorted(slices, key=lambda s: s[1].SliceLocation)
+        #
+        # thumb_slice = pydicom.read_file(
+        #         os.path.join(scan_dir, slices[len(slices) // 2][0]))
+
         slices = []
         scan_dir = os.path.join(self.scan_level, self.scans[scan])
-        for f in os.listdir(scan_dir):
-            _, ext = os.path.splitext(f)
-            if ext.lower() in (".dcm"):
-                slice = (f, pydicom.filereader.read_file(
-                                os.path.join(scan_dir, f),
-                                specific_tags=["SliceLocation"]))
-                slices.append(slice)
+        for file_ in os.listdir(scan_dir):
+            _, ext = os.path.splitext(file_)
+            if ext.lower() in DICOM.EXTENSIONS:
+                slices.append(file_)
 
-        slices = [s for s in slices if hasattr(s[1], "SliceLocation")]
-        slices = sorted(slices, key=lambda s: s[1].SliceLocation)
-
-        thumb_slice = pydicom.read_file(os.path.join(scan_dir,
-                                        slices[len(slices) // 2][0]))
+        slices = natsorted(slices)
+        thumb_slice = pydicom.read_file(
+            os.path.join(scan_dir, slices[len(slices) // 2]))
 
         return numpy.asarray(thumb_slice.pixel_array)
 
     def get_scan_metadata(self, scan):
         metadata = {}
-        slice = None
+        slice_ = None
 
         scan_dir = os.path.join(self.scan_level, self.scans[scan])
-        for f in os.listdir(scan_dir):
-            _, ext = os.path.splitext(f)
-            if ext.lower() in (".dcm"):
-                slice = pydicom.read_file(os.path.join(scan_dir, f),
-                                          defer_size=0)
+        for file_ in os.listdir(scan_dir):
+            _, ext = os.path.splitext(file_)
+            if ext.lower() in DICOM.EXTENSIONS:
+                slice_ = pydicom.read_file(os.path.join(scan_dir, file_),
+                                           defer_size=0)
 
-                ignore = ["PixelData"]
-                for e in slice:
-                    if e.keyword not in ignore and not e.keyword == "":
-                        metadata[e.keyword] = e.value
+                ignore = ["", "PixelData"]
+                for element in slice_:
+                    if element.keyword not in ignore:
+                        metadata[element.keyword] = element.value
 
         return metadata
 
@@ -140,8 +170,8 @@ class DICOM(BaseFormat):
 
         if axis is None:
             return pixel_spacing[0:2]
-        else:
-            return pixel_spacing[axis]
+
+        return pixel_spacing[axis]
 
     def get_scale(self):
         return 0.001  # DICOM always uses mm here
@@ -150,11 +180,12 @@ class DICOM(BaseFormat):
         if "Units" in self.metadata.keys():
             return "{}*".format(self.metadata["Units"])
             # not accounting for Rescale Intercept, Rescale Slope
-        else:
-            return "1"
+
+        return "1"
 
     def get_orientation(self):
         if "DisplaySetPatientOrientation" in self.metadata.keys():
             (right, bottom) = self.metadata["DisplaySetPatientOrientation"]
+            return [right, bottom]
 
         return []

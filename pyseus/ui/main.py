@@ -1,3 +1,11 @@
+"""Main window for PySeus.
+
+Classes
+-------
+
+**MainWindow** - Class representing the main window for PySeus.
+"""
+
 import sys
 import webbrowser
 from functools import partial
@@ -7,14 +15,12 @@ from PySide2.QtWidgets import QMainWindow, QAction, QLabel, QFileDialog, \
                               QFrame, QVBoxLayout, QHBoxLayout
 
 from .view import ViewWidget
-from .console import ConsoleWidget
-from .info import InfoWidget
+from .sidebar import ConsoleWidget, InfoWidget, MetaWidget
 from .thumbs import ThumbsWidget
-from .meta import MetaWidget
 
 
 class MainWindow(QMainWindow):
-    """The main window for PySeus."""
+    """Class representing the main window for PySeus."""
 
     def __init__(self, app):
         QMainWindow.__init__(self)
@@ -71,13 +77,13 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(wrapper)
 
         # Window dimensions
-        geometry = self.app.qt.desktop().availableGeometry(self)
+        geometry = self.app.qt_app.desktop().availableGeometry(self)
         self.resize(geometry.width() * 0.6, geometry.height() * 0.6)
 
     def add_menu_item(self, menu, title, callback, shortcut=""):
         """Create menu item (helper function)."""
         action = QAction(title, self)
-        if(shortcut != ""):
+        if shortcut != "":
             action.setShortcut(shortcut)
         action.triggered.connect(callback)
         menu.addAction(action)
@@ -142,11 +148,11 @@ class MainWindow(QMainWindow):
         self.explore_menu.addSeparator()
         ami(self.explore_menu, "Timelapse", self._action_timelapse, "Ctrl+#")
 
-        self.functions_menu = menu_bar.addMenu("&Evaluate")
-        for f in self.app.tools:
-            f.setup_menu(self.app, self.functions_menu, self.add_menu_item)
-        self.functions_menu.addSeparator()
-        ami(self.functions_menu, "&Clear RoI", self._action_tool_clear, "Esc")
+        self.tools_menu = menu_bar.addMenu("&Evaluate")
+        for tool in self.app.tools:
+            tool.setup_menu(self.app, self.tools_menu, self.add_menu_item)
+        self.tools_menu.addSeparator()
+        ami(self.tools_menu, "&Clear RoI", self._action_tool_clear, "Esc")
 
         # About action is its own top level menu
         ami(menu_bar, "&About", self._action_about)
@@ -155,7 +161,7 @@ class MainWindow(QMainWindow):
         """Display `message` in status bar."""
         self.statusBar().showMessage(message)
 
-    def resizeEvent(self, event):
+    def resizeEvent(self, event):  # pylint: disable=C0103
         """Keep viewport centered and adjust zoom on window resize."""
         x_factor = event.size().width() / event.oldSize().width()
         # y_factor = event.size().height() / event.oldSize().height()
@@ -163,11 +169,12 @@ class MainWindow(QMainWindow):
         self.view.zoom(x_factor, True)
 
     def _action_quit(self):
+        self.app.qt_app.quit()
         sys.exit()
 
     def _action_open(self):
-        path, filter = QFileDialog.getOpenFileName(None, "Open file",
-                                                   self._open_path, "*.*")
+        path, _ = QFileDialog.getOpenFileName(None, "Open file",
+                                              self._open_path, "*.*")
 
         if not path == "":
             self._open_path = os.path.dirname(path)
@@ -185,7 +192,7 @@ class MainWindow(QMainWindow):
     def _action_zoom_reset(self):
         self.view.zoom(1, False)
 
-    def _action_about(self):
+    def _action_about(self):  # pylint: disable=R0201
         webbrowser.open_new("https://github.com/calmer/PySEUS")
 
     def _action_win_lower(self):

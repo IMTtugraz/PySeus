@@ -1,4 +1,11 @@
-from PySide2 import QtCore
+"""GUI elements for displaying images.
+
+Classes
+-------
+
+**ViewWidget** - Widget class for displaying scan thumbnails.
+"""
+
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QLabel, QScrollArea
 
@@ -6,7 +13,7 @@ import numpy
 
 
 class ViewWidget(QScrollArea):
-    """The widget providing an image viewport."""
+    """Widget class for displaying scan thumbnails."""
 
     def __init__(self, app):
         QScrollArea.__init__(self)
@@ -25,8 +32,11 @@ class ViewWidget(QScrollArea):
         self.mouse_action = 0
         """The current action on mouse move. Can be ROI, WINDOW or PAN."""
 
+        self.last_position = None
+        """The last position, from which mouse events were processed."""
+
         self.setMouseTracking(True)
-        self.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        self.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
         self.setWidget(self.image)
 
         # Hide scrollbars
@@ -72,33 +82,33 @@ class ViewWidget(QScrollArea):
         h_zoom = viewport.width() / image.width()
         self.zoom(min(v_zoom, h_zoom)*0.99, False)
 
-    def mousePressEvent(self, event):
+    def mousePressEvent(self, event):  # pylint: disable=C0103
         """Handle pan and window functionality on mouse button down."""
 
-        if(event.buttons() == QtCore.Qt.LeftButton
-                and event.modifiers() == Qt.NoModifier):
+        if event.buttons() == Qt.LeftButton \
+                and event.modifiers() == Qt.NoModifier:
             self.mouse_action = "PAN"
 
-        elif(event.buttons() == QtCore.Qt.MiddleButton):
+        elif event.buttons() == Qt.MiddleButton:
             self.mouse_action = "WINDOW"
 
         self.last_position = event.screenPos()
 
-    def mouseReleaseEvent(self, event):
+    def mouseReleaseEvent(self, event):  # pylint: disable=C0103,W0613
         """Handle RoI functionality on mouse button up."""
 
-        if(self.mouse_action == "ROI"):
+        if self.mouse_action == "ROI":
             self.app.recalculate()
 
         self.last_position = None
         self.mouse_action = 0
 
-    def mouseMoveEvent(self, event):
+    def mouseMoveEvent(self, event):  # pylint: disable=C0103
         """Handle pan, window and RoI functionality on mouse move."""
 
         self.app.window.show_status("")
 
-        if(self.mouse_action == "PAN"):
+        if self.mouse_action == "PAN":
             vertical = self.verticalScrollBar().value() \
                 + self.last_position.y() - event.screenPos().y()
             horizontal = self.horizontalScrollBar().value() \
@@ -108,14 +118,14 @@ class ViewWidget(QScrollArea):
             self.horizontalScrollBar().setValue(horizontal)
             self.last_position = event.screenPos()
 
-        elif(self.mouse_action == "WINDOW"):
+        elif self.mouse_action == "WINDOW":
             move = self.last_position.x() - event.screenPos().x()
             scale = self.last_position.y() - event.screenPos().y()
             self.last_position = event.screenPos()
             self.app.display.adjust_window(move, scale)
             self.app.refresh()
 
-        elif(self.mouse_action == "ROI"):
+        elif self.mouse_action == "ROI":
             x_pos = event.pos().x() if event.pos().x() <= self.image.width() \
                 else self.image.width()
             y_pos = event.pos().y() if event.pos().y() <= self.image.height() \
@@ -125,11 +135,11 @@ class ViewWidget(QScrollArea):
                                       int(y_pos / self.zoom_factor))
             self.app.refresh()
 
-    def mousePressEvent_over_image(self, event):
+    def mousePressEvent_over_image(self, event):  # pylint: disable=C0103
         """Handle RoI functionality on mouse button down over the image.
         Hands off contorl to `mousePressEvent` when appropriate."""
-        if(event.buttons() == QtCore.Qt.LeftButton
-                and event.modifiers() == Qt.ControlModifier):
+        if event.buttons() == Qt.LeftButton \
+                and event.modifiers() == Qt.ControlModifier:
             self.mouse_action = "ROI"
             self.last_position = event.pos()
 
@@ -142,38 +152,38 @@ class ViewWidget(QScrollArea):
         else:
             self.mousePressEvent(event)
 
-    def mouseMoveEvent_over_image(self, event):
+    def mouseMoveEvent_over_image(self, event):  # pylint: disable=C0103
         """Handle value display functionality on mouse move over the image.
         Call `mouseMoveEvent` for pan, window and RoI functionality."""
 
         self.mouseMoveEvent(event)
 
-        x = int((self.horizontalScrollBar().value()
-                 + event.pos().x()) // self.zoom_factor)
-        y = int((self.verticalScrollBar().value()
-                 + event.pos().y()) // self.zoom_factor)
-        slice = self.app.dataset.get_pixeldata(self.app.slice)
-        shape = slice.shape
-        if(x < shape[0] and y < shape[1]):
-            value = slice[x, y]
+        x_coord = int((self.horizontalScrollBar().value()
+                       + event.pos().x()) // self.zoom_factor)
+        y_coord = int((self.verticalScrollBar().value()
+                       + event.pos().y()) // self.zoom_factor)
+        slice_ = self.app.dataset.get_pixeldata(self.app.slice)
+        shape = slice_.shape
+        if(x_coord < shape[0] and y_coord < shape[1]):
+            value = slice_[x_coord, y_coord]
             self.app.window.show_status("{} x {}  -  {:.4g}"
-                                        .format(x, y, value))
+                                        .format(x_coord, y_coord, value))
 
-    def mouseReleaseEvent_over_image(self, event):
+    def mouseReleaseEvent_over_image(self, event):  # pylint: disable=C0103
         """Call `mouseReleaseEvent` on mouse button up for RoI
         functionality."""
 
         self.mouseReleaseEvent(event)
 
-    def wheelEvent(self, event):
+    def wheelEvent(self, event):  # pylint: disable=C0103
         """Handle scroll wheel events in the viewport.
         Scroll - Change current slice up or down.
         Alt+Scroll - Change current scan up or down.
         Strg+Scroll - Zoom the current image in or out."""
 
         if event.modifiers() == Qt.NoModifier:
-            slice = int(numpy.sign(event.delta()))
-            self.app.select_slice(slice, True)
+            slice_ = int(numpy.sign(event.delta()))
+            self.app.select_slice(slice_, True)
 
         elif event.modifiers() == Qt.ControlModifier:
             self.zoom(0.8 if event.delta() < 0 else 1.25)

@@ -1,17 +1,18 @@
-"""...
-"""
+"""Testcases for NIfTI format class."""
 
 import numpy
 import pytest
 
-from context import pyseus
+from context import pyseus  # noqa F401  # pylint: disable=W0611
 from pyseus import formats
 
 
-dataset = formats.NIfTI()
+dataset = formats.NIfTI()  # pylint: disable=C0103
 
 
 def test_nifti_load():
+    """Test loading of NIfTI files."""
+
     assert dataset.load("./tests/samples/sample.nii") is True
     assert isinstance(dataset.path, str)
     assert isinstance(dataset.scans, list)
@@ -26,6 +27,8 @@ def test_nifti_load():
 
 
 def test_nifti_data():
+    """Test access to data in a NIfTI dataset."""
+
     assert isinstance(dataset.get_pixeldata(), numpy.ndarray)
     assert isinstance(dataset.get_metadata(), dict)
     assert isinstance(dataset.get_spacing(), list)
@@ -35,6 +38,8 @@ def test_nifti_data():
 
 
 def test_nifti_errors():
+    """Test how NIfTI handles failure conditions."""
+
     with pytest.raises(formats.LoadError) as error:
-       dataset.load("./this/does/not/exist")
+        dataset.load("./this/does/not/exist")
     assert error.type == formats.LoadError

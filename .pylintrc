@@ -1,0 +1,4 @@
+[MASTER]
+extension-pkg-whitelist=cv2
+# extension-pkg-whitelist=PySide2 does not work
+disable=no-name-in-module

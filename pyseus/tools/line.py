@@ -1,3 +1,11 @@
+"""Tool for evaluation of data along a line.
+
+Classes
+-------
+
+**LineTool** - Class providing simple evaluation along a line.
+"""
+
 from functools import partial
 from math import sqrt
 
@@ -10,7 +18,7 @@ from .base import BaseTool
 
 
 class LineTool(BaseTool):
-    """Evaluates data along a line."""
+    """Class providing simple evaluation along a line"""
 
     def __init__(self, app):
         BaseTool.__init__(self, app)
@@ -56,9 +64,9 @@ class LineTool(BaseTool):
         height = self.line[3]-self.line[1]
         distance = sqrt(width**2 + height**2)
         for i in range(0, int(distance*10)):
-            x = round(self.line[0] + (width)*i / int(distance*10))
-            y = round(self.line[1] + (height)*i / int(distance*10))
-            result.append(data[y][x])
+            x_coord = round(self.line[0] + (width)*i / int(distance*10))
+            y_coord = round(self.line[1] + (height)*i / int(distance*10))
+            result.append(data[y_coord][x_coord])
 
         axes = [self.app.dataset.get_scale(),
                 self.app.dataset.get_units()]
@@ -77,6 +85,9 @@ class LineToolWindow(QDialog):
         self.setWindowFlags(self.windowFlags()
                             & ~Qt.WindowContextHelpButtonHint)
 
+        self.view = None
+        """Holds QChartView instance."""
+
         self.setLayout(QVBoxLayout())
 
         # Startup window size
@@ -89,8 +100,8 @@ class LineToolWindow(QDialog):
             self.view.deleteLater()
 
         series = QtCharts.QLineSeries()
-        for k, v in enumerate(data):
-            series.append(k, v)
+        for key, value in enumerate(data):
+            series.append(key, value)
 
         self.view = QtCharts.QChartView()
         self.view.setRenderHint(QPainter.Antialiasing)

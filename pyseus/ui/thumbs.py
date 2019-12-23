@@ -1,3 +1,11 @@
+"""GUI elements for displaying thumbnails.
+
+Classes
+-------
+
+**ThumbsWidget** - Widget displaying scan thumbnails in a column.
+"""
+
 from functools import partial
 
 from PySide2.QtCore import QSize
@@ -8,7 +16,7 @@ from pyseus.settings import settings
 
 
 class ThumbsWidget(QScrollArea):
-    """The widget for scan thumbnail display."""
+    """Widget displaying scan thumbnails in a column."""
 
     def __init__(self, app):
         QScrollArea.__init__(self)
@@ -35,7 +43,6 @@ class ThumbsWidget(QScrollArea):
         pixmap = pixmap.scaledToWidth(int(settings["ui"]["thumb_size"]))
 
         thumb = QLabel()
-        # thumb.setProperty("role", "current_scan")
         thumb.setPixmap(pixmap)
         thumb.mousePressEvent = partial(self._thumb_clicked,
                                         len(self.thumbs))
@@ -50,18 +57,18 @@ class ThumbsWidget(QScrollArea):
 
     def clear(self):
         """Remove all thumbnails."""
-        for t in self.thumbs:
-            t.deleteLater()
+        for thumb in self.thumbs:
+            thumb.deleteLater()
         self.thumbs = []
 
-    def _thumb_clicked(self, thumb, event):
+    def _thumb_clicked(self, thumb, event):  # pylint: disable=W0613
         """Trigger `app.select_scan` when a thumbnail is clicked."""
         self.app.select_scan(thumb)
 
-    def minimumSizeHint(self):
+    def minimumSizeHint(self):  # pylint: disable=C0103
         """Return widget size; width should be `thumb_size + scrollbar_width`
         or 0 if there are no thumbnails."""
         if self.thumbs:
             return QSize(int(settings["ui"]["thumb_size"])+25, 0)
-        else:
-            return QSize(0, 0)
+
+        return QSize(0, 0)

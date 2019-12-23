@@ -1,7 +1,7 @@
-"""...
-"""
+"""Various demos for PySeus using sample data."""
 
 # flake8: noqa
+# pylint: skip-file
 
 from context import pyseus
 
@@ -38,4 +38,4 @@ def demo_nifti_2():
 
 
 if __name__ == "__main__":
-    demo_nifti()
+    demo_dicom_2()

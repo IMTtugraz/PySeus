@@ -30,6 +30,7 @@ master_doc = 'index'
 # extensions coming with Sphinx (named "sphinx.ext.*") or your custom
 # ones.
 extensions = ["sphinx.ext.autodoc"]
+# extensions = ["sphinx.ext.autosectionlabel"]
 
 # Add any extension configuration here.
 autodoc_default_options = {

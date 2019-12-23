@@ -1,5 +1,13 @@
-import numpy
+"""Tool for evaluation of regions-of-interest.
+
+Classes
+-------
+
+**AreaTool** - Class providing simple RoI evaluation.
+"""
+
 from functools import partial
+import numpy
 
 from PySide2.QtGui import QPainter, QColor, QPen
 
@@ -7,13 +15,13 @@ from .base import BaseTool
 
 
 class AreaTool(BaseTool):
-    """Evaluates data in a simple RoI."""
+    """Class providing simple RoI evaluation."""
 
     def __init__(self, app):
         BaseTool.__init__(self, app)
 
         self.roi = [0, 0, 0, 0]
-        """Coordinates of the current region of interest."""
+        """Coordinates of the current region-of-interest."""
 
     @classmethod
     def setup_menu(cls, app, menu, ami):
@@ -51,16 +59,16 @@ class AreaTool(BaseTool):
         ymax = numpy.maximum(self.roi[1], self.roi[3])
 
         roi = data[xmin:xmax, ymin:ymax]
-        min = numpy.amin(roi)
-        max = numpy.amax(roi)
+        min_ = numpy.amin(roi)
+        max_ = numpy.amax(roi)
         med = numpy.median(roi)
         avg = numpy.average(roi)
 
         if avg > med:
             result = ("Min: {:.4g}  |  Med: {:.4g}  |  Avg: {:.4g}  |  "
-                      "Max: {:.4g}").format(min, med, avg, max)
+                      "Max: {:.4g}").format(min_, med, avg, max_)
         else:
             result = ("Min: {:.4g}  |  Avg: {:.4g}  |  Med: {:.4g}  |  "
-                      "Max: {:.4g}").format(min, avg, med, max)
+                      "Max: {:.4g}").format(min_, avg, med, max_)
 
         self.app.window.console.print("Stats:   " + result)

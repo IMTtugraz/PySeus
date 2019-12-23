@@ -1,3 +1,11 @@
+"""Main components of PySeus.
+
+Classes
+-------
+
+**PySeus** - The main application class.
+"""
+
 import os
 import cv2
 
@@ -5,12 +13,12 @@ from PySide2.QtGui import qApp
 from PySide2.QtCore import QTimer
 from PySide2.QtWidgets import QApplication, QMessageBox
 
-from pyseus import settings
-from pyseus import DisplayHelper
-from pyseus.ui import MainWindow
-from pyseus.formats import Raw, NumPy, H5, DICOM, NIfTI, LoadError
-from pyseus.tools import AreaTool, LineTool
-from pyseus.ui.meta import MetaWindow
+from .display import DisplayHelper
+from .formats import Raw, NumPy, H5, DICOM, NIfTI, LoadError
+from .settings import settings
+from .tools import AreaTool, LineTool
+from .ui import MainWindow
+from .ui.meta import MetaWindow
 
 
 class PySeus():
@@ -19,13 +27,13 @@ class PySeus():
     def __init__(self, gui=True):
         # set gui = false for testing
 
-        self.qt = None
+        self.qt_app = None
         """The QApplication instance for interaction with the Qt framework."""
 
         if isinstance(qApp, type(None)):
-            self.qt = QApplication([])
+            self.qt_app = QApplication([])
         else:
-            self.qt = qApp
+            self.qt_app = qApp
 
         self.dataset = None
         """The current dataset object. See `Formats <development/formats>`_."""
@@ -42,6 +50,10 @@ class PySeus():
         self.window = MainWindow(self)
         """The main window object. See `Interface <development/interface>`_."""
 
+        self.meta_window = None
+        """Holds the meta window object. See `Interface
+        <development/interface>`."""
+
         self.display = DisplayHelper()
         """The display helper object. See `Display <development/display>`_."""
 
@@ -55,28 +67,29 @@ class PySeus():
         style_path = "./ui/" + settings["ui"]["style"] + ".qss"
         style_path = os.path.join(os.path.dirname(__file__), style_path)
         with open(style_path, "r") as stylesheet:
-            self.qt.setStyleSheet(stylesheet.read())
+            self.qt_app.setStyleSheet(stylesheet.read())
 
-        self.qt.font().setPixelSize(int(settings["ui"]["font_size"]))
+        self.qt_app.font().setPixelSize(int(settings["ui"]["font_size"]))
 
         if gui:
             self.window.show()
 
     def show(self):
+        """Show the main window, even if initialized without the GUI."""
         self.window.show()
-        self.qt.exec_()
+        self.qt_app.exec_()
 
     def load_file(self, path):
         """Try to load the file at `path`. See also `setup_dataset`."""
 
-        self.new_dataset = None
-        for f in self.formats:
-            if f.can_handle(path):
-                self.new_dataset = f()
+        new_dataset = None
+        for format_ in self.formats:
+            if format_.can_handle(path):
+                new_dataset = format_()
                 break
 
-        if self.new_dataset is not None:
-            self.setup_dataset(path)
+        if new_dataset is not None:
+            self.setup_dataset(path, new_dataset)
 
         else:
             QMessageBox.warning(self.window, "Pyseus", "Unknown file format.")
@@ -84,18 +97,21 @@ class PySeus():
     def load_data(self, data):
         """Try to load `data`. See also `setup_dataset`."""
 
-        self.new_dataset = Raw()
-        self.setup_dataset(data)
+        new_dataset = Raw()
+        self.setup_dataset(data, new_dataset)
 
-    def setup_dataset(self, arg):
+    def setup_dataset(self, arg, dataset=None):
         """Setup a new dataset: Load scan list, generate thumbnails and load
         default scan."""
+        if dataset is None:
+            dataset = self.dataset
+
         try:
-            if not self.new_dataset.load(arg):  # canceled by user
+            if not dataset.load(arg):  # canceled by user
                 return
 
             self.clear()
-            self.dataset = self.new_dataset
+            self.dataset = dataset
 
             if self.dataset.scan_count() > 1:
                 message = "{} scans detected. Do you want to load all?" \
@@ -104,9 +120,9 @@ class PySeus():
 
                 self.window.thumbs.clear()
                 if load_all is QMessageBox.StandardButton.Yes:
-                    for s in range(0, self.dataset.scan_count()):
+                    for scan_id in range(0, self.dataset.scan_count()):
                         thumb = self.display.generate_thumb(
-                            self.dataset.get_scan_thumbnail(s))
+                            self.dataset.get_scan_thumbnail(scan_id))
                         pixmap = self.display.get_pixmap(thumb)
                         self.window.thumbs.add_thumb(pixmap)
                 else:
@@ -116,11 +132,11 @@ class PySeus():
 
             self.load_scan()
 
-        except LoadError as e:
-            QMessageBox.warning(self.window, "Pyseus", str(e))
+        except LoadError as error:
+            QMessageBox.warning(self.window, "Pyseus", str(error))
 
-        except OSError as e:
-            QMessageBox.warning(self.window, "Pyseus", str(e))
+        except OSError as error:
+            QMessageBox.warning(self.window, "Pyseus", str(error))
 
         else:
             self.window.info.update_path(self.dataset.path)
@@ -137,7 +153,7 @@ class PySeus():
 
         data = self.dataset.get_pixeldata(self.slice)
 
-        # @TODO move to DisplayHelper (refactor data flow in preparation)
+        # @TODO move to DisplayHelper or FormatBase
         spacing = self.dataset.get_spacing()
         if spacing[0] != spacing[1]:
             if spacing[0] > spacing[1]:
@@ -159,9 +175,9 @@ class PySeus():
     def recalculate(self):
         """Refresh the active evaluation tool."""
         if self.tool is not None:
-            slice = self.dataset.get_pixeldata(self.slice)
+            slice_ = self.dataset.get_pixeldata(self.slice)
             self.tool.recalculate(
-                self.display.prepare_without_window(slice))
+                self.display.prepare_without_window(slice_))
 
     def select_scan(self, sid, relative=False):
         """Select and load a scan from the current dataset.
@@ -252,6 +268,7 @@ class PySeus():
         self.clear_tool()
 
     def toggle_timelapse(self):
+        """Toggle automatic loading of next scans."""
         if self.timer.isActive():
             self.timer.stop()
         else:

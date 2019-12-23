@@ -1,17 +1,18 @@
-"""...
-"""
+"""Testcases for NumPy format class."""
 
 import numpy
 import pytest
 
-from context import pyseus
+from context import pyseus  # noqa F401  # pylint: disable=W0611
 from pyseus import formats
 
 
-dataset = formats.NumPy()
+dataset = formats.NumPy()  # pylint: disable=C0103
 
 
 def test_numpy_load():
+    """Test loading of NumPy files."""
+
     assert dataset.load("./tests/samples/sample.npy") is True
     assert isinstance(dataset.path, str)
     assert isinstance(dataset.scans, list)
@@ -25,6 +26,8 @@ def test_numpy_load():
 
 
 def test_numpy_data():
+    """Test access to data in a NumPy dataset."""
+
     assert isinstance(dataset.get_pixeldata(), numpy.ndarray)
     assert isinstance(dataset.get_metadata(), dict)
     assert isinstance(dataset.get_spacing(), list)
@@ -34,6 +37,8 @@ def test_numpy_data():
 
 
 def test_numpy_errors():
+    """Test how NumPy handles failure conditions."""
+
     with pytest.raises(formats.LoadError) as error:
-       dataset.load("./this/does/not/exist")
+        dataset.load("./this/does/not/exist")
     assert error.type == formats.LoadError

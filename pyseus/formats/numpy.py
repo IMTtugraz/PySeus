@@ -1,5 +1,13 @@
-import numpy
+"""Support for NumPy files.
+
+Classes
+-------
+
+**NumPy** - Class modeling NumPy datasets.
+"""
+
 import os
+import numpy
 
 from PySide2.QtWidgets import QMessageBox
 
@@ -7,10 +15,13 @@ from .base import BaseFormat, LoadError
 
 
 class NumPy(BaseFormat):
-    """Support for NumPy files.
+    """Class modeling NumPy datasets.
 
-    Currently, only .npy files are supported.
-    Metadata, pixelspacing, scale and orientation are NOT supported."""
+    Supports arrays or pickeled objects in *.npy*-files.
+    Metadata, pixelspacing, scale, units and orientation are *not* supported.
+    """
+
+    EXTENSIONS = (".npy")
 
     def __init__(self):
         BaseFormat.__init__(self)
@@ -18,7 +29,7 @@ class NumPy(BaseFormat):
     @classmethod
     def can_handle(cls, path):
         _, ext = os.path.splitext(path)
-        return ext.lower() in (".npy")
+        return ext.lower() in NumPy.EXTENSIONS
 
     def load(self, path):
         try:
@@ -41,7 +52,7 @@ class NumPy(BaseFormat):
         elif data.ndim == 5:
             message = ("The selected dataset ist 5-dimensional. "
                        "The first two dimensions will be concatenated.")
-            QMessageBox.warning(self.window, "Pyseus", message)
+            QMessageBox.warning(None, "Pyseus", message)
             scan_count = data.shape[0]*data.shape[1]
 
             self.scans = list(range(0, scan_count-1))
@@ -62,15 +73,17 @@ class NumPy(BaseFormat):
         if data.ndim == 2:  # single slice
             return numpy.asarray([data])
 
-        elif data.ndim == 3:  # multiple slices
+        if data.ndim == 3:  # multiple slices
             return numpy.asarray(data)
 
-        elif data.ndim == 4:  # multiple scans
+        if data.ndim == 4:  # multiple scans
             return numpy.asarray(data[scan])
 
-        elif data.ndim == 5:
-            q, r = divmod(scan, data.shape[1])
-            return numpy.asarray(data[q][r])
+        if data.ndim == 5:
+            dim_4, dim_5 = divmod(scan, data.shape[1])
+            return numpy.asarray(data[dim_4][dim_5])
+
+        return []  # can´t interpret data with dimensions <= 1 or > 5
 
     def get_scan_metadata(self, scan):
         return {}  # metadata not supported

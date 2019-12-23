@@ -1,30 +1,39 @@
-"""...
-"""
+"""Testcases for main components of PySeus."""
 
 import numpy
 import pytest
 
 from PySide2.QtGui import QPixmap
 
-from context import pyseus 
+from context import pyseus # noqa F401  # pylint: disable=W0611
 from pyseus import PySeus, DisplayHelper
 from pyseus.settings import settings
 
 
 def test_core():
+    """Test basic functionality of PySeus class."""
+    
     # @TODO testing for Qt GUIs
-    pass
 
 
 def test_settigns():
+    """Test basic functionality of settings implementation."""
+
     assert isinstance(settings["ui"]["style"], str)
     with pytest.raises(Exception) as error:
-        settings["does_not_exist"]
+        settings["does_not_exist"] = "irrelevant"
         assert error.type == KeyError
 
 
 def test_display():
-    app = PySeus(False)  # noqa E841
+    """Test basic functionality of DisplayHelper class.
+
+    Tests cover initializing window settings, preparing data, generating
+    thumbnails, generating Pixmap objects (for display with ViewWidget) and
+    manipulating window settings.
+    """
+
+    app = PySeus(False)  # noqa E841  # pylint: disable=W0612
     display = DisplayHelper()
 
     data = numpy.array([[1, 3, 0],

@@ -1,17 +1,18 @@
-"""...
-"""
+"""Testcases for Raw format class."""
 
 import numpy
 import pytest
 
-from context import pyseus
+from context import pyseus  # noqa F401  # pylint: disable=W0611
 from pyseus import formats
 
 
-dataset = formats.Raw()
+dataset = formats.Raw()  # pylint: disable=C0103
 
 
 def test_raw_load():
+    """Test loading of Raw data."""
+
     data = numpy.load("./tests/samples/sample.npy")
     assert dataset.load(data) is True
     assert isinstance(dataset.path, str)
@@ -26,6 +27,8 @@ def test_raw_load():
 
 
 def test_raw_data():
+    """Test access to data in a Raw dataset."""
+
     assert isinstance(dataset.get_pixeldata(), numpy.ndarray)
     assert isinstance(dataset.get_metadata(), dict)
     assert isinstance(dataset.get_spacing(), list)
@@ -35,7 +38,9 @@ def test_raw_data():
 
 
 def test_raw_errors():
+    """Test how Raw handles failure conditions."""
+
     with pytest.raises(formats.LoadError) as error:
-       data = ["invalid", "data"]
-       dataset.load(data)
+        data = ["invalid", "data"]
+        dataset.load(data)
     assert error.type == formats.LoadError

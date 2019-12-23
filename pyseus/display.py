@@ -1,3 +1,11 @@
+"""Collection of helper functions for displaying image data.
+
+Classes
+-------
+
+**DisplayHelper** - Greyscale images with simple windowing.
+"""
+
 import numpy
 import cv2
 
@@ -7,7 +15,7 @@ from pyseus import settings
 
 
 class DisplayHelper():
-    """A collection of helper functions for displaying image data."""
+    """Display helper functions for greyscale images with simple windowing."""
 
     def __init__(self):
         self.mode = 0
@@ -34,7 +42,7 @@ class DisplayHelper():
         data = self.apply_window(data)
         return data
 
-    def prepare_without_window(self, data, scaling=None):
+    def prepare_without_window(self, data):
         """Prepare data for display or analysis.
         Use amplitude or phase data occording to the current display mode."""
 
@@ -98,7 +106,7 @@ class DisplayHelper():
         step_size = float(settings["window"]["scale_step"])
         new_black = self.black - delta * step_size * steps
         new_white = self.white + delta * step_size * steps
-        if(new_white > new_black):
+        if new_white > new_black:
             self.black = new_black
             self.white = new_white
 

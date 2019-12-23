@@ -1,15 +1,27 @@
+"""Support for NIfTI files.
+
+Classes
+-------
+
+**NIfTI** - Class modeling NIfTI datasets.
+"""
+
+import os
+
 import nibabel
 import numpy
-import os
 
 from .base import BaseFormat, LoadError
 
 
 class NIfTI(BaseFormat):
-    """Support for NIfTI files.
+    """Class modeling NIfTI datasets.
 
-    Currently, only NIFTI-2 single files are supported.
-    Metadata, pixelspacing, scale and orientation are all supported."""
+    Supports single file *.nii*-files according to the NIfTI-2 standard.
+    Supports metadata, pixelspacing, scale, units and orientation.
+    """
+
+    EXTENSIONS = (".nii")
 
     def __init__(self):
         BaseFormat.__init__(self)
@@ -18,10 +30,13 @@ class NIfTI(BaseFormat):
             "pys:descr": "descrip"
         }
 
+        self.file = None
+        """Instance of the NIfTI file handler."""
+
     @classmethod
     def can_handle(cls, path):
         _, ext = os.path.splitext(path)
-        return ext.lower() in (".nii")
+        return ext.lower() in NIfTI.EXTENSIONS
 
     def load(self, path):
         if not os.path.isfile(path):
@@ -57,20 +72,22 @@ class NIfTI(BaseFormat):
 
         if axis is None:
             return pixdim[0:2]  # ignore time axis @ pixdim[3] if present
-        else:
-            return pixdim[axis]
+
+        return pixdim[axis]
 
     def get_scale(self):
         if "xyzt_units" in self.metadata.keys():
             pixdim = min(self.get_spacing())  # units per pixel
             if self.metadata["xyzt_units"] & 1:
                 return 1.0 * pixdim
-            elif self.metadata["xyzt_units"] & 2:
+            if self.metadata["xyzt_units"] & 2:
                 return 0.001 * pixdim
-            elif self.metadata["xyzt_units"] & 3:
+            if self.metadata["xyzt_units"] & 3:
                 return 0.000001 * pixdim
-        else:
-            return 0.0
+
+            return 0.0  # should not happen, broken metadata
+
+        return 0.0
 
     def get_units(self):
         return "1"

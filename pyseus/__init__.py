@@ -7,22 +7,19 @@ License: MIT License
 Methods
 -------
 
-**load([arg])** - Start PySeus and try to load `arg`.
+**load([arg])** - Start PySeus; see __main__.py for details.
 
 Classes
 -------
 
-**PySeus** - The main application class.
+**PySeus** - Main application class; see core.py for details.
 
 Subpackages
 -----------
 
 **UI** - Contains user interface components.
-
 **Formats** - Contains classes modeling different data sources.
-
 **Tools** - Contains classes for evaluating datasets.
-
 """
 
 from .settings import settings

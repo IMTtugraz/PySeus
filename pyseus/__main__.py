@@ -1,7 +1,15 @@
+"""Defines ways to start PySeus.
+
+Methods
+-------
+
+**load(arg)** - Startup function and console entry point.
+"""
+
 from sys import argv
 import numpy
 
-from pyseus.core import PySeus
+from .core import PySeus
 
 
 def load(arg=None):

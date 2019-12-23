@@ -1,6 +1,16 @@
-import h5py
-import numpy
+"""Support for DICOM files.
+
+Classes
+-------
+
+**H5** - Class modeling HDF5 datasets.
+**H5Explorer** - Dialog for selecting a dataset in an H5 file.
+"""
+
 import os
+import numpy
+
+import h5py
 
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QDialog, QLabel, QLayout, QVBoxLayout, \
@@ -11,14 +21,18 @@ from .base import BaseFormat, LoadError
 
 
 class H5(BaseFormat):
-    """Support for HDF5 files.
+    """Class modeling DICOM datasets.
 
-    Metadata, pixelspacing, scale and orientation are all supported."""
+    Supports *.h5*-files in HDF5 format.
+    Supports metadata, pixelspacing, scale, units and orientation
+    using attributes and DICOM-standard keywords."""
+
+    EXTENSIONS = (".h5", ".hdf5")
 
     @classmethod
     def can_handle(cls, path):
         _, ext = os.path.splitext(path)
-        return ext.lower() in (".h5", ".hdf5")
+        return ext.lower() in H5.EXTENSIONS
 
     def __init__(self):
         BaseFormat.__init__(self)
@@ -33,11 +47,17 @@ class H5(BaseFormat):
             "pys:alpha": ["FlipAngle"]
         }
 
+        self.subpath = ""
+        """Internal path to the current dataset in the H5 file."""
+
+        self.dims = 0
+        """Number of dimensions of the current dataset in the H5 file."""
+
     def load(self, path):
         if not os.path.isfile(path):
             raise LoadError("File not found.")
 
-        with h5py.File(path, "r") as f:
+        with h5py.File(path, "r") as file_:
 
             nodes = []
 
@@ -45,65 +65,67 @@ class H5(BaseFormat):
                 if isinstance(item, h5py.Dataset):
                     nodes.append(name)
 
-            f.visititems(_walk)
+            file_.visititems(_walk)
 
             if len(nodes) == 1:
-                self._subpath = nodes[0]
+                self.subpath = nodes[0]
 
             else:
                 dialog = H5Explorer(nodes)
                 choice = dialog.exec()
                 if choice == QDialog.Accepted:
-                    self._subpath = dialog.result()
+                    self.subpath = dialog.result()
                 else:
                     return False
 
             self.path = path
-            self.dims = len(f[self._subpath].dims)
+            self.dims = len(file_[self.subpath].dims)
 
             if 2 <= self.dims <= 3:  # single or multiple slices
                 self.scans = [0]
 
             elif self.dims == 4:  # multiple scans
-                self.scans = list(range(0, len(f[self._subpath])-1))
+                self.scans = list(range(0, len(file_[self.subpath])-1))
 
             elif self.dims == 5:
                 message = ("The selected dataset is 5-dimensional."
                            "The first two dimensions will be concatenated.")
-                QMessageBox.warning(self.app.window, "Pyseus", message)
-                scan_count = (f[self._subpath].shape[0]
-                              * f[self._subpath].shape[1])
+                QMessageBox.warning(None, "Pyseus", message)
+                scan_count = (file_[self.subpath].shape[0]
+                              * file_[self.subpath].shape[1])
                 self.scans = list(range(0, scan_count-1))
 
             else:
                 message = "Invalid dataset '{}' in '{}': Wrong dimensions." \
-                          .format(self._subpath, path)
+                          .format(self.subpath, path)
                 raise LoadError(message)
 
             self.scan = 0
             return True
 
     def get_scan_pixeldata(self, scan):
-        with h5py.File(self.path, "r") as f:
+        with h5py.File(self.path, "r") as file_:
             if self.dims == 2:  # single slice
-                return numpy.asarray([f[self._subpath]])
+                return numpy.asarray([file_[self.subpath]])
 
             if self.dims == 3:  # multiple slices
-                return numpy.asarray(f[self._subpath])
+                return numpy.asarray(file_[self.subpath])
 
-            elif self.dims == 4:  # multiple scans
-                return numpy.asarray(f[self._subpath][scan])
+            if self.dims == 4:  # multiple scans
+                return numpy.asarray(file_[self.subpath][scan])
 
-            elif self.dims == 5:
-                q, r = divmod(scan, f[self._subpath].shape[1])
-                return numpy.asarray(f[self._subpath][q][r])
+            if self.dims == 5:
+                dim_4, dim_5 = divmod(scan, file_[self.subpath].shape[1])
+                return numpy.asarray(file_[self.subpath][dim_4][dim_5])
+
+            return []  # can´t interpret data with dimensions <= 1 or > 5
 
     def get_scan_metadata(self, scan):
         metadata = {}
 
-        with h5py.File(self.path, "r") as f:
-            for a in f[self._subpath].attrs:
-                metadata[a[0]] = a[1]
+        with h5py.File(self.path, "r") as file_:
+            for attribute in file_[self.subpath].attrs:
+                metadata[attribute[0]] = attribute[1]
 
         return metadata
 
@@ -116,8 +138,8 @@ class H5(BaseFormat):
 
         if axis is None:
             return pixel_spacing[0:2]
-        else:
-            return pixel_spacing[axis]
+
+        return pixel_spacing[axis]
 
     def get_scale(self):
         return 0.0
@@ -130,7 +152,7 @@ class H5(BaseFormat):
 
 
 class H5Explorer(QDialog):
-    """H5Explorer"""
+    """Dialog for selecting a dataset in an H5 file."""
 
     def __init__(self, items):
         QDialog.__init__(self)
@@ -159,13 +181,11 @@ class H5Explorer(QDialog):
         self.setLayout(layout)
 
     def _button_ok(self):
-        """Handles button click on OK"""
         self.accept()
 
     def _button_cancel(self):
-        """Handles button click on Cancel"""
         self.reject()
 
     def result(self):
-        """Returns the selected element"""
+        """Returns the selected element."""
         return self.view.currentItem().text()

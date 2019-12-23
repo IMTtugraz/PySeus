@@ -1,3 +1,11 @@
+"""Support for raw data arrays.
+
+Classes
+-------
+
+**Raw** - Class modeling raw data arrays as datasets.
+"""
+
 import numpy
 
 from PySide2.QtWidgets import QMessageBox
@@ -6,18 +14,23 @@ from .base import BaseFormat, LoadError
 
 
 class Raw(BaseFormat):
-    """Support for (NumPy) array data.
+    """Class modeling raw data arrays as datasets.
 
-    Metadata, pixelspacing, scale and orientation are NOT supported."""
+    Supports python lists, tuples and numpy arrays.
+    Metadata, pixelspacing, scale, units and orientation are *not* supported.
+    """
 
     def __init__(self):
         BaseFormat.__init__(self)
+
+        self.data = None
+        """Current data array."""
 
     @classmethod
     def can_handle(cls, path):
         return False
 
-    def load(self, data):
+    def load(self, data):  # pylint: disable=W0221
         self.data = numpy.asarray(data)
         valid = isinstance(self.data, numpy.ndarray) and \
             numpy.issubdtype(self.data.dtype, numpy.number)
@@ -29,13 +42,13 @@ class Raw(BaseFormat):
         if 2 <= self.data.ndim <= 3:
             self.scans = [0]
 
-        elif self.data.ndim == 4:
+        if self.data.ndim == 4:
             self.scans = list(range(0, len(self.data)-1))
 
-        elif self.data.ndim == 5:
+        if self.data.ndim == 5:
             message = ("The selected dataset ist 5-dimensional. "
                        "The first two dimensions will be concatenated.")
-            QMessageBox.warning(self.window, "Pyseus", message)
+            QMessageBox.warning(None, "Pyseus", message)
             scan_count = self.data.shape[0]*self.data.shape[1]
 
             self.scans = list(range(0, scan_count-1))
@@ -47,29 +60,21 @@ class Raw(BaseFormat):
         if self.data.ndim == 2:  # single slice
             return numpy.asarray([self.data])
 
-        elif self.data.ndim == 3:  # multiple slices
+        if self.data.ndim == 3:  # multiple slices
             return numpy.asarray(self.data)
 
-        elif self.data.ndim == 4:  # multiple scans
+        if self.data.ndim == 4:  # multiple scans
             return numpy.asarray(self.data[scan])
 
-        elif self.data.ndim == 5:
-            q, r = divmod(scan, self.data.shape[1])
-            return numpy.asarray(self.data[q][r])
+        if self.data.ndim == 5:
+            dim_4, dim_5 = divmod(scan, self.data.shape[1])
+            return numpy.asarray(self.data[dim_4][dim_5])
+
+        return []  # can´t interpret data with dimensions <= 1 or > 5
 
     def get_scan_metadata(self, scan):
         return {}  # metadata not supported
 
     def get_scan_thumbnail(self, scan):
-        if self.data.ndim == 2:  # single slice
-            return numpy.asarray(self.data)
-
-        elif self.data.ndim == 3:  # multiple slices
-            return numpy.asarray(self.data[len(self.data) // 2])
-
-        elif self.data.ndim == 4:  # multiple scans
-            return numpy.asarray(self.data[scan][len(self.data) // 2])
-
-        elif self.data.ndim == 5:
-            q, r = divmod(scan, self.data.shape[1])
-            return numpy.asarray(self.data[q][r][len(self.data) // 2])
+        scan_data = self.get_scan_pixeldata(scan)
+        return scan_data[len(scan_data) // 2]
