@@ -1,9 +1,9 @@
-"""Collection of helper functions for displaying image data.
+"""Display classes model the translation of values to color.
 
 Classes
 -------
 
-**DisplayHelper** - Greyscale images with simple windowing.
+**Grayscale** - Grayscale images with simple windowing.
 """
 
 import numpy
@@ -14,8 +14,8 @@ from PySide2.QtGui import QImage, QPixmap
 from .settings import settings
 
 
-class DisplayHelper():
-    """Display helper functions for greyscale images with simple windowing."""
+class Grayscale():
+    """Display class for grayscale images with simple windowing."""
 
     def __init__(self):
         self.mode = 0
@@ -35,7 +35,7 @@ class DisplayHelper():
         """Value translated to white (upper bound of window)."""
 
     def prepare(self, data):
-        """Prepare data for display or analysis (see `prepare_without_window`)
+        """Prepare data for display or analysis (see *prepare_without_window*)
         and apply windowing settings."""
 
         data = self.prepare_without_window(data)
@@ -54,7 +54,7 @@ class DisplayHelper():
         return data
 
     def apply_window(self, data):
-        """Apply current window settings to `data`."""
+        """Apply current window settings to *data*."""
 
         if self.mode == 1:
             data += numpy.pi  # align -pi to 0
@@ -91,7 +91,7 @@ class DisplayHelper():
 
     def move_window(self, steps):
         """Move the window up / down; results in a darker / lighter image.
-        Step size is controlled in `settings.ini`."""
+        Step size is controlled in *settings.ini*."""
 
         delta = self.data_max - self.data_min
         step_size = float(settings["window"]["move_step"])
@@ -100,7 +100,7 @@ class DisplayHelper():
 
     def scale_window(self, steps):
         """Shrink / widen the window; results in higher / lower contrast.
-        Step size is controlled in `settings.ini`."""
+        Step size is controlled in *settings.ini*."""
 
         delta = self.data_max - self.data_min
         step_size = float(settings["window"]["scale_step"])
@@ -124,7 +124,7 @@ class DisplayHelper():
 
     def generate_thumb(self, data):
         """Resize data for use as a thumbnail.
-        Thumbnail size is controlled in `settings.ini`."""
+        Thumbnail size is controlled in *settings.ini*."""
 
         self.setup_window(data)
 
@@ -135,7 +135,7 @@ class DisplayHelper():
         return thumb
 
     def get_pixmap(self, data):
-        """Convert `data` into a QPixmap object."""
+        """Convert *data* into a QPixmap object."""
 
         data = self.prepare(data)
         image = QImage(data.data, data.shape[1], data.shape[0],

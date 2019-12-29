@@ -5,12 +5,13 @@ import numpy
 from PySide2.QtGui import QPixmap
 
 from context import pyseus  # noqa F401  # pylint: disable=W0611
-from pyseus import PySeus, DisplayHelper
+from pyseus import PySeus
+from pyseus.display import Grayscale
 from pyseus.tools import AreaTool, LineTool
 
 
 app = PySeus(False)  # pylint: disable=C0103
-display = DisplayHelper()  # pylint: disable=C0103
+display = Grayscale()  # pylint: disable=C0103
 data = numpy.array([[1, 3, 0],  # pylint: disable=C0103
                     [0, 9, 0],
                     [0, 1, 0]])

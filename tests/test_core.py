@@ -6,7 +6,8 @@ import pytest
 from PySide2.QtGui import QPixmap
 
 from context import pyseus # noqa F401  # pylint: disable=W0611
-from pyseus import PySeus, DisplayHelper
+from pyseus import PySeus
+from pyseus.display import Grayscale
 from pyseus.settings import settings
 
 
@@ -25,8 +26,8 @@ def test_settigns():
         assert error.type == KeyError
 
 
-def test_display():
-    """Test basic functionality of DisplayHelper class.
+def test_grayscale():
+    """Test basic functionality of Grayscale class.
 
     Tests cover initializing window settings, preparing data, generating
     thumbnails, generating Pixmap objects (for display with ViewWidget) and
@@ -34,7 +35,7 @@ def test_display():
     """
 
     app = PySeus(False)  # noqa E841  # pylint: disable=W0612
-    display = DisplayHelper()
+    display = Grayscale()
 
     data = numpy.array([[1, 3, 0],
                         [0, 9, 0],
