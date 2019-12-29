@@ -28,6 +28,10 @@ class MetaWindow(QDialog):  # pylint: disable=R0903
                              QSizePolicy.Policy.MinimumExpanding)
         self.layout().addWidget(widget)
 
+        icon = QIcon(os.path.abspath(os.path.join(
+            os.path.dirname(__file__), "./icon.png")))
+        self.setWindowIcon(icon)
+
         # Window dimensions
         geometry = app.qt_app.desktop().availableGeometry(self)
         self.resize(geometry.width() * 0.3, geometry.height() * 0.8)

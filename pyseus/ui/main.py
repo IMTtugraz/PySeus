@@ -13,6 +13,7 @@ import os
 
 from PySide2.QtWidgets import QMainWindow, QAction, QLabel, QFileDialog, \
                               QFrame, QVBoxLayout, QHBoxLayout
+from PySide2.QtGui import QIcon
 
 from .view import ViewWidget
 from .sidebar import ConsoleWidget, InfoWidget, MetaWidget
@@ -27,22 +28,22 @@ class MainWindow(QMainWindow):  # pylint: disable=R0902
         self.setWindowTitle("PySEUS")
 
         self.app = app
-        """Reference to front controller."""
+        """Reference to the main application object."""
 
         self.thumbs = ThumbsWidget(app)
-        """Reference to thumbs widget."""
+        """Reference to the thumbs widget."""
 
         self.view = ViewWidget(app)
-        """Reference to view widget."""
+        """Reference to the view widget."""
 
         self.info = InfoWidget(app)
-        """Reference to info sidebar widget."""
+        """Reference to the info sidebar widget."""
 
         self.meta = MetaWidget(app)
-        """Reference to meta sidebar widget."""
+        """Reference to the meta sidebar widget."""
 
         self.console = ConsoleWidget(app)
-        """Reference to console sidebar widget."""
+        """Reference to the console sidebar widget."""
 
         # Default path for file open dialoge
         self._open_path = ""
@@ -76,12 +77,16 @@ class MainWindow(QMainWindow):  # pylint: disable=R0902
 
         self.setCentralWidget(wrapper)
 
+        icon = QIcon(os.path.abspath(os.path.join(
+            os.path.dirname(__file__), "./icon.png")))
+        self.setWindowIcon(icon)
+
         # Window dimensions
         geometry = self.app.qt_app.desktop().availableGeometry(self)
         self.resize(geometry.width() * 0.6, geometry.height() * 0.6)
 
     def add_menu_item(self, menu, title, callback, shortcut=""):
-        """Create menu item (helper function)."""
+        """Create a menu item."""
         action = QAction(title, self)
         if shortcut != "":
             action.setShortcut(shortcut)
@@ -91,7 +96,7 @@ class MainWindow(QMainWindow):  # pylint: disable=R0902
 
     def setup_menu(self):
         """Setup the menu bar. Items in the *Evaluate* menu are created
-        in the `setup_menu` function of tool classes."""
+        in the *setup_menu* function of tool classes."""
         ami = self.add_menu_item
         menu_bar = self.menuBar()
 
@@ -130,11 +135,11 @@ class MainWindow(QMainWindow):  # pylint: disable=R0902
         ami(self.explore_menu, "Rotate y",
             partial(self._action_rotate, 0), "Ctrl+T")
         self.explore_menu.addSeparator()
-        ami(self.explore_menu, "Flip L/R",
+        ami(self.explore_menu, "Flip x (L-R)",
             partial(self._action_flip, 1), "Ctrl+D")
-        ami(self.explore_menu, "Flip U/D",
+        ami(self.explore_menu, "Flip y (U-D)",
             partial(self._action_flip, 0), "Ctrl+F")
-        ami(self.explore_menu, "Flip F/B",
+        ami(self.explore_menu, "Flip z (F-B)",
             partial(self._action_flip, 2), "Ctrl+G")
         self.explore_menu.addSeparator()
         ami(self.explore_menu, "Reset Scan",
@@ -158,11 +163,11 @@ class MainWindow(QMainWindow):  # pylint: disable=R0902
         ami(menu_bar, "&About", self._action_about)
 
     def show_status(self, message):
-        """Display `message` in status bar."""
+        """Display *message* in the status bar."""
         self.statusBar().showMessage(message)
 
     def resizeEvent(self, event):  # pylint: disable=C0103
-        """Keep viewport centered and adjust zoom on window resize."""
+        """Keep the viewport centered and adjust zoom on window resize."""
         x_factor = event.size().width() / event.oldSize().width()
         # y_factor = event.size().height() / event.oldSize().height()
         # @TODO x_factor if xf < yf or xf * width * zoom_factor < viewport_x
