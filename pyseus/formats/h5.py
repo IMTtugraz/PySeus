@@ -25,7 +25,7 @@ class H5(BaseFormat):
 
     Supports *.h5*-files in HDF5 format.
     Supports metadata, pixelspacing, scale, units and orientation
-    using attributes and DICOM-standard keywords."""
+    using attributes with DICOM or NIfTI standard keywords."""
 
     EXTENSIONS = (".h5", ".hdf5")
 

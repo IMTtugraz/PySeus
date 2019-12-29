@@ -20,13 +20,13 @@ class BaseFormat():
         self.scans = []
         """List of loaded scan IDs."""
 
-        self.scan = None
+        self.scan = 0
         """The ID of the currently loaded scan."""
 
         self.metadata = {}
         """Dictionary list of the metadata of the current scan."""
 
-        self.pixeldata = []
+        self.pixeldata = [[[]]]
         """3D array of the pixeldata of the current scan."""
 
         self.meta_keymap = {}
@@ -37,17 +37,17 @@ class BaseFormat():
 
     @classmethod
     def can_handle(cls, path):
-        """Return True if the format class can handle the file at `path`,
+        """Return True if the format class can handle the file at *path*,
         otherwise return False.
 
         Custom formats have to override this function."""
 
     def load(self, path):
-        """Attempt to load the file at `path`. Return True on success or
+        """Attempt to load the file at *path*. Return True on success or
         throw an exception."""
 
     def load_scan(self, scan):
-        """Load pixeldata and metadata from the scan with the ID `scan`.
+        """Load pixeldata and metadata from the scan with the ID *scan*.
         Set self.scan to the scan ID on success or throw an exception.
         Uses *get_scan_pixeldata* and *get_scan_metadata*.
 
@@ -88,9 +88,9 @@ class BaseFormat():
         return scan_data[len(scan_data) // 2]
 
     def get_metadata(self, keys=None):
-        """Return metadata items specified in `keys`.
+        """Return metadata items specified in *keys*.
 
-        If `keys` is empty, returns standard metadata items.
+        If *keys* is empty, returns standard metadata items.
         """
 
         if self.meta_keymap is None:
@@ -121,8 +121,8 @@ class BaseFormat():
 
     def get_pixeldata(self, slice_=-1):
         """Return pixeldata of current scan. By default, the entire 3D
-        pixeldata is returned. If `slice_` is set, a 2D array of
-        `pixeldata[slice_]` is returned."""
+        pixeldata is returned. If *slice_* is set, a 2D array of
+        *pixeldata[slice_]* is returned."""
 
         if slice_ == -1:
             return self.pixeldata.copy()

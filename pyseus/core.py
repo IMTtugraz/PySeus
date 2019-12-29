@@ -13,7 +13,7 @@ from PySide2.QtGui import qApp
 from PySide2.QtCore import QTimer
 from PySide2.QtWidgets import QApplication, QMessageBox
 
-from .display import DisplayHelper
+from .display import Grayscale
 from .formats import Raw, NumPy, H5, DICOM, NIfTI, LoadError
 from .settings import settings
 from .tools import AreaTool, LineTool
@@ -39,10 +39,10 @@ class PySeus():  # pylint: disable=R0902
         """The current dataset object. See `Formats <development/formats>`_."""
 
         self.formats = [H5, DICOM, NIfTI, NumPy, Raw]
-        """List of all avaiable data formats."""
+        """List of all avaiable data formats. See `Formats <development/formats>`_."""
 
         self.tools = [AreaTool, LineTool]
-        """List of all avaiable evaluation tools."""
+        """List of all avaiable evaluation tools. See `Tools <development/tools>`_."""
 
         self.tool = None
         """The current tool object. See `Tools <development/tools>`_."""
@@ -51,10 +51,9 @@ class PySeus():  # pylint: disable=R0902
         """The main window object. See `Interface <development/interface>`_."""
 
         self.meta_window = None
-        """Holds the meta window object. See `Interface
-        <development/interface>`."""
+        """Holds the meta window object."""
 
-        self.display = DisplayHelper()
+        self.display = Grayscale()
         """The display helper object. See `Display <development/display>`_."""
 
         self.slice = -1
@@ -62,6 +61,9 @@ class PySeus():  # pylint: disable=R0902
 
         self.timer = QTimer()
         """Timer for timelapse view."""
+
+        self.gui = gui
+        """Flag wheter to use the GUI or not."""
 
         # Stylesheet
         style_path = "./ui/" + settings["ui"]["style"] + ".qss"
@@ -71,16 +73,19 @@ class PySeus():  # pylint: disable=R0902
 
         self.qt_app.font().setPixelSize(int(settings["ui"]["font_size"]))
 
-        if gui:
+        if self.gui:
             self.window.show()
 
     def show(self):
         """Show the main window, even if initialized without the GUI."""
-        self.window.show()
+        if not self.gui:
+            self.window.show()
+            self.gui = True
+
         self.qt_app.exec_()
 
     def load_file(self, path):
-        """Try to load the file at `path`. See also `setup_dataset`."""
+        """Try to load the file at *path*. See also *setup_dataset*."""
 
         new_dataset = None
         for format_ in self.formats:
@@ -95,7 +100,7 @@ class PySeus():  # pylint: disable=R0902
             QMessageBox.warning(self.window, "Pyseus", "Unknown file format.")
 
     def load_data(self, data):
-        """Try to load `data`. See also `setup_dataset`."""
+        """Try to load *data*. See also *setup_dataset*."""
 
         new_dataset = Raw()
         self.setup_dataset(data, new_dataset)
@@ -116,7 +121,9 @@ class PySeus():  # pylint: disable=R0902
             if self.dataset.scan_count() > 1:
                 message = "{} scans detected. Do you want to load all?" \
                         .format(self.dataset.scan_count())
-                load_all = QMessageBox.question(None, "Pyseus", message)
+                # load_all = QMessageBox.question(None, "Pyseus", message)
+                load_all = QMessageBox.StandardButton.Yes
+                # @TODO reset after profiling
 
                 self.window.thumbs.clear()
                 if load_all is QMessageBox.StandardButton.Yes:
@@ -181,7 +188,7 @@ class PySeus():  # pylint: disable=R0902
 
     def select_scan(self, sid, relative=False):
         """Select and load a scan from the current dataset.
-        See also `load_scan`."""
+        See also *load_scan*."""
         if self.dataset is None:
             return
 
@@ -233,7 +240,8 @@ class PySeus():  # pylint: disable=R0902
         self.slice = sid
 
     def show_metadata_window(self):
-        """Show the metadata window (pyseus.ui.meta.MetaWindow)."""
+        """Show the metadata window.
+        See `Interface <development/interface>`_."""
         self.meta_window = MetaWindow(self, self.dataset.get_metadata())
         self.meta_window.show()
 

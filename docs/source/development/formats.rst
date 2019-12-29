@@ -5,13 +5,14 @@ Formats
 
 .. automodule:: pyseus.formats
 
+The BaseFormat Class
+--------------------
+
 .. autoclass:: pyseus.formats.BaseFormat
-  :members:
+   :members:
 
 Built-in Formats
 ----------------
-
-Built-in formats follow the same structure as ``BaseFormat``.
 
 .. autoclass:: pyseus.formats.Raw
 
@@ -27,4 +28,4 @@ Custom Formats
 --------------
 
 Just extend the *BaseFormat* Class and add the format class to the
-`pyseus.formats` list.
+*PySeus.formats* list.

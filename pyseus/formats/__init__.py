@@ -1,4 +1,4 @@
-"""Formats model different data sources.
+"""Formats model different data sources (eg. file formats).
 
 All formats extend the *BaseFormat* class, guaranteeing basic functionality
 of checking files, loading scan pixeldata and metadata.

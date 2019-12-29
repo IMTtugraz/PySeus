@@ -2,7 +2,7 @@ Navigation
 ##########
 
 Depending on whether you are viewing 2D, 3D or higher dimensional data, 
-different options to navigate and visualize that data are available.
+different options to navigate that data are available.
 
 Exploring a Dataset
 ===================
@@ -29,10 +29,10 @@ For 3D data, the first dimension will be interpreted as a list of slices.
 | Explore / Previous Slice | PgDown       | Wheel Up             |
 +--------------------------+--------------+----------------------+
 
-Rotation
---------
+Rotate & Flip
+-------------
 
-Scans (3D data) can be rotated around the three principal axis. The axes are 
+The current scan can be rotated around the three principal axes. The axes are 
 always relative to the viewport and rotation will be done in pi/2 increments 
 counter clockwise.
 
@@ -45,7 +45,22 @@ counter clockwise.
 +--------------------------+--------------+----------------------+
 | Explore / Rotate y       | Strg + T     |                      |
 +--------------------------+--------------+----------------------+
-| Explore / Reset Rotation | Strg + Z     |                      |
+| Explore / Reset Scan     | Strg + Z     |                      |
++--------------------------+--------------+----------------------+
+
+Additionally, the current scan can be flipped in the three principal axes. Again, axes 
+are relative to the viewport.
+
++--------------------------+--------------+----------------------+
+| **Menu**                 | **Keyboard** | **Mouse**            |
++--------------------------+--------------+----------------------+
+| Explore / Flip x (L-R)   | Strg + D     |                      |
++--------------------------+--------------+----------------------+
+| Explore / Flip y (U-D)   | Strg + F     |                      |
++--------------------------+--------------+----------------------+
+| Explore / Flip z (F-B)   | Strg + G     |                      |
++--------------------------+--------------+----------------------+
+| Explore / Reset Scan     | Strg + Z     |                      |
 +--------------------------+--------------+----------------------+
 
 Viewing a Slice
@@ -65,7 +80,7 @@ Zoom & Pan
 ----------
 
 By default, the entire image will be visible in the viewport.
-The image can be zoomed in several ways, and paned by holding *RMB* while 
+The image can be zoomed in several ways, and panned by holding *RMB* while 
 moving the mouse.
 
 +---------------------+--------------+----------------------+
@@ -83,14 +98,15 @@ moving the mouse.
 Windowing
 ---------
 
-Windowing controls the translation of values to greyscale.
+Windowing controls the translation of values to color. The following example 
+are based on the default translation to grayscale:
 
 - *Lowering* or *raising* the window results in a darker or lighter image 
-respectively.
+  respectively.
 - *Shrinking* or *widening* the window results in higher or lower contrast 
-respectively.
+  respectively.
 - *Reseting* the window will use the default options of covering all values 
-present in the data.
+  present in the data.
 
 +----------------------+--------------+--------------------+
 | **Menu**             | **Keyboard** | **Mouse**          |

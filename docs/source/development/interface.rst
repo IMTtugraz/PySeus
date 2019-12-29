@@ -1,31 +1,29 @@
 Interface
 #########
 
-.. automodule:: pyseus.ui
+Contains the main GUI elements for PySeus. Format and tool specific GUI 
+elements are defined in format and tool modules respectively.
 
-Styling can be controlled in the Qt stylesheet under `ui/style_dark.qss`.
+Styling can be controlled in the Qt stylesheet under *ui/style_dark.qss*.
 
 Main Window
 ===========
 
 .. autoclass:: pyseus.ui.MainWindow
-  :members: add_menu_item, setup_menu, app, console, info, meta, thumbs,
-    view, show_status, resizeEvent
+   :members:
 
-.. fails when all members are to be documented (works, when class has no
-  private members ???)
 
 View Widget
 ===========
 
 .. autoclass:: pyseus.ui.ViewWidget
-  :members:
+   :members:
 
 Thumbnails Widget
 =================
 
 .. autoclass:: pyseus.ui.ThumbsWidget
-  :members:
+   :members:
 
 Sidebar Widgets
 ===============
@@ -36,19 +34,19 @@ File Info Widget
 ----------------
 
 .. autoclass:: pyseus.ui.InfoWidget
-  :members:
+   :members:
 
 Metadata Widget
 ---------------
 
 .. autoclass:: pyseus.ui.MetaWidget
-  :members:
+   :members:
 
 .. autoclass:: pyseus.ui.meta.MetaWindow
-  :members:
+   :members:
 
 Console Widget
 --------------
 
 .. autoclass:: pyseus.ui.ConsoleWidget
-  :members:
+   :members:

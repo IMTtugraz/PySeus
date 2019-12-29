@@ -21,12 +21,12 @@ Line Tool
 ---------
 
 .. autoclass:: pyseus.tools.LineTool
-  :members: line
+   :members: line
 
 .. autoclass:: pyseus.tools.line.LineToolWindow
-  :members: load_data
+   :members: load_data
 
 Custom Tools
 ============
 
-Just extend the *BaseTool* Class and add the class to the `pyseus.tools` list.
+Just extend the *BaseTool* Class and add the class to the *PySeus.tools* list.

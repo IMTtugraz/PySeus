@@ -13,7 +13,7 @@ from .core import PySeus
 
 
 def load(arg=None):
-    """Start Pyseus and load `arg` (can be a path or data array)."""
+    """Start Pyseus and load *arg* (can be a path or data array)."""
 
     app = PySeus()
 
@@ -23,7 +23,7 @@ def load(arg=None):
     if isinstance(arg, str):
         app.load_file(arg)
 
-    elif isinstance(arg, numpy.ndarray):
+    elif isinstance(arg, numpy.ndarray) or isinstance(arg, list):
         app.load_data(arg)
 
     return app.show()

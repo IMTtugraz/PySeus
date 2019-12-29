@@ -85,7 +85,7 @@ class MetaWidget(QScrollArea):
         return QSize(int(settings["ui"]["sidebar_size"]), 100)
 
     def update_meta(self, data, more=True):
-        """Set the displayed metadata; if `more` is True, display a button to
+        """Set the displayed metadata; if *more* is True, display a button to
         show all metadata."""
 
         self._reset_ui()

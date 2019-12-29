@@ -3,7 +3,7 @@
 Classes
 -------
 
-**ViewWidget** - Widget class for displaying scan thumbnails.
+**ViewWidget** - Widget providing an interactive viewport.
 """
 
 from PySide2.QtCore import Qt
@@ -13,7 +13,7 @@ import numpy
 
 
 class ViewWidget(QScrollArea):
-    """Widget class for displaying scan thumbnails."""
+    """Widget providing an interactive viewport."""
 
     def __init__(self, app):
         QScrollArea.__init__(self)
@@ -30,7 +30,8 @@ class ViewWidget(QScrollArea):
         """The current zoom factor of the image."""
 
         self.mouse_action = 0
-        """The current action on mouse move. Can be ROI, WINDOW or PAN."""
+        """The current action on mouse move.
+        Can be *ROI*, *WINDOW* or *PAN*."""
 
         self.last_position = None
         """The last position, from which mouse events were processed."""
@@ -44,14 +45,14 @@ class ViewWidget(QScrollArea):
         self.verticalScrollBar().setStyleSheet("QScrollBar { width: 0 }")
 
     def set(self, pixmap):
-        """Display the iamge in `pixmap`."""
+        """Display the image in *pixmap*."""
         self.image.setPixmap(pixmap)
 
     def zoom(self, factor, relative=True):
         """Set the zoom level for the displayed image.
 
         By default, the new zoom factor will be relative to the current
-        zoom factor. If `relative` is set to False, `factor` will be used as
+        zoom factor. If *relative* is set to False, *factor* will be used as
         the new zoom factor."""
 
         if self.app.dataset is None \
@@ -137,7 +138,7 @@ class ViewWidget(QScrollArea):
 
     def mousePressEvent_over_image(self, event):  # pylint: disable=C0103
         """Handle RoI functionality on mouse button down over the image.
-        Hands off contorl to `mousePressEvent` when appropriate."""
+        Hands off contorl to *mousePressEvent* when appropriate."""
         if event.buttons() == Qt.LeftButton \
                 and event.modifiers() == Qt.ControlModifier:
             self.mouse_action = "ROI"
@@ -154,7 +155,7 @@ class ViewWidget(QScrollArea):
 
     def mouseMoveEvent_over_image(self, event):  # pylint: disable=C0103
         """Handle value display functionality on mouse move over the image.
-        Call `mouseMoveEvent` for pan, window and RoI functionality."""
+        Call *mouseMoveEvent* for pan, window and RoI functionality."""
 
         self.mouseMoveEvent(event)
 
@@ -170,7 +171,7 @@ class ViewWidget(QScrollArea):
                                         .format(x_coord, y_coord, value))
 
     def mouseReleaseEvent_over_image(self, event):  # pylint: disable=C0103
-        """Call `mouseReleaseEvent` on mouse button up for RoI
+        """Call *mouseReleaseEvent* on mouse button up for RoI
         functionality."""
 
         self.mouseReleaseEvent(event)

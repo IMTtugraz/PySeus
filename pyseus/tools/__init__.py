@@ -1,7 +1,6 @@
 """Tools provide different ways to evaluate data.
 
-All tools extend the *BaseTool* class, guaranteeing basic functionality
-of marking regions of interest, and displaying results.
+All tools extend the *BaseTool* class, guaranteeing basic functionality.
 """
 
 from .base import BaseTool

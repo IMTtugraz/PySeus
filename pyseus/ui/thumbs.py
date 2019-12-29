@@ -39,7 +39,7 @@ class ThumbsWidget(QScrollArea):
         self.setWidget(self.wrapper)
 
     def add_thumb(self, pixmap):
-        """Add the thumbnail in `pixmap` to the widget."""
+        """Add the thumbnail in *pixmap* to the widget."""
         pixmap = pixmap.scaledToWidth(int(settings["ui"]["thumb_size"]))
 
         thumb = QLabel()
@@ -62,11 +62,11 @@ class ThumbsWidget(QScrollArea):
         self.thumbs = []
 
     def _thumb_clicked(self, thumb, event):  # pylint: disable=W0613
-        """Trigger `app.select_scan` when a thumbnail is clicked."""
+        """Trigger *app.select_scan* when a thumbnail is clicked."""
         self.app.select_scan(thumb)
 
     def minimumSizeHint(self):  # pylint: disable=C0103
-        """Return widget size; width should be `thumb_size + scrollbar_width`
+        """Return widget size; width should be *thumb_size + scrollbar_width*
         or 0 if there are no thumbnails."""
         if self.thumbs:
             return QSize(int(settings["ui"]["thumb_size"])+25, 0)
