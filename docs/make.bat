@@ -10,7 +10,7 @@ if "%SPHINXBUILD%" == "" (
 set SOURCEDIR=source
 set BUILDDIR=build
 
-set SPHINXOPTS="-v"
+set SPHINXOPTS=-v -v -v
 
 if "%1" == "" goto help
 

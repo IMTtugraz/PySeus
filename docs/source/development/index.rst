@@ -9,11 +9,16 @@ Environment
 
 1. Installe the `virtualenv <https://virtualenv.pypa.io/en/latest/>`_ package
 with ``pip install virtualenv``.
+
 2. Checkout the source code from `GitHub <https://github.com/calmer/PySEUS>`_.
+
 3. In the source directory, run ``virtualenv pyseus`` to create a new virtual
 environment.
+
 4. Activate the virtual environment with ``pyseus\scripts\active``.
+
 5. Run ``pip install -r requirements.txt`` to install all required packages.
+
 6. After you are done, run ``deactivate`` to disable the virtual environment.
 
 Testing
