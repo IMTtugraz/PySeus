@@ -32,6 +32,9 @@ class BaseFormat():
         self.meta_keymap = {}
         """Maps common metadata keys to format specific keys."""
 
+        self.pixel_spacing = []
+        """The pixel spacing metadata adjusted for rotation."""
+
     @classmethod
     def can_handle(cls, path):
         """Return True if the format class can handle the file at `path`,
@@ -126,23 +129,23 @@ class BaseFormat():
 
         return self.pixeldata[slice_].copy()
 
-    def get_spacing(self, axis=None):  # pylint: disable=R0201
-        """Return the pixel aspect ratio, if available.
-        Otherweise, return 1:1:1."""
-        pixel_spacing = [1, 1, 1]
-        if axis is None:
-            return pixel_spacing[0:2]
+    def get_spacing(self, reset=False):  # pylint: disable=R0201
+        """Return the pixel spacing, if available.
 
-        return pixel_spacing[axis]
+        This is used for calculation of the pixel aspect ratio; the value
+        has to be stored in *self.pixel_spacing* to be adjusted on rotation."""
+        if not self.pixel_spacing or reset:
+            self.pixel_spacing = [1, 1, 1]
+
+        return self.pixel_spacing
 
     def get_scale(self):  # pylint: disable=R0201
-        """Return the actual size of a pixel, if available.
-        Otherwise, return 0."""
+        """Return the actual size of a pixel in mm, if available."""
         return 0.0
 
     def get_units(self):  # pylint: disable=R0201
         """Return units associated with the loaded values, if available."""
-        return ""
+        return "1"
 
     def get_orientation(self):  # pylint: disable=R0201
         """Return the default image orientation, if available."""
@@ -151,19 +154,29 @@ class BaseFormat():
     def rotate(self, axis):
         """Rotate the currently loaded pixeldata in 3D."""
         if axis == -1:  # reset
+            self.get_spacing(reset=True)
             self.load_scan(self.scan)
 
         else:
+            if not self.pixel_spacing:
+                self.get_spacing()
+
             if axis == 0 and len(self.pixeldata) > 2:  # x-axis
                 self.pixeldata = numpy.asarray(numpy.swapaxes(self.pixeldata,
                                                               0, 2))
+                self.pixel_spacing[0], self.pixel_spacing[1] = \
+                    self.pixel_spacing[2], self.pixel_spacing[1]
 
             elif axis == 1 and len(self.pixeldata) > 2:  # y-axis
                 self.pixeldata = numpy.asarray(numpy.rot90(self.pixeldata))
+                self.pixel_spacing[0], self.pixel_spacing[1] = \
+                    self.pixel_spacing[0], self.pixel_spacing[2]
 
             elif axis == 2:  # z-axis
                 self.pixeldata = numpy.asarray([numpy.rot90(slice)
                                                 for slice in self.pixeldata])
+                self.pixel_spacing[0], self.pixel_spacing[1] = \
+                    self.pixel_spacing[1], self.pixel_spacing[0]
 
     def flip(self, direction):
         """Flip the currently loaded pixeldata."""

@@ -163,29 +163,33 @@ class DICOM(BaseFormat):
 
         return metadata
 
-    def get_spacing(self, axis=None):
-        pixel_spacing = [1, 1, 1]
-        if "PixelSpacing" in self.metadata.keys():
-            pixel_spacing = list(self.metadata["PixelSpacing"])
+    def get_spacing(self, reset=False):
+        if not self.pixel_spacing or reset:
+            if "PixelSpacing" in self.metadata.keys():
+                self.pixel_spacing = list(self.metadata["PixelSpacing"])
+            else:
+                self.pixel_spacing = [1, 1]
 
-        if axis is None:
-            return pixel_spacing[0:2]
+            if "SliceThickness" in self.metadata.keys():
+                self.pixel_spacing.append(self.metadata["SliceThickness"])
+            else:
+                self.pixel_spacing.append(1)
 
-        return pixel_spacing[axis]
+        return self.pixel_spacing
 
     def get_scale(self):
-        return 0.001  # DICOM always uses mm here
+        if "PixelSpacing" in self.metadata.keys():
+            pixel_spacing = list(self.metadata["PixelSpacing"])
+            return float(min(pixel_spacing))
+
+        return 0.0
 
     def get_units(self):
         if "Units" in self.metadata.keys():
-            return "{}*".format(self.metadata["Units"])
+            return "{}".format(self.metadata["Units"])
             # not accounting for Rescale Intercept, Rescale Slope
 
         return "1"
 
     def get_orientation(self):
-        if "DisplaySetPatientOrientation" in self.metadata.keys():
-            (right, bottom) = self.metadata["DisplaySetPatientOrientation"]
-            return [right, bottom]
-
         return []

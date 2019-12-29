@@ -12,7 +12,7 @@ from PySide2.QtWidgets import QDialog, QSizePolicy, QVBoxLayout
 from .sidebar import MetaWidget
 
 
-class MetaWindow(QDialog):
+class MetaWindow(QDialog):  # pylint: disable=R0903
     """Window for displaying metadata."""
 
     def __init__(self, app, data):

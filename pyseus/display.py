@@ -11,7 +11,7 @@ import cv2
 
 from PySide2.QtGui import QImage, QPixmap
 
-from pyseus import settings
+from .settings import settings
 
 
 class DisplayHelper():

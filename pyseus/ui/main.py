@@ -19,7 +19,7 @@ from .sidebar import ConsoleWidget, InfoWidget, MetaWidget
 from .thumbs import ThumbsWidget
 
 
-class MainWindow(QMainWindow):
+class MainWindow(QMainWindow):  # pylint: disable=R0902
     """Class representing the main window for PySeus."""
 
     def __init__(self, app):
@@ -237,7 +237,7 @@ class MainWindow(QMainWindow):
         self.app.toggle_timelapse()
 
 
-class SidebarHeading(QLabel):
+class SidebarHeading(QLabel):  # pylint: disable=R0903
     """Widget for sidebar separators and headings."""
 
     def __init__(self, text="", first=False):

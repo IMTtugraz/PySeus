@@ -21,7 +21,7 @@ from .ui import MainWindow
 from .ui.meta import MetaWindow
 
 
-class PySeus():
+class PySeus():  # pylint: disable=R0902
     """The main application class acts as front controller."""
 
     def __init__(self, gui=True):
@@ -153,7 +153,7 @@ class PySeus():
 
         data = self.dataset.get_pixeldata(self.slice)
 
-        # @TODO move to DisplayHelper or FormatBase
+        # @TODO move to FormatBase (get_pixeldata_adjusted)
         spacing = self.dataset.get_spacing()
         if spacing[0] != spacing[1]:
             if spacing[0] > spacing[1]:

@@ -65,27 +65,24 @@ class NIfTI(BaseFormat):
             metadata[key] = value
         return metadata
 
-    def get_spacing(self, axis=None):
-        pixdim = [1, 1, 1]
-        if "pixdim" in self.metadata.keys():
-            pixdim = list(self.metadata["pixdim"])[1:4]
+    def get_spacing(self, reset=False):
+        if not self.pixel_spacing or reset:
+            if "pixdim" in self.metadata.keys():
+                self.pixel_spacing = list(self.metadata["pixdim"])[1:4]
+            else:
+                self.pixel_spacing = [1, 1, 1]
 
-        if axis is None:
-            return pixdim[0:2]  # ignore time axis @ pixdim[3] if present
-
-        return pixdim[axis]
+        return self.pixel_spacing
 
     def get_scale(self):
         if "xyzt_units" in self.metadata.keys():
             pixdim = min(self.get_spacing())  # units per pixel
             if self.metadata["xyzt_units"] & 1:
-                return 1.0 * pixdim
+                return 1000.0 * pixdim
             if self.metadata["xyzt_units"] & 2:
-                return 0.001 * pixdim
+                return 1.0 * pixdim
             if self.metadata["xyzt_units"] & 3:
-                return 0.000001 * pixdim
-
-            return 0.0  # should not happen, broken metadata
+                return 0.001 * pixdim
 
         return 0.0
 

@@ -129,29 +129,47 @@ class H5(BaseFormat):
 
         return metadata
 
-    def get_spacing(self, axis=None):
-        pixel_spacing = [1, 1, 1]
-        if "PixelSpacing" in self.metadata.keys():
-            pixel_spacing = list(self.metadata["PixelSpacing"])
-        elif "pixdim" in self.metadata.keys():
-            pixel_spacing = list(self.metadata["pixdim"])
+    def get_spacing(self, reset=False):
+        if not self.pixel_spacing or reset:
+            if "PixelSpacing" in self.metadata.keys():
+                self.pixel_spacing = list(self.metadata["PixelSpacing"])
+            elif "pixdim" in self.metadata.keys():
+                self.pixel_spacing = list(self.metadata["pixdim"])
+            else:
+                self.pixel_spacing = [1, 1, 1]
 
-        if axis is None:
-            return pixel_spacing[0:2]
-
-        return pixel_spacing[axis]
+        return self.pixel_spacing
 
     def get_scale(self):
+        # DICOM implementation
+        if "PixelSpacing" in self.metadata.keys():
+            pixel_spacing = list(self.metadata["PixelSpacing"])
+            return float(min(pixel_spacing))
+
+        # NIfTI implementation
+        if "xyzt_units" in self.metadata.keys():
+            pixdim = min(self.get_spacing())  # units per pixel
+            if self.metadata["xyzt_units"] & 1:
+                return 1000.0 * pixdim
+            if self.metadata["xyzt_units"] & 2:
+                return 1.0 * pixdim
+            if self.metadata["xyzt_units"] & 3:
+                return 0.001 * pixdim
+
         return 0.0
 
     def get_units(self):
-        return ""
+        if "Units" in self.metadata.keys():
+            return "{}".format(self.metadata["Units"])
+            # not accounting for Rescale Intercept, Rescale Slope
+
+        return "1"
 
     def get_orientation(self):
         return []
 
 
-class H5Explorer(QDialog):
+class H5Explorer(QDialog):  # pylint: disable=R0903
     """Dialog for selecting a dataset in an H5 file."""
 
     def __init__(self, items):
