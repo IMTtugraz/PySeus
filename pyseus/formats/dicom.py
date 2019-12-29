@@ -85,12 +85,21 @@ class DICOM(BaseFormat):
 
     def load_scan(self, scan):
         slices = []
+        first_slice = True
         scan_dir = os.path.join(self.scan_level, self.scans[scan])
         for file_ in os.listdir(scan_dir):
             _, ext = os.path.splitext(file_)
             if ext.lower() in DICOM.EXTENSIONS:
-                slice_ = pydicom.read_file(os.path.join(scan_dir, file_),
-                                           defer_size=0)
+                slice_ = pydicom.read_file(os.path.join(scan_dir, file_))
+
+                if first_slice:  # get metadata
+
+                    metadata = {}
+                    meta_ignore = ["", "PixelData"]
+                    for element in slice_:
+                        if element.keyword not in meta_ignore:
+                            metadata[element.keyword] = element.value
+
                 slices.append(slice_)
 
         file_count = len(slices)
@@ -107,7 +116,7 @@ class DICOM(BaseFormat):
                 pixeldata.append(slice_.pixel_array)
 
         self.pixeldata = numpy.asarray(pixeldata)
-        self.metadata = self.get_scan_metadata(scan)
+        self.metadata = metadata
         self.scan = scan
 
         return True
@@ -153,8 +162,7 @@ class DICOM(BaseFormat):
         for file_ in os.listdir(scan_dir):
             _, ext = os.path.splitext(file_)
             if ext.lower() in DICOM.EXTENSIONS:
-                slice_ = pydicom.read_file(os.path.join(scan_dir, file_),
-                                           defer_size=0)
+                slice_ = pydicom.read_file(os.path.join(scan_dir, file_))
 
                 ignore = ["", "PixelData"]
                 for element in slice_:
