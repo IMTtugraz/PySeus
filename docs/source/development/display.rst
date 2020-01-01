@@ -1,17 +1,20 @@
 Display
 =======
 
-The display classes are responsible for the translation of values to color and 
-windowing functionality, and provide helper functions for displaying the 
+Display modes are responsible for the translation of values to color, provide 
+functions like windowing and implement helper functions for displaying the 
 results.
 
-Built-in Display Modes
-----------------------
-
-.. autoclass:: pyseus.display.Grayscale
+.. autoclass:: pyseus.modes.BaseMode
    :members:
 
 Built-in Display Modes
 ----------------------
 
-Custom display modes are currently *not* supported.
+.. autoclass:: pyseus.modes.Grayscale
+
+Built-in Display Modes
+----------------------
+
+Just extend the *BaseMode* class and add the format class to the
+*PySeus.modes* list.

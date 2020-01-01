@@ -13,7 +13,7 @@ from PySide2.QtGui import qApp
 from PySide2.QtCore import QTimer
 from PySide2.QtWidgets import QApplication, QMessageBox
 
-from .display import Grayscale
+from .modes import Grayscale
 from .formats import Raw, NumPy, H5, DICOM, NIfTI, LoadError
 from .settings import settings
 from .tools import AreaTool, LineTool

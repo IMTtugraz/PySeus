@@ -29,4 +29,4 @@ Line Tool
 Custom Tools
 ============
 
-Just extend the *BaseTool* Class and add the class to the *PySeus.tools* list.
+Just extend the *BaseTool* class and add the class to the *PySeus.tools* list.

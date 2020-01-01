@@ -3,7 +3,7 @@
 Classes
 -------
 
-**BaseFormat** - Defines interface for formats classes.
+**BaseFormat** - Defines the interface for formats classes.
 **LoadError** - Exception for various errors during loading.
 """
 

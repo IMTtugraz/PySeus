@@ -27,5 +27,5 @@ Built-in Formats
 Custom Formats
 --------------
 
-Just extend the *BaseFormat* Class and add the format class to the
+Just extend the *BaseFormat* class and add the format class to the
 *PySeus.formats* list.
