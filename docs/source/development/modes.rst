@@ -1,7 +1,7 @@
-Display
-=======
+Display Modes
+=============
 
-The display classes are responsible for the translation of values to color and 
+Display mode classes are responsible for the translation of values to color and 
 windowing functionality, and provide helper functions for displaying the 
 results.
 

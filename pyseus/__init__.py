@@ -1,7 +1,7 @@
 """PySeus is a simple viewer for MRI imaging data.
 
+Auhtor: Christoph Almer
 Version: 1.0
-
 License: MIT License
 
 
@@ -25,6 +25,6 @@ Subpackages
 **Tools** - Contains classes for evaluating datasets.
 """
 
-from .settings import settings
-from .core import PySeus
 from .__main__ import load
+from .core import PySeus
+from .settings import settings

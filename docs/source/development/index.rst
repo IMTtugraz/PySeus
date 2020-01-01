@@ -1,7 +1,8 @@
 Development
 ===========
 
-INTRO
+PySeus was envisioned as a basis for more advanced tools to be developed on 
+top of it.
 
 Environment
 -----------
