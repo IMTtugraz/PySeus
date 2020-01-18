@@ -12,5 +12,4 @@ at [Gaz University of Technology](https://www.tugraz.at/en/home/).
 ![PySeus Screenshot](https://raw.githubusercontent.com/calmer/PySeus/master/docs/source/_static/dicom_multi.png)
 
 **License information**
-
-PySide2 (Qt for Python) is licensed for non-commercial application under [LGPL-3.0](https://www.gnu.org/licenses/lgpl-3.0.html).
+PySide2 (Qt for Python) is licensed for non-commercial use under [LGPL-3.0](https://www.gnu.org/licenses/lgpl-3.0.html).
