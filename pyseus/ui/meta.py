@@ -8,6 +8,7 @@ Classes
 
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QDialog, QSizePolicy, QVBoxLayout
+from PySide2.QtGui import QIcon
 
 from .sidebar import MetaWidget
 

@@ -14,7 +14,7 @@ from pyseus.settings import settings
 def test_core():
     """Test basic functionality of PySeus class."""
 
-    # @TODO testing for Qt GUIs
+    # @TODO testing for Qt GUI
 
 
 def test_settigns():

@@ -121,9 +121,7 @@ class PySeus():  # pylint: disable=R0902
             if self.dataset.scan_count() > 1:
                 message = "{} scans detected. Do you want to load all?" \
                         .format(self.dataset.scan_count())
-                # load_all = QMessageBox.question(None, "Pyseus", message)
-                load_all = QMessageBox.StandardButton.Yes
-                # @TODO reset after profiling
+                load_all = QMessageBox.question(None, "Pyseus", message)
 
                 self.window.thumbs.clear()
                 if load_all is QMessageBox.StandardButton.Yes:
@@ -177,7 +175,7 @@ class PySeus():  # pylint: disable=R0902
         if self.tool is not None:
             pixmap = self.tool.draw_overlay(pixmap)
 
-        self.window.view.set(pixmap)  # @TODO Refactor ?!?
+        self.window.view.set(pixmap)
 
     def recalculate(self):
         """Refresh the active evaluation tool."""

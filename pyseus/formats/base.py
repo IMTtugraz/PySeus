@@ -202,7 +202,6 @@ class BaseFormat():
     def slice_count(self):
         """Return the number of slices in the current scan."""
         return len(self.pixeldata)
-        # @TODO determine slice count for arbitrary scans
 
 
 class LoadError(Exception):

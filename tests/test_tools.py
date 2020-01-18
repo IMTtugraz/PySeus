@@ -44,4 +44,4 @@ def test_line_tool():
     tool.end_roi(3, 4)
     assert tool.line == [1, 2, 3, 4]
 
-    # @TODO test Qt GUI (chart window)
+    # @TODO testing for Qt GUI (chart window)

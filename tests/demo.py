@@ -41,4 +41,4 @@ def demo_nifti_2():
 
 
 if __name__ == "__main__":
-    demo_dicom()
+    demo_dicom_2()
