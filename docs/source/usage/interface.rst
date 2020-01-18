@@ -20,7 +20,7 @@ dispalyed on the left. Clicking on a thumbnail will load the scan.
 top. This contains the dataset path, the current scan and the current slice.
 
 *Metadata*: If a dataset contains metadata, the most common items are 
-displayed here. Clicking on "*more*" at the bottom will bring up a window
+displayed here. Clicking on *more* at the bottom will bring up a window
 with all available metadata.
 
 *Console*: Generic text output (like from the area tool) is displayed here.

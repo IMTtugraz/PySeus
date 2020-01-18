@@ -11,7 +11,7 @@ Built-in Display Modes
 .. autoclass:: pyseus.display.Grayscale
    :members:
 
-Built-in Display Modes
-----------------------
+Custom Display Modes
+--------------------
 
 Custom display modes are currently *not* supported.

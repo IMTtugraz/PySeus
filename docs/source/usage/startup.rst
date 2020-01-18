@@ -30,8 +30,7 @@ present within a file, a selection dialog is displayed.
 and scans form the base and parent directories. *DICOMDIR* files are currently 
 *not* supported.
 
-**NIfTI files**: Pyseus will accept NIFTI-2 *.nii* files; NIFTI-1 files and 
-split files are currently *not* supported.
+**NIfTI files**: Pyseus will accept NIFTI-1 and NIfTI-2 *.nii* files.
 
 If you need to extend PySeus to use other file formats, see 
 `Development / Formats<formats>`_.
