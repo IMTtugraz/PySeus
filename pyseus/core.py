@@ -35,32 +35,35 @@ class PySeus():  # pylint: disable=R0902
         else:
             self.qt_app = qApp
 
-        self.dataset = None
-        """The current dataset object. See `Formats <development/formats>`_."""
-
         self.formats = [H5, DICOM, NIfTI, NumPy, Raw]
-        """List of all avaiable data formats. See `Formats <development/formats>`_."""
+        """List of all avaiable data formats. See `Formats <development/formats.html>`_."""
+
+        self.modes = [Grayscale]
+        """List of all avaiable display modes. See `Display <development/display.html>`_."""
 
         self.tools = [AreaTool, LineTool]
-        """List of all avaiable evaluation tools. See `Tools <development/tools>`_."""
+        """List of all avaiable evaluation tools. See `Tools <development/tools.html>`_."""
+
+        self.dataset = None
+        """The current dataset object. See `Formats <development/formats.html>`_."""
+
+        self.mode = Grayscale()
+        """The display mode object. See `Display <development/display.html>`_."""
 
         self.tool = None
-        """The current tool object. See `Tools <development/tools>`_."""
+        """The current tool object. See `Tools <development/tools.html>`_."""
 
         self.window = MainWindow(self)
-        """The main window object. See `Interface <development/interface>`_."""
+        """The main window object. See `Interface <development/interface.html>`_."""
 
         self.meta_window = None
         """Holds the meta window object."""
-
-        self.display = Grayscale()
-        """The display helper object. See `Display <development/display>`_."""
 
         self.slice = -1
         """Index of the current slice."""
 
         self.timer = QTimer()
-        """Timer for timelapse view."""
+        """Timer for cine view."""
 
         self.gui = gui
         """Flag wheter to use the GUI or not."""
@@ -128,9 +131,10 @@ class PySeus():  # pylint: disable=R0902
                 self.window.thumbs.clear()
                 if load_all is QMessageBox.StandardButton.Yes:
                     for scan_id in range(0, self.dataset.scan_count()):
-                        thumb = self.display.generate_thumb(
-                            self.dataset.get_scan_thumbnail(scan_id))
-                        pixmap = self.display.get_pixmap(thumb)
+                        thumb = self.mode.generate_thumb(
+                            self.dataset.get_scan_thumbnail(scan_id),
+                            int(settings["ui"]["thumb_size"]))
+                        pixmap = self.mode.get_pixmap(thumb)
                         self.window.thumbs.add_thumb(pixmap)
                 else:
                     single_scan = self.dataset.scans[self.dataset.scan]
@@ -150,7 +154,7 @@ class PySeus():  # pylint: disable=R0902
 
     def set_mode(self, mode):
         """Set display mode to amplitude (0) or phase (1)."""
-        self.display.set_mode(mode)
+        self.mode.set_mode(mode)
         self.refresh()
 
     def refresh(self):
@@ -172,7 +176,7 @@ class PySeus():  # pylint: disable=R0902
 
             data = cv2.resize(data, size)
 
-        pixmap = self.display.get_pixmap(data)
+        pixmap = self.mode.get_pixmap(data)
 
         if self.tool is not None:
             pixmap = self.tool.draw_overlay(pixmap)
@@ -184,7 +188,7 @@ class PySeus():  # pylint: disable=R0902
         if self.tool is not None:
             slice_ = self.dataset.get_pixeldata(self.slice)
             self.tool.recalculate(
-                self.display.prepare_without_window(slice_))
+                self.mode.prepare_raw(slice_))
 
     def select_scan(self, sid, relative=False):
         """Select and load a scan from the current dataset.
@@ -219,7 +223,7 @@ class PySeus():  # pylint: disable=R0902
                                      len(default_metadata) > 0)
         self.window.info.update_scan(self.dataset.scans[sid])
 
-        self.display.setup_data(self.dataset.get_pixeldata())
+        self.mode.setup_data(self.dataset.get_pixeldata())
         self.refresh()
         self.window.view.zoom_fit()
 
@@ -275,13 +279,13 @@ class PySeus():  # pylint: disable=R0902
         self.refresh()
         self.clear_tool()
 
-    def toggle_timelapse(self):
+    def toggle_cine(self):
         """Toggle automatic loading of next scans."""
         if self.timer.isActive():
             self.timer.stop()
         else:
-            self.timer.timeout.connect(self._timelapse_next)
-            self.timer.start(int(settings["timelapse"]["interval"]))
+            self.timer.timeout.connect(self._cine_next)
+            self.timer.start(int(settings["cine"]["interval"]))
 
-    def _timelapse_next(self):
+    def _cine_next(self):
         self.select_scan(1, True)

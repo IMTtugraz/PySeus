@@ -123,7 +123,7 @@ class ViewWidget(QScrollArea):
             move = self.last_position.x() - event.screenPos().x()
             scale = self.last_position.y() - event.screenPos().y()
             self.last_position = event.screenPos()
-            self.app.display.adjust_window(move, scale)
+            self.app.mode.adjust_window(move, scale)
             self.app.refresh()
 
         elif self.mouse_action == "ROI":
