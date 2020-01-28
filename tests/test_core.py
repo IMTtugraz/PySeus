@@ -41,7 +41,7 @@ def test_grayscale():
                         [0, 9, 0],
                         [0, 1, 0]])
 
-    display.setup_data(data)
+    display.setup_window(data)
     assert display.white == 9
     assert display.black == 0
 

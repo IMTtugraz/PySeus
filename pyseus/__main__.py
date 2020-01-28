@@ -23,7 +23,7 @@ def load(arg=None):
     if isinstance(arg, str):
         app.load_file(arg)
 
-    elif isinstance(arg, numpy.ndarray) or isinstance(arg, list):
+    elif isinstance(arg, [numpy.ndarray, list]):
         app.load_data(arg)
 
     return app.show()

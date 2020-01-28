@@ -6,7 +6,6 @@ Classes
 **BaseMode** - Defines the interface for display mode classes.
 """
 
-import numpy
 import cv2
 
 from PySide2.QtGui import QImage, QPixmap
@@ -37,13 +36,17 @@ class BaseMode():
         self.white = 1
         """Value translated to white (upper bound of window)."""
 
-    def prepare(self, data):
+    def prepare(self, data): # pylint: disable=R0201
         """Prepare data for display (see *prepare_raw*)
         and apply windowing settings."""
 
-    def prepare_raw(self, data):
+        return data
+
+    def prepare_raw(self, data): # pylint: disable=R0201
         """Prepare data for analysis.
         Use amplitude or phase data occording to the current display mode."""
+
+        return data
 
     def apply_window(self, data):
         """Apply current window settings to *data*."""

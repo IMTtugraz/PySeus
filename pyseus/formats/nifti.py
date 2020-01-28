@@ -17,7 +17,7 @@ from .base import BaseFormat, LoadError
 class NIfTI(BaseFormat):
     """Class modeling NIfTI datasets.
 
-    Supports single file *.nii*-files according to the NIfTI-1 and NIfTI-2 
+    Supports single file *.nii*-files according to the NIfTI-1 and NIfTI-2
     standard. Supports metadata, pixelspacing, scale, units and orientation.
     """
 

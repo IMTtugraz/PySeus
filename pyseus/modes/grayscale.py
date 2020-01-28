@@ -6,9 +6,9 @@ Classes
 **Grayscale** - Grayscale images with simple windowing.
 """
 
-import numpy
-import cv2
 from functools import partial
+
+import numpy
 
 from ..settings import settings
 from .base import BaseMode
@@ -23,13 +23,15 @@ class Grayscale(BaseMode):
         ami(menu, "&Gray - Phase", partial(cls.start, app, 1))
 
     @classmethod
-    def start(cls, app, src):
+    def start(cls, app, src): # pylint: disable=W0221
         if not isinstance(app.mode, cls):
             app.mode = cls()
         app.mode.set_source(src)
         app.refresh()
 
     def __init__(self):
+        BaseMode.__init__(self)
+
         self.source = 0
         """Determines wheter amplitude (0) or phase (1) information from the
         data is used. Default ist amplitude (0)."""
@@ -59,7 +61,7 @@ class Grayscale(BaseMode):
         data = data.clip(0, 255)
         return data.astype(numpy.uint8).copy()
 
-    def setup_data(self, data):
+    def setup_window(self, data):
         data = numpy.absolute(data)
         self.data_min = numpy.amin(data)
         self.data_max = numpy.amax(data)

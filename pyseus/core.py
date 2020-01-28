@@ -150,11 +150,6 @@ class PySeus():  # pylint: disable=R0902
         else:
             self.window.info.update_path(self.dataset.path)
 
-    def set_mode(self, mode):
-        """Set display mode to amplitude (0) or phase (1)."""
-        self.mode.set_mode(mode)
-        self.refresh()
-
     def refresh(self):
         """Refresh the displayed image."""
         if self.slice == -1:
@@ -221,7 +216,7 @@ class PySeus():  # pylint: disable=R0902
                                      len(default_metadata) > 0)
         self.window.info.update_scan(self.dataset.scans[sid])
 
-        self.mode.setup_data(self.dataset.get_pixeldata())
+        self.mode.setup_window(self.dataset.get_pixeldata())
         self.refresh()
         self.window.view.zoom_fit()
 

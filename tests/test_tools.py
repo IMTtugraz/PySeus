@@ -22,7 +22,7 @@ def test_area_tool():
 
     tool = AreaTool(app)
 
-    display.setup_data(data)
+    display.setup_window(data)
     pixmap = display.get_pixmap(data)
     assert isinstance(tool.draw_overlay(pixmap), QPixmap)
 
@@ -36,7 +36,7 @@ def test_line_tool():
 
     tool = LineTool(app)
 
-    display.setup_data(data)
+    display.setup_window(data)
     pixmap = display.get_pixmap(data)
     assert isinstance(tool.draw_overlay(pixmap), QPixmap)
 

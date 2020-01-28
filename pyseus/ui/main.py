@@ -186,7 +186,7 @@ class MainWindow(QMainWindow):  # pylint: disable=R0902
         if not path == "":
             self._open_path = os.path.dirname(path)
             self.app.load_file(path)
-    
+
     def _action_reload(self):
         if not self.app.dataset is None:
             self.app.load_file(self.app.dataset.path)
