@@ -5,14 +5,14 @@ Interface
    :width: 600
 
 **Menu bar**: The menu bar at the top allows access to all functions. See 
-`Navigation<usage/navigation>`_ for the *View* and *Explore* menus and 
-`Evaluate<usage/evalute>`_ for the *Tools* menu.
+`Navigation<usage/navigation.html>`_ for the *View* and *Explore* menus and 
+`Evaluate<usage/evalute.html>`_ for the *Tools* menu.
 
 **Thumbnails**: For datasets with multiple scans, thumbnails of each scan are 
 dispalyed on the left. Clicking on a thumbnail will load the scan.
 
 **Viewport**: The viewport in the center displays the current slice. See 
-`Navigation<usage/navigation>`_ for how to adjust the viewport.
+`Navigation<usage/navigation.html>`_ for how to adjust the viewport.
 
 **Sidebar**: The Sidebar collects various kinds of information.
 

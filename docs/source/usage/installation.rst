@@ -22,14 +22,15 @@ The following **dependencies** will be installed with PySeus:
 - nibabel
 - natsort
 
-For DICOM files using JPEG encodings, `GDCM <https://sourceforge.net/projects/gdcm>`_
-is required to decode the image.
+Optional Dependencies
+---------------------
+
+**GDCM** (Grass Roots DICOM)
+
+For DICOM files using certain encodings, `GDCM <https://sourceforge.net/projects/gdcm>`_
+is required.
 
 If *conda* is available on your system, you can simply run 
-``conda install -c conda-forge -y gdcm``.
-
-On Ubuntu/Debian you can run ``sudo apt install python3-gdcm`` or build GDCM 
-from source (see `here <>`_).
-
-For Windows systems, you can get the latest installer from their 
-`GitHub Mirror <https://github.com/malaterre/GDCM/releases/>`_
+``conda install -c conda-forge -y gdcm``. On Ubuntu/Debian you can run ``sudo apt install python3-gdcm`` or `build GDCM 
+from source<http://gdcm.sourceforge.net/wiki/index.php/Compilation>`_. For Windows systems, you can get the latest installer from their 
+`GitHub Mirror <https://github.com/malaterre/GDCM/releases/>`_.

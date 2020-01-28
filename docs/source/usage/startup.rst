@@ -33,12 +33,12 @@ and scans form the base and parent directories. *DICOMDIR* files are currently
 **NIfTI files**: Pyseus will accept NIFTI-1 and NIfTI-2 *.nii* files.
 
 If you need to extend PySeus to use other file formats, see 
-`Development / Formats<formats>`_.
+`Development / Formats<development/formats.html>`_.
 
 Data conventions
 ----------------
 
-Some formats, like NumPy and HDF5 allow allow a lot of freedom in how the data 
+Some formats, like NumPy and HDF5 allow for a lot of freedom in how the data 
 is structured; in these cases, PySeus interprets data like this:
 
 *Two dimensional data* is interpreted as a single slice, the first dimension 

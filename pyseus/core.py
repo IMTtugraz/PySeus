@@ -37,31 +37,31 @@ class PySeus():  # pylint: disable=R0902
 
         self.formats = [H5, DICOM, NIfTI, NumPy, Raw]
         """List of all avaiable data formats.
-        See `Formats <development/formats.html>`_."""
+        See `Formats <formats.html>`_."""
 
         self.modes = [Grayscale]
         """List of all avaiable display modes.
-        See `Display <development/display.html>`_."""
+        See `Display <display.html>`_."""
 
         self.tools = [AreaTool, LineTool]
         """List of all avaiable evaluation tools.
-        See `Tools <development/tools.html>`_."""
+        See `Tools <tools.html>`_."""
 
         self.dataset = None
         """The current dataset object.
-        See `Formats <development/formats.html>`_."""
+        See `Formats <formats.html>`_."""
 
         self.mode = Grayscale()
         """The display mode object.
-        See `Display <development/display.html>`_."""
+        See `Display <display.html>`_."""
 
         self.tool = None
         """The current tool object.
-        See `Tools <development/tools.html>`_."""
+        See `Tools <tools.html>`_."""
 
         self.window = MainWindow(self)
         """The main window object.
-        See `Interface <development/interface.html>`_."""
+        See `Interface <interface.html>`_."""
 
         self.meta_window = None
         """Holds the meta window object."""
@@ -245,7 +245,7 @@ class PySeus():  # pylint: disable=R0902
 
     def show_metadata_window(self):
         """Show the metadata window.
-        See `Interface <development/interface>`_."""
+        See `Interface <interface.html>`_."""
         self.meta_window = MetaWindow(self, self.dataset.get_metadata())
         self.meta_window.show()
 

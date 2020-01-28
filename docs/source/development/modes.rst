@@ -11,6 +11,8 @@ results.
 Built-in Display Modes
 ----------------------
 
+# Grayscale Mode
+
 .. autoclass:: pyseus.modes.Grayscale
    :members: source, set_source
 
