@@ -6,7 +6,7 @@ from PySide2.QtGui import QPixmap
 
 from context import pyseus  # noqa F401  # pylint: disable=W0611
 from pyseus import PySeus
-from pyseus.display import Grayscale
+from pyseus.modes import Grayscale
 from pyseus.tools import AreaTool, LineTool
 
 

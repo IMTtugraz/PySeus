@@ -15,11 +15,11 @@ class BaseTool():
 
     @classmethod
     def setup_menu(cls, app, menu, ami):
-        """Add the tool to the menu bar in the main window."""
+        """Add the mode to the menu bar in the main window."""
 
     @classmethod
     def start(cls, app):
-        """Set the respective tool as active."""
+        """Set the respective mode as active."""
         app.tool = cls(app)
 
     def start_roi(self, x, y):  # pylint: disable=C0103

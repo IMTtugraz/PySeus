@@ -102,11 +102,13 @@ class MainWindow(QMainWindow):  # pylint: disable=R0902
 
         self.file_menu = menu_bar.addMenu("&File")
         ami(self.file_menu, "&Load", self._action_open, "Ctrl+O")
+        ami(self.file_menu, "&Reload", self._action_reload, "Ctrl+L")
+        self.file_menu.addSeparator()
         ami(self.file_menu, "&Quit", self._action_quit, "Ctrl+Q")
 
         self.view_menu = menu_bar.addMenu("&View")
-        ami(self.view_menu, "&Amplitude", partial(self._action_mode, 0), "F1")
-        ami(self.view_menu, "&Phase", partial(self._action_mode, 1), "F2")
+        for mode in self.app.modes:
+            mode.setup_menu(self.app, self.view_menu, self.add_menu_item)
         self.view_menu.addSeparator()
 
         ami(self.view_menu, "Zoom &in", self._action_zoom_in, "+")
@@ -151,7 +153,7 @@ class MainWindow(QMainWindow):  # pylint: disable=R0902
         ami(self.explore_menu, "Previous Sc&an",
             partial(self._action_scan, -1), "Alt+PgDown")
         self.explore_menu.addSeparator()
-        ami(self.explore_menu, "Timelapse", self._action_timelapse, "Ctrl+#")
+        ami(self.explore_menu, "cine", self._action_cine, "Ctrl+#")
 
         self.tools_menu = menu_bar.addMenu("&Evaluate")
         for tool in self.app.tools:
@@ -184,6 +186,10 @@ class MainWindow(QMainWindow):  # pylint: disable=R0902
         if not path == "":
             self._open_path = os.path.dirname(path)
             self.app.load_file(path)
+    
+    def _action_reload(self):
+        if not self.app.dataset is None:
+            self.app.load_file(self.app.dataset.path)
 
     def _action_zoom_in(self):
         self.view.zoom(1.25)
@@ -201,27 +207,24 @@ class MainWindow(QMainWindow):  # pylint: disable=R0902
         webbrowser.open_new("https://github.com/calmer/PySEUS")
 
     def _action_win_lower(self):
-        self.app.display.move_window(-20)
+        self.app.mode.move_window(-20)
         self.app.refresh()
 
     def _action_win_raise(self):
-        self.app.display.move_window(20)
+        self.app.mode.move_window(20)
         self.app.refresh()
 
     def _action_win_shrink(self):
-        self.app.display.scale_window(-25)
+        self.app.mode.scale_window(-25)
         self.app.refresh()
 
     def _action_win_enlarge(self):
-        self.app.display.scale_window(25)
+        self.app.mode.scale_window(25)
         self.app.refresh()
 
     def _action_win_reset(self):
-        self.app.display.reset_window()
+        self.app.mode.reset_window()
         self.app.refresh()
-
-    def _action_mode(self, mode):
-        self.app.set_mode(mode)
 
     def _action_slice(self, step):
         self.app.select_slice(step, True)
@@ -238,8 +241,8 @@ class MainWindow(QMainWindow):  # pylint: disable=R0902
     def _action_flip(self, direction):
         self.app.flip(direction)
 
-    def _action_timelapse(self):
-        self.app.toggle_timelapse()
+    def _action_cine(self):
+        self.app.toggle_cine()
 
 
 class SidebarHeading(QLabel):  # pylint: disable=R0903

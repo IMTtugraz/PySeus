@@ -66,15 +66,17 @@ are relative to the viewport.
 Viewing a Slice
 ===============
 
-PySeus can visualize either the amplitude or phase part of data.
+PySeus supports different ways to visuaize data via display modes. The built-in
+mode *Grayscale* allows for visualizaiotn of either the amplitude or phase 
+part of data.
 
-+---------------------+--------------+----------------------+
-| **Menu**            | **Keyboard** | **Mouse**            |
-+---------------------+--------------+----------------------+
-| View / Amplitude    | F1           |                      |
-+---------------------+--------------+----------------------+
-| View / Phase        | F2           |                      |
-+---------------------+--------------+----------------------+
++-------------------------+--------------+----------------------+
+| **Menu**                | **Keyboard** | **Mouse**            |
++-------------------------+--------------+----------------------+
+| View / Gray - Amplitude | F1           |                      |
++-------------------------+--------------+----------------------+
+| View / Gray - Phase     | F2           |                      |
++-------------------------+--------------+----------------------+
 
 Zoom & Pan
 ----------
@@ -103,8 +105,10 @@ are based on the default translation to grayscale:
 
 - *Lowering* or *raising* the window results in a darker or lighter image 
   respectively.
+
 - *Shrinking* or *widening* the window results in higher or lower contrast 
   respectively.
+  
 - *Reseting* the window will use the default options of covering all values 
   present in the data.
 

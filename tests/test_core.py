@@ -7,7 +7,7 @@ from PySide2.QtGui import QPixmap
 
 from context import pyseus # noqa F401  # pylint: disable=W0611
 from pyseus import PySeus
-from pyseus.display import Grayscale
+from pyseus.modes import Grayscale
 from pyseus.settings import settings
 
 
@@ -49,7 +49,8 @@ def test_grayscale():
     assert numpy.amin(prepared) == 0
     assert numpy.amax(prepared) == 255
 
-    thumbnail = display.generate_thumb(prepared)
+    thumbnail = display.generate_thumb(prepared, 
+                                       int(settings["ui"]["thumb_size"]))
     assert isinstance(thumbnail, numpy.ndarray)
     assert thumbnail.shape[0] <= int(settings["ui"]["thumb_size"])
     assert thumbnail.shape[1] <= int(settings["ui"]["thumb_size"])
