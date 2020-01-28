@@ -13,4 +13,4 @@ at [Gaz University of Technology](https://www.tugraz.at/en/home/).
 
 **License information**
 
-PySide2 (Qt for Python) is licensed for non-commercial application under [LGPL-3.0](https://www.gnu.org/licenses/lgpl-3.0.html).
+[PySide2](https://wiki.qt.io/Qt_for_Python) (Qt for Python) is licensed for non-commercial use under [LGPL-3.0](https://www.gnu.org/licenses/lgpl-3.0.html).
