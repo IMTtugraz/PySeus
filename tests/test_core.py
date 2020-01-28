@@ -49,7 +49,7 @@ def test_grayscale():
     assert numpy.amin(prepared) == 0
     assert numpy.amax(prepared) == 255
 
-    thumbnail = display.generate_thumb(prepared, 
+    thumbnail = display.generate_thumb(prepared,
                                        int(settings["ui"]["thumb_size"]))
     assert isinstance(thumbnail, numpy.ndarray)
     assert thumbnail.shape[0] <= int(settings["ui"]["thumb_size"])

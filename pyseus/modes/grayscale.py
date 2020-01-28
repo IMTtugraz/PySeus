@@ -23,7 +23,7 @@ class Grayscale(BaseMode):
         ami(menu, "&Gray - Phase", partial(cls.start, app, 1))
 
     @classmethod
-    def start(cls, app, src): # pylint: disable=W0221
+    def start(cls, app, src):  # pylint: disable=W0221
         if not isinstance(app.mode, cls):
             app.mode = cls()
         app.mode.set_source(src)

@@ -188,7 +188,7 @@ class MainWindow(QMainWindow):  # pylint: disable=R0902
             self.app.load_file(path)
 
     def _action_reload(self):
-        if not self.app.dataset is None:
+        if self.app.dataset is not None:
             self.app.load_file(self.app.dataset.path)
 
     def _action_zoom_in(self):
