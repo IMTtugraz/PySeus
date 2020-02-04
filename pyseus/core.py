@@ -41,7 +41,7 @@ class PySeus():  # pylint: disable=R0902
 
         self.modes = [Grayscale]
         """List of all avaiable display modes.
-        See `Display <display.html>`_."""
+        See `Display <modes.html>`_."""
 
         self.tools = [AreaTool, LineTool]
         """List of all avaiable evaluation tools.
@@ -53,7 +53,7 @@ class PySeus():  # pylint: disable=R0902
 
         self.mode = Grayscale()
         """The display mode object.
-        See `Display <display.html>`_."""
+        See `Display <modes.html>`_."""
 
         self.tool = None
         """The current tool object.

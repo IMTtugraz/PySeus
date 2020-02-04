@@ -66,8 +66,8 @@ are relative to the viewport.
 Viewing a Slice
 ===============
 
-PySeus supports different ways to visuaize data via display modes. The built-in
-mode *Grayscale* allows for visualizaiotn of either the amplitude or phase 
+PySeus supports different ways to visualize data via display modes. The built-in
+mode *Grayscale* allows for visualization of either the amplitude or phase 
 part of data.
 
 +-------------------------+--------------+----------------------+

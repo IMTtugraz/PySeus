@@ -153,7 +153,7 @@ class MainWindow(QMainWindow):  # pylint: disable=R0902
         ami(self.explore_menu, "Previous Sc&an",
             partial(self._action_scan, -1), "Alt+PgDown")
         self.explore_menu.addSeparator()
-        ami(self.explore_menu, "cine", self._action_cine, "Ctrl+#")
+        ami(self.explore_menu, "Cine Play", self._action_cine, "Ctrl+#")
 
         self.tools_menu = menu_bar.addMenu("&Evaluate")
         for tool in self.app.tools:

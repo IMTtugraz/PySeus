@@ -25,4 +25,4 @@ Custom Tools
 ------------
 
 If you need to extend PySeus with custom tools, see 
-`Development / Tools <development/tools.html>`_.
+`Development / Tools <../development/tools.html>`_.
