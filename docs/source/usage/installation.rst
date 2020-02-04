@@ -26,7 +26,7 @@ The following **dependencies** will be installed with PySeus:
 Optional Dependencies
 ---------------------
 
-`**GDCM** (Grass Roots DICOM) <https://sourceforge.net/projects/gdcm>`_ is 
+**GDCM** (`Grass Roots DICOM <https://sourceforge.net/projects/gdcm>`_) is 
 required for DICOM files using certain encodings.
 
 If *conda* is available on your system, you can simply run 
