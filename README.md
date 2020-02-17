@@ -1,5 +1,6 @@
 # PySEUS
 
+[![Build Status](https://travis-ci.org/IMTtugraz/PySeus.svg?branch=master)](https://travis-ci.org/IMTtugraz/PySeus)
 [![Docs Status](https://readthedocs.org/projects/pyseus/badge/?version=latest)](https://pyseus.readthedocs.io/en/latest)
 
 PySeus is a simple viewer for MRI data written in Python and licensed 
