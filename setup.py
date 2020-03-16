@@ -13,6 +13,7 @@ setup(
     license='GNU',
     packages=find_packages(),
     package_data={'pyseus': [
+        'settings.ini',
         'ui/style_dark.qss',
         'ui/icon.png',
     ]},
