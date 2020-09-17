@@ -111,7 +111,6 @@ class PySeus():  # pylint: disable=R0902
 
     def load_data(self, data):
         """Try to load *data*. See also *setup_dataset*."""
-
         new_dataset = Raw()
         self.setup_dataset(data, new_dataset)
 

@@ -7,6 +7,7 @@ Classes
 """
 
 import cv2
+import numpy as np
 
 from PySide2.QtGui import QImage, QPixmap
 
@@ -75,11 +76,10 @@ class BaseMode():
     def generate_thumb(self, data, size):
         """Resize data for use as a thumbnail.
         Thumbnail size is controlled in *settings.ini*."""
-
         self.temporary_window(data)
 
         # @TODO preserve AR (calculate height, width separately)
-        thumb = cv2.resize(data, (size, size))
+        thumb = cv2.resize(np.abs(data), (size, size))
 
         return thumb
 
