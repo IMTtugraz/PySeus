@@ -10,7 +10,7 @@ import os
 import cv2
 
 from PySide2.QtCore import QTimer
-from PySide2.QtWidgets import qApp, QApplication, QMessageBox
+from PySide2.QtWidgets import QApplication, QMessageBox
 
 from .modes import Grayscale
 from .formats import Raw, NumPy, H5, DICOM, NIfTI, LoadError
