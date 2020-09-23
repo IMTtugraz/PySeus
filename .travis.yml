@@ -16,8 +16,8 @@ install:
   # Useful for debugging any issues with conda
   - conda info -a
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
+  - conda env update -q --name test-environment --file environment.yml
   - conda activate test-environment
-  - conda env update -q --file environment.yml
 
 script:
   - flake8 --exit-zero ./pyseus
