@@ -11,9 +11,9 @@ sphinx
 sphinx_rtd_theme
 
 # app
-PySide2==5.15
+PySide2
 numpy
-opencv-python
+opencv-python-headless
 h5py
 pydicom
 nibabel
