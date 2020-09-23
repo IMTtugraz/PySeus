@@ -13,7 +13,7 @@ sphinx_rtd_theme
 # app
 PySide2
 numpy
-opencv-python-headless
+opencv-python
 h5py
 pydicom
 nibabel

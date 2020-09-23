@@ -21,7 +21,7 @@ setup(
     install_requires=[
         'PySide2',
         'numpy',
-        'opencv-python-headless',
+        'opencv-python',
         'h5py',
         'pydicom',
         'nibabel',
