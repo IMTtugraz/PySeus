@@ -9,7 +9,7 @@ Classes
 import os
 import cv2
 
-from pySide2.QtGui import qApp
+from PySide2.QtGui import qApp
 from PySide2.QtCore import QTimer
 from PySide2.QtWidgets import QApplication, QMessageBox
 
