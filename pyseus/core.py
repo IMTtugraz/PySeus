@@ -9,6 +9,7 @@ Classes
 import os
 import cv2
 
+from pySide2.QtGui import qApp
 from PySide2.QtCore import QTimer
 from PySide2.QtWidgets import QApplication, QMessageBox
 
@@ -95,7 +96,6 @@ class PySeus():  # pylint: disable=R0902
 
     def load_file(self, path):
         """Try to load the file at *path*. See also *setup_dataset*."""
-
         new_dataset = None
         for format_ in self.formats:
             if format_.can_handle(path):
