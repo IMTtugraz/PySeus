@@ -9,7 +9,6 @@ Classes
 import os
 import cv2
 
-from PySide2.QtGui import qApp
 from PySide2.QtCore import QTimer
 from PySide2.QtWidgets import QApplication, QMessageBox
 
@@ -30,10 +29,11 @@ class PySeus():  # pylint: disable=R0902
         self.qt_app = None
         """The QApplication instance for interaction with the Qt framework."""
 
-        if isinstance(qApp, type(None)):
+        if isinstance(QApplication.instance(), type(None)):
             self.qt_app = QApplication([])
         else:
-            self.qt_app = qApp
+            self.qt_app = QApplication.instance()
+            
 
         self.formats = [H5, DICOM, NIfTI, NumPy, Raw]
         """List of all avaiable data formats.
