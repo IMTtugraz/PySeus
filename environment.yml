@@ -1,0 +1,15 @@
+channels:
+  - conda-forge
+
+dependencies:
+  - pytest
+  - mock
+  - PySide2
+  - numpy
+  - opencv
+  - h5py
+  - pydicom
+  - nibabel
+  - natsort
+  - flake8
+  - pylint

@@ -1,7 +1,7 @@
 Interface
 =========
 
-.. image:: ../_static/dicom_multi.png
+.. image:: ../_static/dicom_multi_showcase.png
    :width: 600
 
 **(1) Menu bar**: The menu bar at the top allows access to all functions. See 

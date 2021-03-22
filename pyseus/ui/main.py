@@ -204,7 +204,7 @@ class MainWindow(QMainWindow):  # pylint: disable=R0902
         self.view.zoom(1, False)
 
     def _action_about(self):  # pylint: disable=R0201
-        webbrowser.open_new("https://github.com/calmer/PySEUS")
+        webbrowser.open_new("https://github.com/IMTtugraz/PySeus")
 
     def _action_win_lower(self):
         self.app.mode.move_window(-20)

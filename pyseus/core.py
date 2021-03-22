@@ -96,7 +96,6 @@ class PySeus():  # pylint: disable=R0902
 
     def load_file(self, path):
         """Try to load the file at *path*. See also *setup_dataset*."""
-
         new_dataset = None
         for format_ in self.formats:
             if format_.can_handle(path):
@@ -111,7 +110,6 @@ class PySeus():  # pylint: disable=R0902
 
     def load_data(self, data):
         """Try to load *data*. See also *setup_dataset*."""
-
         new_dataset = Raw()
         self.setup_dataset(data, new_dataset)
 
