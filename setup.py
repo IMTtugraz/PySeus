@@ -15,6 +15,7 @@ setup(
     package_data={'pyseus': [
         'ui/style_dark.qss',
         'ui/icon.png',
+        'settings.ini'
     ]},
     include_package_data=True,
     install_requires=[
