@@ -11,7 +11,7 @@ sphinx
 sphinx_rtd_theme
 
 # app
-PySide2
+pyside2
 numpy
 opencv-python
 h5py
