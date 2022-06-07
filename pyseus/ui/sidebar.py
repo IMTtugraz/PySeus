@@ -26,7 +26,7 @@ class InfoWidget(QFrame):
         self.layout().setContentsMargins(0, 0, 0, 0)
 
         self.path = QLineEdit("")
-        self.scan = QLineEdit("")
+        self.scan = QLabel("")
         self.slice = QLabel("")
 
         info = QFrame()
@@ -92,11 +92,12 @@ class MetaWidget(QScrollArea):
 
         if data is not None and data:
             for key in sorted(data.keys()):
-                value = QLineEdit(str(data[key]))
+                value = QLabel(str(data[key]))
                 self.table.addRow(key, value)
 
         if more:
             more_label = QLabel("more ...")
+            more_label.setStyleSheet(" text-decoration: underline")
             more_label.mouseReleaseEvent = self._show_more
             self.table.addRow(more_label, None)
         elif data is None or not data:
