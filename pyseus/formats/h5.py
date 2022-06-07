@@ -10,7 +10,6 @@ Classes
 import os
 import numpy
 from ..settings import DataType
-from enum import IntEnum
 
 import h5py
 

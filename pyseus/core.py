@@ -8,9 +8,6 @@ Classes
 
 import os
 import cv2
-import numpy
-from enum import IntEnum
-
 
 from PySide2.QtCore import QTimer
 from PySide2.QtWidgets import QApplication, QMessageBox

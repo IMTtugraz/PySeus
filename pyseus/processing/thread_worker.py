@@ -1,4 +1,4 @@
-from PySide2.QtCore import QThread, Signal, QObject
+from PySide2.QtCore import Signal, QObject
 import numpy
 from pyseus.processing.tv_denoising import TV_Denoise
 from pyseus.processing.tgv_denoising import TGV_Denoise

@@ -8,7 +8,6 @@ Classes
 """
 
 import numpy
-from enum import IntEnum
 
 from ..settings import DataType
 

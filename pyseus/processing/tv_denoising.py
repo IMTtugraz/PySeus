@@ -1,5 +1,3 @@
-from re import U
-import matplotlib.pyplot as plt
 import numpy as np
 import scipy
 import scipy.sparse as sp

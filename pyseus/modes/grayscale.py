@@ -10,7 +10,6 @@ from functools import partial
 
 import numpy
 
-from enum import IntEnum
 from ..settings import settings, DataType
 from .base import BaseMode
 

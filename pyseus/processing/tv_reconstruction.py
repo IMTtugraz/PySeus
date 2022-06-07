@@ -1,7 +1,6 @@
 import numpy as np
 import scipy
 import scipy.sparse as sp
-import scipy.sparse.linalg as la
 
 from ..settings import ProcessSelDataType
 

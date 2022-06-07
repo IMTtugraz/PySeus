@@ -12,19 +12,13 @@ from functools import partial
 import os
 import numpy
 
-from PySide2 import QtWidgets
-from PySide2.QtCore import QLine
-from PySide2.QtWidgets import QButtonGroup, QDialog, QDialogButtonBox, QFormLayout, QLineEdit, QMainWindow, QAction, QLabel, QFileDialog, \
-    QFrame, QPushButton, QRadioButton, QVBoxLayout, QHBoxLayout, QWidget
+from PySide2.QtWidgets import  QMainWindow, QAction, QLabel, QFileDialog, QFrame, QVBoxLayout, QHBoxLayout
 from PySide2.QtGui import QIcon
 
 from .view import ViewWidget
 from .sidebar import ConsoleWidget, InfoWidget, MetaWidget
 from .thumbs import ThumbsWidget
 from ..settings import DataType, ProcessType
-
-import scipy.io
-import matplotlib.pyplot as plt
 
 
 class MainWindow(QMainWindow):  # pylint: disable=R0902
