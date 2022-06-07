@@ -50,7 +50,7 @@ class BaseFormat():
 
         Custom formats have to override this function."""
 
-    def load(self, path, data_type):
+    def load(self, path, data_type=None):
         """Attempt to load the file at *path*. Return True on success or
         throw an exception."""
 

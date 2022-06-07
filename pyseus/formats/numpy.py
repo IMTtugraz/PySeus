@@ -31,7 +31,7 @@ class NumPy(BaseFormat):
         _, ext = os.path.splitext(path)
         return ext.lower() in NumPy.EXTENSIONS
 
-    def load(self, path, data_type):
+    def load(self, path, data_type=None):
         try:
             data = numpy.load(path, None, False)
         except Exception:

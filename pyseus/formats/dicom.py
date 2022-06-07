@@ -46,7 +46,7 @@ class DICOM(BaseFormat):
         _, ext = os.path.splitext(path)
         return ext.lower() in cls.EXTENSIONS
 
-    def load(self, path, data_type):
+    def load(self, path, data_type=None):
         if not os.path.isfile(path):
             raise LoadError("File not found.")
 
