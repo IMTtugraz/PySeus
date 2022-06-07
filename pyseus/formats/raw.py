@@ -30,7 +30,7 @@ class Raw(BaseFormat):
     def can_handle(cls, path):
         return False
 
-    def load(self, data):  # pylint: disable=W0221
+    def load(self, data, data_type):  # pylint: disable=W0221
         self.data = numpy.asarray(data)
         valid = isinstance(self.data, numpy.ndarray) and \
             numpy.issubdtype(self.data.dtype, numpy.number)

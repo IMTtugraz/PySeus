@@ -38,7 +38,7 @@ class NIfTI(BaseFormat):
         _, ext = os.path.splitext(path)
         return ext.lower() in NIfTI.EXTENSIONS
 
-    def load(self, path):
+    def load(self, path, data_type):
         if not os.path.isfile(path):
             raise LoadError("File not found.")
 
