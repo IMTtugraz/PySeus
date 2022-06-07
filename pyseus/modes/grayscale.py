@@ -15,15 +15,18 @@ from ..settings import settings, DataType
 from .base import BaseMode
 
 
-# M: This class just adjusts the value border for graphical representation, no gui things themselves
+# M: This class just adjusts the value border for graphical
+# representation, no gui things themselves
 class Grayscale(BaseMode):
     """Display class for grayscale images with simple windowing."""
 
     @classmethod
     def setup_menu(cls, app, menu, ami):
-        ami(menu, "&Gray - Amplitude - Image", partial(cls.start, app, DataType.IMAGE))
+        ami(menu, "&Gray - Amplitude - Image",
+            partial(cls.start, app, DataType.IMAGE))
         ami(menu, "&Gray - Phase", partial(cls.start, app, DataType.PHASE))
-        ami(menu, "&Gray - Amplitude - Root(k-space)", partial(cls.start, app, DataType.KSPACE))
+        ami(menu, "&Gray - Amplitude - Root(k-space)",
+            partial(cls.start, app, DataType.KSPACE))
 
     @classmethod
     def start(cls, app, src):  # pylint: disable=W0221
@@ -53,14 +56,15 @@ class Grayscale(BaseMode):
         elif self.source == DataType.IMAGE:
             data = numpy.absolute(data).astype(float)
         elif self.source == DataType.KSPACE:
-            data = ((numpy.absolute(numpy.fft.fftshift(data)))**self.exp_kspace).astype(float)
-        
+            data = ((numpy.absolute(numpy.fft.fftshift(data)))
+                    ** self.exp_kspace).astype(float)
+
         return data
 
     def apply_window(self, data):
         if self.source == DataType.PHASE:
             data += numpy.pi  # align -pi to 0
-            data *= 255 / (2*numpy.pi)  # scale pi to 255
+            data *= 255 / (2 * numpy.pi)  # scale pi to 255
 
         elif self.source == DataType.IMAGE or self.source == DataType.KSPACE:
             data -= self.black  # align black to 0

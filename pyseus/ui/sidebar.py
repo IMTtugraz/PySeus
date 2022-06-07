@@ -47,7 +47,7 @@ class InfoWidget(QFrame):
 
     def update_slice(self, current, slices):
         """Update the displayed slice index."""
-        self.slice.setText("{} / {}".format(current+1, slices))
+        self.slice.setText("{} / {}".format(current + 1, slices))
 
     def update_scan(self, scan):
         """Update the displayed scan ID."""

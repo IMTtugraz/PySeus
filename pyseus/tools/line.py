@@ -60,12 +60,12 @@ class LineTool(BaseTool):
 
     def recalculate(self, data):
         result = []
-        width = self.line[2]-self.line[0]
-        height = self.line[3]-self.line[1]
+        width = self.line[2] - self.line[0]
+        height = self.line[3] - self.line[1]
         distance = sqrt(width**2 + height**2)
-        for i in range(0, int(distance*100)):
-            x_coord = round(self.line[0] + (width)*i / int(distance*100))
-            y_coord = round(self.line[1] + (height)*i / int(distance*100))
+        for i in range(0, int(distance * 100)):
+            x_coord = round(self.line[0] + (width) * i / int(distance * 100))
+            y_coord = round(self.line[1] + (height) * i / int(distance * 100))
             result.append(data[y_coord][x_coord])
 
         axes = [self.app.dataset.get_scale(),
@@ -113,10 +113,10 @@ class LineToolWindow(QDialog):  # pylint: disable=R0903
         real_x = QtCharts.QValueAxis()
         if axes[0] == 0.0:
             real_x.setTitleText("[x] = px")
-            real_x_max = int(x_axis[0].max()/100)
+            real_x_max = int(x_axis[0].max() / 100)
         else:
             real_x.setTitleText("[x] = mm")
-            real_x_max = int(x_axis[0].max()/100) * axes[0]
+            real_x_max = int(x_axis[0].max() / 100) * axes[0]
         real_x.setRange(x_axis[0].min(), real_x_max)
         self.view.chart().addAxis(real_x, Qt.AlignBottom)
 

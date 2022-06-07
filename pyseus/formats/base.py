@@ -13,7 +13,6 @@ from enum import IntEnum
 from ..settings import DataType
 
 
-
 class BaseFormat():
     """Defines the interface for format classes."""
 
@@ -85,22 +84,22 @@ class BaseFormat():
 
     def get_reco_pixeldata(self, scan):
         """Returns the 4D pixeldata from all coils (4.dim) of the current (in case there is a 5. dim) Scan  """
-        
+
         return []
 
     def set_pixeldata(self, dataset, slice_id):
         """Sets pixeldata after denoising, if changes are confirmed."""
 
-        if isinstance(dataset,numpy.ndarray):
+        if isinstance(dataset, numpy.ndarray):
             if dataset.ndim == 2 and slice_id != -1:  # single slice
-                self.pixeldata[slice_id,:,:] = dataset
+                self.pixeldata[slice_id, :, :] = dataset
 
             if dataset.ndim == 3 and slice_id == -1:  # multiple slices
                 self.pixeldata = dataset
 
     def get_coil_data(self, slice_):
         """Return the coil sensitivities data that was selected with the kspace data together"""
-        
+
         return []
 
     def get_scan_metadata(self, scan):  # pylint: disable=R0201,W0613
@@ -164,8 +163,8 @@ class BaseFormat():
         data = self.get_pixeldata(slice_)
         data_min = numpy.min(data)
         data_max = numpy.max(data)
-        
-        return (data_min,data_max)
+
+        return (data_min, data_max)
 
     def get_spacing(self, reset=False):  # pylint: disable=R0201
         """Return the pixel spacing, if available.

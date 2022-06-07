@@ -63,11 +63,11 @@ class ViewWidget(QScrollArea):
         self.image.resize(self.zoom_factor * self.image.pixmap().size())
 
         v_scroll = int(factor * self.verticalScrollBar().value() +
-                       ((factor-1) * self.verticalScrollBar().pageStep()/2))
+                       ((factor - 1) * self.verticalScrollBar().pageStep() / 2))
         self.verticalScrollBar().setValue(v_scroll)
 
         h_scroll = int(factor * self.horizontalScrollBar().value() +
-                       ((factor-1) * self.horizontalScrollBar().pageStep()/2))
+                       ((factor - 1) * self.horizontalScrollBar().pageStep() / 2))
         self.horizontalScrollBar().setValue(h_scroll)
 
     def zoom_fit(self):
@@ -81,7 +81,7 @@ class ViewWidget(QScrollArea):
 
         v_zoom = viewport.height() / image.height()
         h_zoom = viewport.width() / image.width()
-        self.zoom(min(v_zoom, h_zoom)*0.99, False)
+        self.zoom(min(v_zoom, h_zoom) * 0.99, False)
 
     def mousePressEvent(self, event):  # pylint: disable=C0103
         """Handle pan and window functionality on mouse button down."""

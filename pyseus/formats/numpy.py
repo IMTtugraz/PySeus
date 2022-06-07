@@ -47,15 +47,15 @@ class NumPy(BaseFormat):
             self.scans = [0]
 
         elif data.ndim == 4:
-            self.scans = list(range(0, len(data)-1))
+            self.scans = list(range(0, len(data) - 1))
 
         elif data.ndim == 5:
             message = ("The selected dataset ist 5-dimensional. "
                        "The first two dimensions will be concatenated.")
             QMessageBox.warning(None, "Pyseus", message)
-            scan_count = data.shape[0]*data.shape[1]
+            scan_count = data.shape[0] * data.shape[1]
 
-            self.scans = list(range(0, scan_count-1))
+            self.scans = list(range(0, scan_count - 1))
 
         self.scan = 0
         return True
