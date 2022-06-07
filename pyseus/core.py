@@ -8,6 +8,9 @@ Classes
 
 import os
 import cv2
+import numpy
+from enum import IntEnum
+
 
 from PySide2.QtCore import QTimer
 from PySide2.QtWidgets import QApplication, QMessageBox
@@ -18,14 +21,16 @@ from .settings import settings
 from .tools import AreaTool, LineTool
 from .ui import MainWindow
 from .ui.meta import MetaWindow
-
+from .ui.process import ProcessDialog
+from .settings import DataType
 
 class PySeus():  # pylint: disable=R0902
+
     """The main application class acts as front controller."""
 
+    
     def __init__(self, gui=True):
-        # set gui = false for testing
-
+        
         self.qt_app = None
         """The QApplication instance for interaction with the Qt framework."""
 
@@ -51,6 +56,10 @@ class PySeus():  # pylint: disable=R0902
         """The current dataset object.
         See `Formats <formats.html>`_."""
 
+        self.dataset_processed = None
+        """The temporary processed dataset.
+        """
+
         self.mode = Grayscale()
         """The display mode object.
         See `Display <modes.html>`_."""
@@ -65,6 +74,14 @@ class PySeus():  # pylint: disable=R0902
 
         self.meta_window = None
         """Holds the meta window object."""
+
+        self.process_window = None
+        """Holds the process diaglog object for denoising and reconstruction."""
+
+        self.data_type = DataType.IMAGE
+        """"IMAGE" or "KSPACE" Enum of data which is loaded from the file,
+        influences GUI representation of data and file load
+        dialogues"""
 
         self.slice = -1
         """Index of the current slice."""
@@ -94,8 +111,11 @@ class PySeus():  # pylint: disable=R0902
 
         self.qt_app.exec_()
 
-    def load_file(self, path):
+    def load_file(self, path, data_type=DataType.IMAGE):
         """Try to load the file at *path*. See also *setup_dataset*."""
+        self.data_type = data_type
+        self.mode.set_source(self.data_type)
+        
         new_dataset = None
         for format_ in self.formats:
             if format_.can_handle(path):
@@ -108,19 +128,22 @@ class PySeus():  # pylint: disable=R0902
         else:
             QMessageBox.warning(self.window, "Pyseus", "Unknown file format.")
 
-    def load_data(self, data):
+    def load_data(self, data, data_type=DataType.IMAGE):
         """Try to load *data*. See also *setup_dataset*."""
+        self.data_type = data_type
+        self.mode.set_source(self.data_type)
+
         new_dataset = Raw()
         self.setup_dataset(data, new_dataset)
-
+    
     def setup_dataset(self, arg, dataset=None):
         """Setup a new dataset: Load scan list, generate thumbnails and load
         default scan."""
         if dataset is None:
             dataset = self.dataset
-
+        
         try:
-            if not dataset.load(arg):  # canceled by user
+            if not dataset.load(arg,self.data_type):  # canceled by user
                 return
 
             self.clear()
@@ -159,9 +182,7 @@ class PySeus():  # pylint: disable=R0902
         """Refresh the displayed image."""
         if self.slice == -1:
             return
-
         data = self.dataset.get_pixeldata(self.slice)
-
         # @TODO move to FormatBase (get_pixeldata_adjusted)
         spacing = self.dataset.get_spacing()
         if spacing[0] != spacing[1]:
@@ -171,7 +192,6 @@ class PySeus():  # pylint: disable=R0902
             else:
                 size = (int(data.shape[0]),
                         int(data.shape[1]*spacing[1]/spacing[0]))
-
             data = cv2.resize(data, size)
 
         pixmap = self.mode.get_pixmap(data)
@@ -241,11 +261,38 @@ class PySeus():  # pylint: disable=R0902
         self.window.info.update_slice(sid, self.dataset.slice_count())
         self.slice = sid
 
+    def get_slice_id(self):
+        return self.slice
+
     def show_metadata_window(self):
         """Show the metadata window.
         See `Interface <interface.html>`_."""
         self.meta_window = MetaWindow(self, self.dataset.get_metadata())
         self.meta_window.show()
+
+    def show_process_window(self, proc_type):
+        """Show the process window."""
+        self.process_window = ProcessDialog(self, proc_type)
+        self.process_window.show()
+
+    def set_processed_dataset(self,dataset):
+        """Save processed data in Dataset after confirmation in ProcessDialog."""
+
+        if self.data_type == DataType.IMAGE:
+
+
+            self.load_data(dataset, DataType.IMAGE)
+
+
+        elif self.data_type == DataType.KSPACE:
+            
+            self.load_data(dataset, DataType.IMAGE)
+
+        
+        self.refresh()
+        self.window.view.zoom_fit()
+
+
 
     def clear(self):
         """Reset the application."""
@@ -287,3 +334,5 @@ class PySeus():  # pylint: disable=R0902
 
     def _cine_next(self):
         self.select_scan(1, True)
+
+

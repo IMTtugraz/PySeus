@@ -8,6 +8,10 @@ Classes
 """
 
 import numpy
+from enum import IntEnum
+
+from ..settings import DataType
+
 
 
 class BaseFormat():
@@ -29,11 +33,17 @@ class BaseFormat():
         self.pixeldata = [[[]]]
         """3D array of the pixeldata of the current scan."""
 
+        self.coildata = [[[]]]
+        """4D array of the coil sensitivities data for the whole sample"""
+
         self.meta_keymap = {}
         """Maps common metadata keys to format specific keys."""
 
         self.pixel_spacing = []
         """The pixel spacing metadata adjusted for rotation."""
+
+        self.data_type = DataType.IMAGE
+        """Choose between "IMAGE" and "KSPACE" enum data type"""
 
     @classmethod
     def can_handle(cls, path):
@@ -42,7 +52,7 @@ class BaseFormat():
 
         Custom formats have to override this function."""
 
-    def load(self, path):
+    def load(self, path, data_type):
         """Attempt to load the file at *path*. Return True on success or
         throw an exception."""
 
@@ -71,6 +81,26 @@ class BaseFormat():
         *get_scan_metadata* or reimplement *load_scan*.
         """
 
+        return []
+
+    def get_reco_pixeldata(self, scan):
+        """Returns the 4D pixeldata from all coils (4.dim) of the current (in case there is a 5. dim) Scan  """
+        
+        return []
+
+    def set_pixeldata(self, dataset, slice_id):
+        """Sets pixeldata after denoising, if changes are confirmed."""
+
+        if isinstance(dataset,numpy.ndarray):
+            if dataset.ndim == 2 and slice_id != -1:  # single slice
+                self.pixeldata[slice_id,:,:] = dataset
+
+            if dataset.ndim == 3 and slice_id == -1:  # multiple slices
+                self.pixeldata = dataset
+
+    def get_coil_data(self, slice_):
+        """Return the coil sensitivities data that was selected with the kspace data together"""
+        
         return []
 
     def get_scan_metadata(self, scan):  # pylint: disable=R0201,W0613
@@ -128,6 +158,14 @@ class BaseFormat():
             return self.pixeldata.copy()
 
         return self.pixeldata[slice_].copy()
+
+    def get_minmax_pixeldata(self, slice_):
+
+        data = self.get_pixeldata(slice_)
+        data_min = numpy.min(data)
+        data_max = numpy.max(data)
+        
+        return (data_min,data_max)
 
     def get_spacing(self, reset=False):  # pylint: disable=R0201
         """Return the pixel spacing, if available.
@@ -202,6 +240,9 @@ class BaseFormat():
     def slice_count(self):
         """Return the number of slices in the current scan."""
         return len(self.pixeldata)
+
+    def get_data_type(self):
+        return self.data_type
 
 
 class LoadError(Exception):
