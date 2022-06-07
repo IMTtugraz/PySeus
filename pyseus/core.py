@@ -22,7 +22,7 @@ from .ui.process import ProcessDialog
 from .settings import DataType
 
 
-class PySeus():  # pylint: disable=R0902
+class PySeus():
 
     """The main application class acts as front controller."""
 

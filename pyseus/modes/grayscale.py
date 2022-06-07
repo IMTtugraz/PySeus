@@ -28,7 +28,7 @@ class Grayscale(BaseMode):
             partial(cls.start, app, DataType.KSPACE))
 
     @classmethod
-    def start(cls, app, src):  # pylint: disable=W0221
+    def start(cls, app, src):
         if not isinstance(app.mode, cls):
             app.mode = cls()
         app.mode.set_source(src)

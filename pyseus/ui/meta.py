@@ -15,7 +15,7 @@ from PySide2.QtGui import QIcon
 from .sidebar import MetaWidget
 
 
-class MetaWindow(QDialog):  # pylint: disable=R0903
+class MetaWindow(QDialog):
     """Window for displaying metadata."""
 
     def __init__(self, app, data):

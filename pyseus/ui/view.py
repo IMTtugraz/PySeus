@@ -83,7 +83,7 @@ class ViewWidget(QScrollArea):
         h_zoom = viewport.width() / image.width()
         self.zoom(min(v_zoom, h_zoom) * 0.99, False)
 
-    def mousePressEvent(self, event):  # pylint: disable=C0103
+    def mousePressEvent(self, event):
         """Handle pan and window functionality on mouse button down."""
 
         if event.buttons() == Qt.LeftButton \
@@ -95,7 +95,7 @@ class ViewWidget(QScrollArea):
 
         self.last_position = event.screenPos()
 
-    def mouseReleaseEvent(self, event):  # pylint: disable=C0103,W0613
+    def mouseReleaseEvent(self, event):
         """Handle RoI functionality on mouse button up."""
 
         if self.mouse_action == "ROI":
@@ -104,7 +104,7 @@ class ViewWidget(QScrollArea):
         self.last_position = None
         self.mouse_action = 0
 
-    def mouseMoveEvent(self, event):  # pylint: disable=C0103
+    def mouseMoveEvent(self, event):
         """Handle pan, window and RoI functionality on mouse move."""
 
         self.app.window.show_status("")
@@ -136,7 +136,7 @@ class ViewWidget(QScrollArea):
                                       int(y_pos / self.zoom_factor))
             self.app.refresh()
 
-    def mousePressEvent_over_image(self, event):  # pylint: disable=C0103
+    def mousePressEvent_over_image(self, event):
         """Handle RoI functionality on mouse button down over the image.
         Hands off contorl to *mousePressEvent* when appropriate."""
         if event.buttons() == Qt.LeftButton \
@@ -153,7 +153,7 @@ class ViewWidget(QScrollArea):
         else:
             self.mousePressEvent(event)
 
-    def mouseMoveEvent_over_image(self, event):  # pylint: disable=C0103
+    def mouseMoveEvent_over_image(self, event):
         """Handle value display functionality on mouse move over the image.
         Call *mouseMoveEvent* for pan, window and RoI functionality."""
 
@@ -170,13 +170,13 @@ class ViewWidget(QScrollArea):
             self.app.window.show_status("{} x {}  -  {:.4g}"
                                         .format(x_coord, y_coord, value))
 
-    def mouseReleaseEvent_over_image(self, event):  # pylint: disable=C0103
+    def mouseReleaseEvent_over_image(self, event):
         """Call *mouseReleaseEvent* on mouse button up for RoI
         functionality."""
 
         self.mouseReleaseEvent(event)
 
-    def wheelEvent(self, event):  # pylint: disable=C0103
+    def wheelEvent(self, event):
         """Handle scroll wheel events in the viewport.
         Scroll - Change current slice up or down.
         Alt+Scroll - Change current scan up or down.

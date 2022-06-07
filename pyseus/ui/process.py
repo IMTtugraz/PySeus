@@ -1,5 +1,5 @@
-from PySide2.QtWidgets import QBoxLayout, QButtonGroup, QCheckBox, QDesktopWidget, QDialog, QDialogButtonBox, QFormLayout, QGroupBox, QLayout, QLineEdit, QMainWindow, QAction, QLabel, QFileDialog, \
-    QFrame, QPushButton, QRadioButton, QScrollArea, QSizePolicy, QVBoxLayout, QHBoxLayout, QWidget, QGridLayout
+from PySide2.QtWidgets import QButtonGroup, QDesktopWidget, QDialog, QDialogButtonBox, \
+    QFormLayout, QGroupBox, QLineEdit, QLabel, QRadioButton, QScrollArea, QVBoxLayout, QGridLayout
 
 from pyseus.processing.tv_reconstruction import TV_Reco
 
@@ -392,7 +392,7 @@ class ProcessedWindow(QDialog):
 
         self.app.set_processed_dataset(self.processed)
 
-    def resizeEvent(self, event):  # pylint: disable=C0103
+    def resizeEvent(self, event):
         """Keep the viewport centered and adjust zoom on window resize."""
         x_factor = event.size().width() / event.oldSize().width()
         # y_factor = event.size().height() / event.oldSize().height()
@@ -469,7 +469,7 @@ class ProcessedViewWidget(QScrollArea):
         h_zoom = viewport.width() / image.width()
         self.zoom(min(v_zoom, h_zoom) * 0.99, False)
 
-    def wheelEvent(self, event):  # pylint: disable=C0103
+    def wheelEvent(self, event):
         """Handle scroll wheel events in the viewport.
         Scroll - Change current slice up or down."""
 

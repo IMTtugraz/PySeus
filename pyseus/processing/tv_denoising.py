@@ -4,8 +4,6 @@ import scipy.sparse as sp
 
 from ..settings import ProcessSelDataType
 
-from memory_profiler import profile
-
 
 class TV_Denoise():
 
@@ -274,7 +272,6 @@ class TV_Denoise():
 
         return u_new
 
-    @profile
     def tv_denoising_L2(self, img_noisy, lambd, iterations):
 
         # Parameters

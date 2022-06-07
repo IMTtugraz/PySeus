@@ -3,11 +3,10 @@
 import numpy
 import pytest
 
-from context import pyseus  # noqa F401  # pylint: disable=W0611
 from pyseus import formats
 
 
-dataset = formats.H5()  # pylint: disable=C0103
+dataset = formats.H5()
 
 
 def test_h5_load():

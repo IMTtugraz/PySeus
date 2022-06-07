@@ -21,7 +21,7 @@ from .thumbs import ThumbsWidget
 from ..settings import DataType, ProcessType
 
 
-class MainWindow(QMainWindow):  # pylint: disable=R0902
+class MainWindow(QMainWindow):
     """Class representing the main window for PySeus."""
 
     def __init__(self, app):
@@ -182,7 +182,7 @@ class MainWindow(QMainWindow):  # pylint: disable=R0902
         """Display *message* in the status bar."""
         self.statusBar().showMessage(message)
 
-    def resizeEvent(self, event):  # pylint: disable=C0103
+    def resizeEvent(self, event):
         """Keep the viewport centered and adjust zoom on window resize."""
         x_factor = event.size().width() / event.oldSize().width()
         # y_factor = event.size().height() / event.oldSize().height()
@@ -230,7 +230,7 @@ class MainWindow(QMainWindow):  # pylint: disable=R0902
     def _action_zoom_reset(self):
         self.view.zoom(1, False)
 
-    def _action_about(self):  # pylint: disable=R0201
+    def _action_about(self):
         webbrowser.open_new("https://github.com/IMTtugraz/PySeus")
 
     def _action_win_lower(self):
@@ -275,7 +275,7 @@ class MainWindow(QMainWindow):  # pylint: disable=R0902
         self.app.show_process_window(proc_type)
 
 
-class SidebarHeading(QLabel):  # pylint: disable=R0903
+class SidebarHeading(QLabel):
     """Widget for sidebar separators and headings."""
 
     def __init__(self, text="", first=False):

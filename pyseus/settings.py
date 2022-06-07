@@ -4,7 +4,7 @@ import os
 from configparser import ConfigParser
 from enum import IntEnum
 
-settings = ConfigParser()  # pylint: disable=C0103
+settings = ConfigParser()
 settings.read(os.path.abspath(os.path.join(
     os.path.dirname(__file__), "./settings.ini")))
 

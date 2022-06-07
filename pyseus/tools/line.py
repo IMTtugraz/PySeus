@@ -76,7 +76,7 @@ class LineTool(BaseTool):
         self.window.show()
 
 
-class LineToolWindow(QDialog):  # pylint: disable=R0903
+class LineToolWindow(QDialog):
     """Dispalys LineTool results in a chart window."""
 
     def __init__(self):

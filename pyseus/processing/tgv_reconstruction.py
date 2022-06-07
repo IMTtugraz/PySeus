@@ -4,8 +4,6 @@ import scipy.sparse as sp
 
 from ..settings import ProcessSelDataType
 
-from memory_profiler import profile
-
 
 class TGV_Reco():
 
@@ -149,7 +147,6 @@ class TGV_Reco():
             raise TypeError(
                 "Dataset must be either 2D or 3D and matching the correct dataset type")
 
-    @profile
     def tgv2_reconstruction(
             self,
             img_kspace,

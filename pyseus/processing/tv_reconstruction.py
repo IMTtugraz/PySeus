@@ -4,8 +4,6 @@ import scipy.sparse as sp
 
 from ..settings import ProcessSelDataType
 
-from memory_profiler import profile
-
 
 class TV_Reco():
 
@@ -141,7 +139,6 @@ class TV_Reco():
             raise TypeError(
                 "Dataset must be either 2D or 3D and matching the correct dataset type")
 
-    @profile
     def tv_l2_reconstruction(
             self,
             img_kspace,

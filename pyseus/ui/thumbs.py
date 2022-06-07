@@ -61,11 +61,11 @@ class ThumbsWidget(QScrollArea):
             thumb.deleteLater()
         self.thumbs = []
 
-    def _thumb_clicked(self, thumb, event):  # pylint: disable=W0613
+    def _thumb_clicked(self, thumb, event):
         """Trigger *app.select_scan* when a thumbnail is clicked."""
         self.app.select_scan(thumb)
 
-    def minimumSizeHint(self):  # pylint: disable=C0103
+    def minimumSizeHint(self):
         """Return widget size; width should be *thumb_size + scrollbar_width*
         or 0 if there are no thumbnails."""
         if self.thumbs:

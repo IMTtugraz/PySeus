@@ -72,7 +72,7 @@ class BaseFormat():
         else:
             return True
 
-    def get_scan_pixeldata(self, scan):  # pylint: disable=R0201,W0613
+    def get_scan_pixeldata(self, scan):
         """Collect and return the pixeldata from the scan *scan*.
 
         Custom formats have to override either this function and
@@ -101,7 +101,7 @@ class BaseFormat():
 
         return []
 
-    def get_scan_metadata(self, scan):  # pylint: disable=R0201,W0613
+    def get_scan_metadata(self, scan):
         """Collect and return the metadata from the scan *scan*.
 
         Custom formats have to override either this function and
@@ -165,7 +165,7 @@ class BaseFormat():
 
         return (data_min, data_max)
 
-    def get_spacing(self, reset=False):  # pylint: disable=R0201
+    def get_spacing(self, reset=False):
         """Return the pixel spacing, if available.
 
         This is used for calculation of the pixel aspect ratio; the value
@@ -175,15 +175,15 @@ class BaseFormat():
 
         return self.pixel_spacing
 
-    def get_scale(self):  # pylint: disable=R0201
+    def get_scale(self):
         """Return the actual size of a pixel in mm, if available."""
         return 0.0
 
-    def get_units(self):  # pylint: disable=R0201
+    def get_units(self):
         """Return units associated with the loaded values, if available."""
         return "1"
 
-    def get_orientation(self):  # pylint: disable=R0201
+    def get_orientation(self):
         """Return the default image orientation, if available."""
         return []
 

@@ -327,7 +327,7 @@ class H5(BaseFormat):
         return []
 
 
-class H5Explorer(QDialog):  # pylint: disable=R0903
+class H5Explorer(QDialog):
     """Dialog for selecting a dataset in an H5 file."""
 
     def __init__(self, items, title):

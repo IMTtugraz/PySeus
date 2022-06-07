@@ -4,8 +4,6 @@ import scipy.sparse as sp
 
 from ..settings import ProcessSelDataType
 
-from memory_profiler import profile
-
 
 class TGV_Denoise():
 
@@ -124,7 +122,6 @@ class TGV_Denoise():
             raise TypeError(
                 "Dataset must be either 2D or 3D and matching the correct dataset type")
 
-    @profile
     def tgv2_denoising(self, img_noisy, lambd, alpha0, alpha1, iterations):
 
         # Parameters
