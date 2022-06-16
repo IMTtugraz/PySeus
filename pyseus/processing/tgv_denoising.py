@@ -1,3 +1,12 @@
+"""Implementation of TGV denoising algorithms.
+
+Classes
+-------
+
+**MainWindow** - Class containing the TGV denoising function.
+"""
+
+
 import numpy as np
 import scipy
 import scipy.sparse as sp
@@ -6,7 +15,7 @@ from ..settings import ProcessSelDataType
 
 
 class TGV_Denoise():
-
+    """Class containing the TGV denoising function."""
     def __init__(self):
 
         self.h_inv = 1.0
@@ -15,6 +24,7 @@ class TGV_Denoise():
         self.tau_init = 10
 
     def _make_nabla(self, L, M, N):
+        """Generate nabla operator for the usage within the K operator."""
         row = np.arange(0, L * M * N)
         dat = np.ones(L * M * N)
         col = np.arange(0, M * N * L).reshape(L, M, N)
@@ -56,6 +66,7 @@ class TGV_Denoise():
         return nabla, nabla_x, nabla_y, nabla_z
 
     def make_K(self, L, M, N):
+        """Generate K operator for TGV (12 variables)."""
 
         nabla, nabla_x, nabla_y, nabla_z = self._make_nabla(L, M, N)
         neg_I = sp.identity(L * M * N) * -1
@@ -79,12 +90,14 @@ class TGV_Denoise():
         return K
 
     def prox_G(self, u, f, tau, lambd):
+        """Proximity operator for L2-dataterm on primal variable."""
 
         prox = (f * tau * lambd + u) / (1 + tau * lambd)
 
         return prox
 
     def proj_ball(self, Y, alpha):
+        """Projection operator for norm balls."""
 
         norm = np.linalg.norm(Y, axis=0)
         projection = Y / np.maximum(1, norm / alpha)
@@ -92,6 +105,8 @@ class TGV_Denoise():
         return projection
 
     def tgv2_denoising_gen(self, dataset_type, dataset_noisy, params, spac):
+        """General method for TGV denoising which calls the algorithm according to the
+        selected data type."""
 
         self.h_inv = spac[0]
         self.hz_inv = spac[1]
@@ -123,6 +138,8 @@ class TGV_Denoise():
                 "Dataset must be either 2D or 3D and matching the correct dataset type")
 
     def tgv2_denoising(self, img_noisy, lambd, alpha0, alpha1, iterations):
+        """Specific TGV-L2 denoising method implemented via primal-dual algorithm from Chambolle-Pock and
+        line search to find appropriate stepsize."""
 
         # Parameters
         beta = 1

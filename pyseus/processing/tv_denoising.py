@@ -1,3 +1,11 @@
+"""Implementation of TV denoising algorithms.
+
+Classes
+-------
+
+**MainWindow** - Class containing the TV denoising function.
+"""
+
 import numpy as np
 import scipy
 import scipy.sparse as sp
@@ -6,6 +14,7 @@ from ..settings import ProcessSelDataType
 
 
 class TV_Denoise():
+    """Class containing the TV denoising function."""
 
     def __init__(self):
 
@@ -15,6 +24,7 @@ class TV_Denoise():
         self.tau_init = 10
 
     def _make_nabla(self, L, M, N):
+        """Generate nabla operator for the usage within the K operator."""
         row = np.arange(0, L * M * N)
         dat = np.ones(L * M * N)
         col = np.arange(0, M * N * L).reshape(L, M, N)
@@ -56,6 +66,7 @@ class TV_Denoise():
         return nabla, nabla_x, nabla_y, nabla_z
 
     def make_K(self, L, M, N):
+        """Generate K operator for TV (3 variables)."""
 
         nabla, nabla_x, nabla_y, nabla_z = self._make_nabla(L, M, N)
 
@@ -64,6 +75,7 @@ class TV_Denoise():
         return K
 
     def prox_G_L1(self, u, u_0, tau, lambd):
+        """Proximity operator for L1-dataterm on primal variable."""
 
         prox = (u - tau * lambd) * (u - u_0 > tau * lambd) + (u + tau * lambd) * \
             (u - u_0 < -tau * lambd) + (u_0) * (abs(u - u_0) <= tau * lambd)
@@ -71,12 +83,14 @@ class TV_Denoise():
         return prox
 
     def prox_G_L2(self, u, u_0, tau, lambd):
+        """Proximity operator for L2-dataterm on primal variable."""
 
         prox = (u + tau * lambd * u_0) / (1 + tau * lambd)
 
         return prox
 
     def proj_ball(self, Y):
+        """Projection operator for norm balls."""
 
         norm = np.linalg.norm(Y, axis=0)
         projection = Y / np.maximum(1, norm)
@@ -90,6 +104,8 @@ class TV_Denoise():
             dataset_noisy,
             params,
             spac):
+        """General method for TV denoising which calls the algorithm according to the
+        selected data type."""
 
         self.h_inv = spac[0]
         self.hz_inv = spac[1]
@@ -129,6 +145,8 @@ class TV_Denoise():
                 "Dataset must be either 2D or 3D and matching the correct dataset type")
 
     def tv_denoising_L1(self, img_noisy, lambd, iterations):
+        """Specific TV-L1 denoising method implemented via primal-dual algorithm from Chambolle-Pock and
+        line search to find appropriate stepsize."""
 
         # star argument to take really the value of the variable as argument
         # if 2dim noisy data make it a 3D array, if 3D just let it be
@@ -202,6 +220,8 @@ class TV_Denoise():
         return u_new
 
     def tv_denoising_huberROF(self, img_noisy, lambd, iterations, alpha):
+        """Specific TV-Huber denoising method implemented via primal-dual algorithm from Chambolle-Pock and
+        line search to find appropriate stepsize."""
 
         # Parameters
         beta = 1
@@ -273,6 +293,8 @@ class TV_Denoise():
         return u_new
 
     def tv_denoising_L2(self, img_noisy, lambd, iterations):
+        """Specific TV-L2 denoising method implemented via primal-dual algorithm from Chambolle-Pock and
+        line search to find appropriate stepsize."""
 
         # Parameters
         beta = 1

@@ -1,3 +1,11 @@
+"""Implementation of TGV reconstruction algorithms.
+
+Classes
+-------
+
+**MainWindow** - Class containing the TGV reconstruction function.
+"""
+
 import numpy as np
 import scipy
 import scipy.sparse as sp
@@ -6,6 +14,7 @@ from ..settings import ProcessSelDataType
 
 
 class TGV_Reco():
+    """Class containing the TGV reconstruction function."""
 
     def __init__(self):
 
@@ -18,6 +27,7 @@ class TGV_Reco():
         self.fft_dim = (-2, -1)
 
     def _make_nabla(self, L, M, N):
+        """Generate nabla operator for the usage within the K operator."""
         row = np.arange(0, L * M * N)
         dat = np.ones(L * M * N)
         col = np.arange(0, M * N * L).reshape(L, M, N)
@@ -59,6 +69,7 @@ class TGV_Reco():
         return nabla, nabla_x, nabla_y, nabla_z
 
     def make_K(self, L, M, N):
+        """Generate K operator for TGV (12 variables)."""
 
         nabla, nabla_x, nabla_y, nabla_z = self._make_nabla(L, M, N)
         neg_I = sp.identity(L * M * N) * -1
@@ -82,6 +93,7 @@ class TGV_Reco():
         return K
 
     def proj_ball(self, Y, alpha):
+        """Projection operator for norm balls."""
 
         norm = np.linalg.norm(Y, axis=0)
         projection = Y / np.maximum(1, norm / alpha)
@@ -89,16 +101,19 @@ class TGV_Reco():
         return projection
 
     def prox_F(self, r, sigma, lambd):
+        """Proximity operator for L2-dataterm on dual variable."""
 
         # this is from knoll stollberger tgv paper
         return (r * lambd) / (lambd + sigma)
 
     def op_A(self, u, sens_c, sparse_mask):
+        """Implementation of operator A on data representing P x F x C x u."""
 
         return sparse_mask * \
             np.fft.fftn((sens_c * u), axes=self.fft_dim, norm='ortho')
 
     def op_A_conj(self, r, sens_c, sparse_mask):
+        """Implementation of operator A* on data representing C* x F* x P x r."""
 
         r_IFT = sens_c.conjugate() * np.fft.ifftn(r * sparse_mask,
                                                   axes=self.fft_dim, norm='ortho')
@@ -112,6 +127,8 @@ class TGV_Reco():
             data_coils,
             params,
             spac):
+        """General method for TGV reconstruction which calls the algorithm according to the
+        selected data type."""
 
         self.h_inv = spac[0]
         self.hz_inv = spac[1]
@@ -156,6 +173,8 @@ class TGV_Reco():
             alpha0,
             alpha1,
             iterations):
+        """Specific TGV-L2 reconstruction method implemented via primal-dual algorithm from Chambolle-Pock and
+        line search to find appropriate stepsize."""
 
         # Parameters
         beta = 1

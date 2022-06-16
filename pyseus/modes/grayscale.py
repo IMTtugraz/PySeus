@@ -38,8 +38,8 @@ class Grayscale(BaseMode):
         BaseMode.__init__(self)
 
         self.source = DataType.IMAGE
-        """Determines wheter (IMAGE) amplitude or PHASE information from the
-        data is used or the KSPACE FFT representation. Default is IMAGE amplitude."""
+        """Determines wheter (IMAGE) amplitude or (PHASE) information of the data
+        or the (KSPACE) FFT representation is selected. Default is IMAGE amplitude."""
 
         # exponent for root amplitude representation of k-space
         self.exp_kspace = 0.3
@@ -118,7 +118,7 @@ class Grayscale(BaseMode):
         self.scale_window(scale_steps)
 
     def set_source(self, src):
-        """Represent amplitude (1) or phase (0) or FFT (2) (Root(data) and FFTShift) information in data."""
+        """Represent amplitude (IMAGE) or phase (PHASE) or (KSPACE, Root(data) and FFTShift) information in data."""
 
         self.source = src
         self.reset_window()

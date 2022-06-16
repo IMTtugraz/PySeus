@@ -195,6 +195,7 @@ class MainWindow(QMainWindow):
 
     # without event it would work that all windows close
     def closeEvent(self, event):
+        """Close all windows if main window is closed."""
         self._action_quit()
 
     def _action_open(self, data_type=DataType.IMAGE):

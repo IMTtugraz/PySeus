@@ -16,9 +16,10 @@ import numpy
 
 
 class ProcessDialog(QDialog):
-    """ Dialog for Image Processing with input parameters "denoising" or "reconstruction" as processing type"""
+    """Dialog for Image Processing with input parameters "denoising" or "reconstruction" as processing type."""
 
     def __init__(self, app, proc_type):
+        """Initialize all GUI elements and organize them in dialog window."""
         super().__init__()
 
         self.app = app
@@ -191,6 +192,8 @@ class ProcessDialog(QDialog):
                            )
 
     def signal_ok(self):
+        """GUI Parameters are stored in variables and
+        handled over to the method which starts the calculation."""
 
         alpha = float(self.qline_alpha.text())
         alpha0 = float(self.qline_alpha0.text())
@@ -217,6 +220,7 @@ class ProcessDialog(QDialog):
 
 
 class ProcessedWindow(QDialog):
+    """Window which displays the results of the denoising or reconstruction process."""
 
     def __init__(self, app, proc_type):
         super().__init__()
@@ -247,6 +251,7 @@ class ProcessedWindow(QDialog):
         self.mode = Grayscale()
 
     def calculation_callback(self, data_obj):
+        """Callback method from multithreading after the iterative calculation finished."""
 
         self.thread.requestInterruption()
         self.thread.quit()
@@ -277,6 +282,7 @@ class ProcessedWindow(QDialog):
             hz_inv,
             dataset_type,
             tv_type):
+        """Start multithreading with the appropriate denoising or reconstruction class."""
 
         self.dataset_type = dataset_type
 

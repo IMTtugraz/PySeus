@@ -3,7 +3,7 @@
 Methods
 -------
 
-**load(arg)** - Startup function and console entry point.
+**load(arg, data_type=DataType.IMAGE)** - Startup function and console entry point.
 """
 
 from sys import argv

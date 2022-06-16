@@ -32,7 +32,7 @@ class BaseFormat():
         """3D array of the pixeldata of the current scan."""
 
         self.coildata = [[[]]]
-        """4D array of the coil sensitivities data for the whole sample"""
+        """4D array of the coil sensitivities data for the whole sample."""
 
         self.meta_keymap = {}
         """Maps common metadata keys to format specific keys."""
@@ -41,7 +41,7 @@ class BaseFormat():
         """The pixel spacing metadata adjusted for rotation."""
 
         self.data_type = DataType.IMAGE
-        """Choose between "IMAGE" and "KSPACE" enum data type"""
+        """Choose between "IMAGE" and "KSPACE" enum data type."""
 
     @classmethod
     def can_handle(cls, path):
@@ -82,7 +82,7 @@ class BaseFormat():
         return []
 
     def get_reco_pixeldata(self, scan):
-        """Returns the 4D pixeldata from all coils (4.dim) of the current (in case there is a 5. dim) Scan  """
+        """Returns the pixeldata from all coils of the current scan."""
 
         return []
 
@@ -97,7 +97,7 @@ class BaseFormat():
                 self.pixeldata = dataset
 
     def get_coil_data(self, slice_):
-        """Return the coil sensitivities data that was selected with the kspace data together"""
+        """Return the coil sensitivities data that was selected with the kspace data together."""
 
         return []
 
@@ -158,6 +158,7 @@ class BaseFormat():
         return self.pixeldata[slice_].copy()
 
     def get_minmax_pixeldata(self, slice_):
+        """Return the minimum and maximum value of the selected slice."""
 
         data = self.get_pixeldata(slice_)
         data_min = numpy.min(data)
@@ -240,6 +241,7 @@ class BaseFormat():
         return len(self.pixeldata)
 
     def get_data_type(self):
+        """Return data type of current loaded file."""
         return self.data_type
 
 
