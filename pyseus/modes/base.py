@@ -37,13 +37,13 @@ class BaseMode():
         self.white = 1
         """Value translated to white (upper bound of window)."""
 
-    def prepare(self, data):  # pylint: disable=R0201
+    def prepare(self, data):
         """Prepare data for display (see *prepare_raw*)
         and apply windowing settings."""
 
         return data
 
-    def prepare_raw(self, data):  # pylint: disable=R0201
+    def prepare_raw(self, data):
         """Prepare data for analysis.
         Use amplitude or phase data occording to the current display mode."""
 

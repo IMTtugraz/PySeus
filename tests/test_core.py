@@ -5,7 +5,7 @@ import pytest
 
 from PySide2.QtGui import QPixmap
 
-from context import pyseus # noqa F401  # pylint: disable=W0611
+from context import pyseus
 from pyseus import PySeus
 from pyseus.modes import Grayscale
 from pyseus.settings import settings

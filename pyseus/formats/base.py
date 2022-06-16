@@ -8,10 +8,8 @@ Classes
 """
 
 import numpy
-from enum import IntEnum
 
 from ..settings import DataType
-
 
 
 class BaseFormat():
@@ -34,7 +32,7 @@ class BaseFormat():
         """3D array of the pixeldata of the current scan."""
 
         self.coildata = [[[]]]
-        """4D array of the coil sensitivities data for the whole sample"""
+        """4D array of the coil sensitivities data for the whole sample."""
 
         self.meta_keymap = {}
         """Maps common metadata keys to format specific keys."""
@@ -43,7 +41,7 @@ class BaseFormat():
         """The pixel spacing metadata adjusted for rotation."""
 
         self.data_type = DataType.IMAGE
-        """Choose between "IMAGE" and "KSPACE" enum data type"""
+        """Choose between "IMAGE" and "KSPACE" enum data type."""
 
     @classmethod
     def can_handle(cls, path):
@@ -52,7 +50,7 @@ class BaseFormat():
 
         Custom formats have to override this function."""
 
-    def load(self, path, data_type):
+    def load(self, path, data_type=None):
         """Attempt to load the file at *path*. Return True on success or
         throw an exception."""
 
@@ -74,7 +72,7 @@ class BaseFormat():
         else:
             return True
 
-    def get_scan_pixeldata(self, scan):  # pylint: disable=R0201,W0613
+    def get_scan_pixeldata(self, scan):
         """Collect and return the pixeldata from the scan *scan*.
 
         Custom formats have to override either this function and
@@ -84,26 +82,26 @@ class BaseFormat():
         return []
 
     def get_reco_pixeldata(self, scan):
-        """Returns the 4D pixeldata from all coils (4.dim) of the current (in case there is a 5. dim) Scan  """
-        
+        """Returns the pixeldata from all coils of the current scan."""
+
         return []
 
     def set_pixeldata(self, dataset, slice_id):
         """Sets pixeldata after denoising, if changes are confirmed."""
 
-        if isinstance(dataset,numpy.ndarray):
+        if isinstance(dataset, numpy.ndarray):
             if dataset.ndim == 2 and slice_id != -1:  # single slice
-                self.pixeldata[slice_id,:,:] = dataset
+                self.pixeldata[slice_id, :, :] = dataset
 
             if dataset.ndim == 3 and slice_id == -1:  # multiple slices
                 self.pixeldata = dataset
 
     def get_coil_data(self, slice_):
-        """Return the coil sensitivities data that was selected with the kspace data together"""
-        
+        """Return the coil sensitivities data that was selected with the kspace data together."""
+
         return []
 
-    def get_scan_metadata(self, scan):  # pylint: disable=R0201,W0613
+    def get_scan_metadata(self, scan):
         """Collect and return the metadata from the scan *scan*.
 
         Custom formats have to override either this function and
@@ -160,14 +158,15 @@ class BaseFormat():
         return self.pixeldata[slice_].copy()
 
     def get_minmax_pixeldata(self, slice_):
+        """Return the minimum and maximum value of the selected slice."""
 
         data = self.get_pixeldata(slice_)
         data_min = numpy.min(data)
         data_max = numpy.max(data)
-        
-        return (data_min,data_max)
 
-    def get_spacing(self, reset=False):  # pylint: disable=R0201
+        return (data_min, data_max)
+
+    def get_spacing(self, reset=False):
         """Return the pixel spacing, if available.
 
         This is used for calculation of the pixel aspect ratio; the value
@@ -177,15 +176,15 @@ class BaseFormat():
 
         return self.pixel_spacing
 
-    def get_scale(self):  # pylint: disable=R0201
+    def get_scale(self):
         """Return the actual size of a pixel in mm, if available."""
         return 0.0
 
-    def get_units(self):  # pylint: disable=R0201
+    def get_units(self):
         """Return units associated with the loaded values, if available."""
         return "1"
 
-    def get_orientation(self):  # pylint: disable=R0201
+    def get_orientation(self):
         """Return the default image orientation, if available."""
         return []
 
@@ -242,6 +241,7 @@ class BaseFormat():
         return len(self.pixeldata)
 
     def get_data_type(self):
+        """Return data type of current loaded file."""
         return self.data_type
 
 

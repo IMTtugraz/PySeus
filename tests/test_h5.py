@@ -3,17 +3,18 @@
 import numpy
 import pytest
 
-from context import pyseus  # noqa F401  # pylint: disable=W0611
+from context import pyseus
 from pyseus import formats
+from pyseus.settings import DataType
 
 
-dataset = formats.H5()  # pylint: disable=C0103
+dataset = formats.H5()
 
 
 def test_h5_load():
     """Test loading of H5 files."""
 
-    assert dataset.load("./tests/samples/sample.h5") is True
+    assert dataset.load("./tests/samples/sample.h5", data_type=DataType.IMAGE) is True
     assert isinstance(dataset.path, str)
     assert isinstance(dataset.scans, list)
     assert isinstance(dataset.scan, int)
@@ -41,5 +42,5 @@ def test_h5_errors():
     """Test how H5 handles failure conditions."""
 
     with pytest.raises(formats.LoadError) as error:
-        dataset.load("./this/does/not/exist")
+        dataset.load("./this/does/not/exist", data_type=DataType.IMAGE)
     assert error.type == formats.LoadError

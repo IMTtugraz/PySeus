@@ -10,7 +10,7 @@ from functools import partial
 
 from PySide2.QtCore import QSize
 from PySide2.QtWidgets import QLabel, QScrollArea, QSizePolicy, \
-                              QVBoxLayout, QFrame
+    QVBoxLayout, QFrame
 
 from pyseus.settings import settings
 
@@ -47,10 +47,10 @@ class ThumbsWidget(QScrollArea):
         thumb.mousePressEvent = partial(self._thumb_clicked,
                                         len(self.thumbs))
         thumb.setProperty("role", "scan_thumb")
-        thumb.setMaximumWidth(int(settings["ui"]["thumb_size"])+2)
+        thumb.setMaximumWidth(int(settings["ui"]["thumb_size"]) + 2)
 
         self.thumbs.append(thumb)
-        self.wrapper.layout().insertWidget(self.wrapper.layout().count()-1,
+        self.wrapper.layout().insertWidget(self.wrapper.layout().count() - 1,
                                            thumb)
 
         self.updateGeometry()
@@ -61,14 +61,14 @@ class ThumbsWidget(QScrollArea):
             thumb.deleteLater()
         self.thumbs = []
 
-    def _thumb_clicked(self, thumb, event):  # pylint: disable=W0613
+    def _thumb_clicked(self, thumb, event):
         """Trigger *app.select_scan* when a thumbnail is clicked."""
         self.app.select_scan(thumb)
 
-    def minimumSizeHint(self):  # pylint: disable=C0103
+    def minimumSizeHint(self):
         """Return widget size; width should be *thumb_size + scrollbar_width*
         or 0 if there are no thumbnails."""
         if self.thumbs:
-            return QSize(int(settings["ui"]["thumb_size"])+25, 0)
+            return QSize(int(settings["ui"]["thumb_size"]) + 25, 0)
 
         return QSize(0, 0)

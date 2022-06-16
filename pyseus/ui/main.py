@@ -12,10 +12,7 @@ from functools import partial
 import os
 import numpy
 
-from PySide2 import QtWidgets
-from PySide2.QtCore import QLine
-from PySide2.QtWidgets import QButtonGroup, QDialog, QDialogButtonBox, QFormLayout, QLineEdit, QMainWindow, QAction, QLabel, QFileDialog, \
-                              QFrame, QPushButton, QRadioButton, QVBoxLayout, QHBoxLayout, QWidget
+from PySide2.QtWidgets import  QMainWindow, QAction, QLabel, QFileDialog, QFrame, QVBoxLayout, QHBoxLayout
 from PySide2.QtGui import QIcon
 
 from .view import ViewWidget
@@ -23,11 +20,8 @@ from .sidebar import ConsoleWidget, InfoWidget, MetaWidget
 from .thumbs import ThumbsWidget
 from ..settings import DataType, ProcessType
 
-import scipy.io
-import matplotlib.pyplot as plt
 
-
-class MainWindow(QMainWindow):  # pylint: disable=R0902
+class MainWindow(QMainWindow):
     """Class representing the main window for PySeus."""
 
     def __init__(self, app):
@@ -92,7 +86,6 @@ class MainWindow(QMainWindow):  # pylint: disable=R0902
         geometry = self.app.qt_app.desktop().availableGeometry(self)
         self.resize(geometry.width() * 0.6, geometry.height() * 0.6)
 
-
     def add_menu_item(self, menu, title, callback, shortcut=""):
         """Create a menu item."""
         action = QAction(title, self)
@@ -108,12 +101,15 @@ class MainWindow(QMainWindow):  # pylint: disable=R0902
         ami = self.add_menu_item
         menu_bar = self.menuBar()
 
-        # partial fixes a given number of arguments to a function and generates a new function without 
+        # partial fixes a given number of arguments to a function and generates a new function without
         # calling it
         self.file_menu = menu_bar.addMenu("&File")
-        ami(self.file_menu, "&Load image", partial(self._action_open, DataType.IMAGE), "Ctrl+O")
-        ami(self.file_menu, "&Load k-space", partial(self._action_open, DataType.KSPACE), "Ctrl+K")
-        ami(self.file_menu, "&Save dataset", partial(self._action_save), "Ctrl+S")
+        ami(self.file_menu, "&Load image", partial(
+            self._action_open, DataType.IMAGE), "Ctrl+O")
+        ami(self.file_menu, "&Load k-space",
+            partial(self._action_open, DataType.KSPACE), "Ctrl+K")
+        ami(self.file_menu, "&Save dataset",
+            partial(self._action_save), "Ctrl+S")
         ami(self.file_menu, "&Reload", self._action_reload, "Ctrl+L")
         self.file_menu.addSeparator()
         ami(self.file_menu, "&Quit", self._action_quit, "Ctrl+Q")
@@ -122,7 +118,7 @@ class MainWindow(QMainWindow):  # pylint: disable=R0902
         for mode in self.app.modes:
             mode.setup_menu(self.app, self.view_menu, self.add_menu_item)
         self.view_menu.addSeparator()
-        
+
         ami(self.view_menu, "Zoom &in", self._action_zoom_in, "+")
         ami(self.view_menu, "Zoom &out", self._action_zoom_out, "-")
         ami(self.view_menu, "Zoom to &fit", self._action_zoom_fit, "#")
@@ -175,19 +171,18 @@ class MainWindow(QMainWindow):  # pylint: disable=R0902
 
         self.process_menu = menu_bar.addMenu("&Process")
         ami(self.process_menu, "Denoising",
-            partial(self._open_process_dialog, ProcessType.DENOISING ), "---")
-        ami(self.process_menu, "Reconstruction",
-            partial(self._open_process_dialog, ProcessType.RECONSTRUCTION), "---")
+            partial(self._open_process_dialog, ProcessType.DENOISING), "---")
+        ami(self.process_menu, "Reconstruction", partial(
+            self._open_process_dialog, ProcessType.RECONSTRUCTION), "---")
 
         # About action is its own top level menu
         ami(menu_bar, "&About", self._action_about)
-
 
     def show_status(self, message):
         """Display *message* in the status bar."""
         self.statusBar().showMessage(message)
 
-    def resizeEvent(self, event):  # pylint: disable=C0103
+    def resizeEvent(self, event):
         """Keep the viewport centered and adjust zoom on window resize."""
         x_factor = event.size().width() / event.oldSize().width()
         # y_factor = event.size().height() / event.oldSize().height()
@@ -199,7 +194,8 @@ class MainWindow(QMainWindow):  # pylint: disable=R0902
         sys.exit(0)
 
     # without event it would work that all windows close
-    def closeEvent(self,event):
+    def closeEvent(self, event):
+        """Close all windows if main window is closed."""
         self._action_quit()
 
     def _action_open(self, data_type=DataType.IMAGE):
@@ -211,14 +207,13 @@ class MainWindow(QMainWindow):  # pylint: disable=R0902
             self.app.load_file(path, data_type)
 
     def _action_save(self):
-        
-        path,_ = QFileDialog.getSaveFileName(None, "Save dataset",
-                                            self._open_path, "*.npy")
 
-        with open(path,'wb') as file:
-            numpy.save(file,self.app.dataset.get_pixeldata())
-        
-        
+        path, _ = QFileDialog.getSaveFileName(None, "Save dataset",
+                                              self._open_path, "*.npy")
+
+        with open(path, 'wb') as file:
+            numpy.save(file, self.app.dataset.get_pixeldata())
+
     def _action_reload(self):
         if self.app.dataset is not None:
             data_type = self.app.dataset.get_data_type()
@@ -236,7 +231,7 @@ class MainWindow(QMainWindow):  # pylint: disable=R0902
     def _action_zoom_reset(self):
         self.view.zoom(1, False)
 
-    def _action_about(self):  # pylint: disable=R0201
+    def _action_about(self):
         webbrowser.open_new("https://github.com/IMTtugraz/PySeus")
 
     def _action_win_lower(self):
@@ -279,10 +274,9 @@ class MainWindow(QMainWindow):  # pylint: disable=R0902
 
     def _open_process_dialog(self, proc_type):
         self.app.show_process_window(proc_type)
-    
 
 
-class SidebarHeading(QLabel):  # pylint: disable=R0903
+class SidebarHeading(QLabel):
     """Widget for sidebar separators and headings."""
 
     def __init__(self, text="", first=False):

@@ -19,6 +19,7 @@ on the left and clicking a thumbnail will load the corresponding scan.
 | Explore / Previous Scan | Alt + PgDown | Alt + Wheel Up       |
 +-------------------------+--------------+----------------------+
 
+
 For 3D data, the first dimension will be interpreted as a list of slices.
 
 +--------------------------+--------------+----------------------+
@@ -67,16 +68,20 @@ Viewing a Slice
 ===============
 
 PySeus supports different ways to visualize data via display modes. The built-in
-mode *Grayscale* allows for visualization of either the amplitude or phase 
-part of data.
+mode *Grayscale* allows for visualization of either the amplitude or the phase 
+part of data. Furthermore, a representation for kspace data is available which takes
+the root of the amplitude data for better contrast of the kspace data.
 
-+-------------------------+--------------+----------------------+
-| **Menu**                | **Keyboard** | **Mouse**            |
-+-------------------------+--------------+----------------------+
-| View / Gray - Amplitude | F1           |                      |
-+-------------------------+--------------+----------------------+
-| View / Gray - Phase     | F2           |                      |
-+-------------------------+--------------+----------------------+
++-----------------------------------------+--------------+----------------------+
+| **Menu**                                | **Keyboard** | **Mouse**            |
++-----------------------------------------+--------------+----------------------+
+| View / Gray - Amplitude - Image         | F1           |                      |
++-----------------------------------------+--------------+----------------------+
+| View / Gray - Phase                     | F2           |                      |
++-----------------------------------------+--------------+----------------------+
+| View / Gray - Amplitude - Root(k-space) |              |                      |
++-----------------------------------------+--------------+----------------------+
+
 
 Zoom & Pan
 ----------

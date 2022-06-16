@@ -3,7 +3,7 @@
 import numpy
 import pytest
 
-from context import pyseus  # noqa F401  # pylint: disable=W0611
+from context import pyseus
 from pyseus import formats
 
 

@@ -3,11 +3,11 @@
 import numpy
 import pytest
 
-from context import pyseus  # noqa F401  # pylint: disable=W0611
+from context import pyseus
 from pyseus import formats
 
 
-dataset = formats.NIfTI()  # pylint: disable=C0103
+dataset = formats.NIfTI()
 
 
 def test_nifti_load():

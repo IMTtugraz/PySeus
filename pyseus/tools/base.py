@@ -22,10 +22,10 @@ class BaseTool():
         """Set the respective mode as active."""
         app.tool = cls(app)
 
-    def start_roi(self, x, y):  # pylint: disable=C0103
+    def start_roi(self, x, y):
         """Start marking a region of interest (on mouse button down)."""
 
-    def end_roi(self, x, y):  # pylint: disable=C0103
+    def end_roi(self, x, y):
         """End marking a region of interest (on mouse button up)."""
 
     def draw_overlay(self, pixmap):

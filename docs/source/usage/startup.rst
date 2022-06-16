@@ -8,10 +8,15 @@ python script:
 .. code-block:: python
 
    import pyseus
+   from pyseus.settings import DataType
 
-   pyseus.load()  # starts the PySeus GUI
-   pyseus.load(data)  # starts the GUI and loads [data]
-   pyseus.load(path)  # starts the GUI and loads [path]
+
+   pyseus.load()  # starts the PySeus GUI in image mode
+   pyseus.load(data)  # starts the GUI and loads [data] in image mode (standard)
+   pyseus.load(path)  # starts the GUI and loads [path] in image mode (standard)
+   pyseus.load(data, data_type=DataType.IMAGE)  # starts the GUI and loads [data] in image mode
+   pyseus.load(data, data_type=DataType.KSPACE)  # starts the GUI and loads [data] in kspace mode
+   pyseus.load(path, data_type=DataType.KSPACE)  # starts the GUI and loads [path] in kspace mode
 
 Supported formats
 -----------------
@@ -24,7 +29,9 @@ PySeus supports the following data formats:
 are currently *not* supported.
 
 **HDF5 files**: PySeus will accept HDF5 files; if multiple datasets are 
-present within a file, a selection dialog is displayed.
+present within a file, a selection dialog is displayed. Additionally to image data
+HDF5 also accepts kspace data with three datasets. These three datasets are the real and the imaginary
+part of the kspace and the corresponding coil sensitivities. 
 
 **DICOM files**: PySeus will accept *.DCM* files and attempt to load slices 
 and scans form the base and parent directories. *DICOMDIR* files are currently 
@@ -41,6 +48,8 @@ Data conventions
 Some formats, like NumPy and HDF5 allow for a lot of freedom in how the data 
 is structured; in these cases, PySeus interprets data like this:
 
+**Image data:**
+
 *Two dimensional data* is interpreted as a single slice, the first dimension 
 being the y-axis.
 
@@ -52,3 +61,14 @@ dimension is the scan index.
 
 *Five dimensional data* is interpreted as a set of scans, where the first 
 two dimensions are merged for the scan index.
+
+**Kspace data:**
+
+*Three dimensional data* is interpreted as a single slice for every coil, the first 
+dimension being the coil index and the second being the y-axis.
+
+*Four dimensional data* is interpreted as a set of slices for every coil, where the first 
+dimension is the coil index and the second the slice index.
+
+*Five dimensional data* is interpreted as a set of scans for every coil, where the first 
+dimension is the coil index and the second is the scan index.

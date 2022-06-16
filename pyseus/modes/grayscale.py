@@ -10,23 +10,25 @@ from functools import partial
 
 import numpy
 
-from enum import IntEnum
 from ..settings import settings, DataType
 from .base import BaseMode
 
 
-# M: This class just adjusts the value border for graphical representation, no gui things themselves
+# M: This class just adjusts the value border for graphical
+# representation, no gui things themselves
 class Grayscale(BaseMode):
     """Display class for grayscale images with simple windowing."""
 
     @classmethod
     def setup_menu(cls, app, menu, ami):
-        ami(menu, "&Gray - Amplitude - Image", partial(cls.start, app, DataType.IMAGE))
+        ami(menu, "&Gray - Amplitude - Image",
+            partial(cls.start, app, DataType.IMAGE))
         ami(menu, "&Gray - Phase", partial(cls.start, app, DataType.PHASE))
-        ami(menu, "&Gray - Amplitude - Root(k-space)", partial(cls.start, app, DataType.KSPACE))
+        ami(menu, "&Gray - Amplitude - Root(k-space)",
+            partial(cls.start, app, DataType.KSPACE))
 
     @classmethod
-    def start(cls, app, src):  # pylint: disable=W0221
+    def start(cls, app, src):
         if not isinstance(app.mode, cls):
             app.mode = cls()
         app.mode.set_source(src)
@@ -36,8 +38,8 @@ class Grayscale(BaseMode):
         BaseMode.__init__(self)
 
         self.source = DataType.IMAGE
-        """Determines wheter (IMAGE) amplitude or PHASE information from the
-        data is used or the KSPACE FFT representation. Default is IMAGE amplitude."""
+        """Determines wheter (IMAGE) amplitude or (PHASE) information of the data
+        or the (KSPACE) FFT representation is selected. Default is IMAGE amplitude."""
 
         # exponent for root amplitude representation of k-space
         self.exp_kspace = 0.3
@@ -53,14 +55,15 @@ class Grayscale(BaseMode):
         elif self.source == DataType.IMAGE:
             data = numpy.absolute(data).astype(float)
         elif self.source == DataType.KSPACE:
-            data = ((numpy.absolute(numpy.fft.fftshift(data)))**self.exp_kspace).astype(float)
-        
+            data = ((numpy.absolute(numpy.fft.fftshift(data)))
+                    ** self.exp_kspace).astype(float)
+
         return data
 
     def apply_window(self, data):
         if self.source == DataType.PHASE:
             data += numpy.pi  # align -pi to 0
-            data *= 255 / (2*numpy.pi)  # scale pi to 255
+            data *= 255 / (2 * numpy.pi)  # scale pi to 255
 
         elif self.source == DataType.IMAGE or self.source == DataType.KSPACE:
             data -= self.black  # align black to 0
@@ -115,7 +118,7 @@ class Grayscale(BaseMode):
         self.scale_window(scale_steps)
 
     def set_source(self, src):
-        """Represent amplitude (1) or phase (0) or FFT (2) (Root(data) and FFTShift) information in data."""
+        """Represent amplitude (IMAGE) or phase (PHASE) or (KSPACE, Root(data) and FFTShift) information in data."""
 
         self.source = src
         self.reset_window()

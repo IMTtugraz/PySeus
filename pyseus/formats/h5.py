@@ -10,14 +10,13 @@ Classes
 import os
 import numpy
 from ..settings import DataType
-from enum import IntEnum
 
 import h5py
 
 from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QDialog, QLabel, QLayout, QVBoxLayout, \
-                              QDialogButtonBox, QMessageBox, \
-                              QListWidget, QListWidgetItem
+    QDialogButtonBox, QMessageBox, \
+    QListWidget, QListWidgetItem
 
 from .base import BaseFormat, LoadError
 
@@ -27,7 +26,8 @@ class H5(BaseFormat):
 
     Supports *.h5*-files in HDF5 format.
     Supports metadata, pixelspacing, scale, units and orientation
-    using attributes with DICOM or NIfTI standard keywords."""
+    using attributes with DICOM or NIfTI standard keywords.
+    Furthermore it supports kspace data for reconstruction."""
 
     EXTENSIONS = (".h5", ".hdf5")
 
@@ -64,8 +64,6 @@ class H5(BaseFormat):
         self.dims = 0
         """Number of dimensions of the current dataset in the H5 file."""
 
-        
-
     def load(self, path, data_type):
         if not os.path.isfile(path):
             raise LoadError("File not found.")
@@ -83,7 +81,7 @@ class H5(BaseFormat):
             file_.visititems(_walk)
 
             def _openH5Explorer(title):
-                dialog = H5Explorer(nodes,title)
+                dialog = H5Explorer(nodes, title)
                 choice = dialog.exec()
                 if choice == QDialog.Accepted:
                     subpath = dialog.result()
@@ -91,18 +89,19 @@ class H5(BaseFormat):
                 else:
                     return False
 
-            if len(nodes) == 1 and (self.data_type == DataType.IMAGE or self.data_type == DataType.KSPACE):
+            if len(nodes) == 1 and (self.data_type ==
+                                    DataType.IMAGE or self.data_type == DataType.KSPACE):
                 self.subpath = nodes[0]
-            
+
             elif self.data_type == DataType.KSPACE:
                 self.subpath_real = _openH5Explorer("Select Real Dataset")
                 self.subpath_imag = _openH5Explorer("Select Imag Dataset")
                 self.subpath_coil = _openH5Explorer("Select Coil Dataset")
                 len_re = len(file_[self.subpath_real].dims)
                 len_im = len(file_[self.subpath_imag].dims)
-                
+
                 if len_re == len_im:
-                    # to be consistent with dimension check of the 
+                    # to be consistent with dimension check of the
                     # scans below subpath variable of image data is used
                     self.subpath = self.subpath_real
                 else:
@@ -142,9 +141,9 @@ class H5(BaseFormat):
 
     def get_scan_pixeldata(self, scan):
         with h5py.File(self.path, "r") as file_:
-            
+
             if self.data_type == DataType.IMAGE:
-            
+
                 if self.dims == 2:  # single slice
                     return numpy.asarray([file_[self.subpath]])
 
@@ -160,23 +159,45 @@ class H5(BaseFormat):
 
             elif self.data_type == DataType.KSPACE:
                 if self.dims == 2:  # single slice
-                    return (numpy.asarray([file_[self.subpath_real]]) + 1j*numpy.asarray([file_[self.subpath_imag]]))
+                    return (numpy.asarray(
+                        [file_[self.subpath_real]]) + 1j * numpy.asarray([file_[self.subpath_imag]]))
 
                 if self.dims == 3:  # multiple slices
-                    return (numpy.asarray(file_[self.subpath_real]) + 1j*numpy.asarray(file_[self.subpath_imag]))
+                    return (
+                        numpy.asarray(
+                            file_[
+                                self.subpath_real]) +
+                        1j *
+                        numpy.asarray(
+                            file_[
+                                self.subpath_imag]))
 
                 if self.dims == 4:  # multiple scans
-                    return (numpy.asarray(file_[self.subpath_real][scan]) + 1j*numpy.asarray(file_[self.subpath_imag][scan]))
+                    return (
+                        numpy.asarray(
+                            file_[
+                                self.subpath_real][scan]) +
+                        1j *
+                        numpy.asarray(
+                            file_[
+                                self.subpath_imag][scan]))
 
                 if self.dims == 5:
-                    dim_4, dim_5 = divmod(scan, file_[self.subpath_real].shape[1])
-                    return (numpy.asarray(file_[self.subpath_real][dim_4][dim_5]) + 1j*numpy.asarray(file_[self.subpath_imag][dim_4][dim_5]))
-                
-             
+                    dim_4, dim_5 = divmod(
+                        scan, file_[self.subpath_real].shape[1])
+                    return (
+                        numpy.asarray(
+                            file_[
+                                self.subpath_real][dim_4][dim_5]) +
+                        1j *
+                        numpy.asarray(
+                            file_[
+                                self.subpath_imag][dim_4][dim_5]))
 
             return []  # can´t interpret data with dimensions <= 1 or > 5
 
-    # just with 4 dims or more, Coils are needed and assumption that there is just  3D sample (no 2D only)
+    # just with 4 dims or more, Coils are needed and assumption that there is
+    # just  3D sample (no 2D only)
     def get_reco_pixeldata(self, scan, slice_):
         with h5py.File(self.path, "r") as file_:
 
@@ -184,30 +205,79 @@ class H5(BaseFormat):
 
                 if self.dims == 4:  # multiple scans
                     if slice_ == -1:
-                        return (numpy.asarray(file_[self.subpath_real]) + 1j*numpy.asarray(file_[self.subpath_imag]))[:,:,:,:]
+                        return (
+                            numpy.asarray(
+                                file_[
+                                    self.subpath_real]) +
+                            1j *
+                            numpy.asarray(
+                                file_[
+                                    self.subpath_imag]))[
+                            :,
+                            :,
+                            :,
+                            :]
                     else:
-                        return (numpy.asarray(file_[self.subpath_real]) + 1j*numpy.asarray(file_[self.subpath_imag]))[:,slice_:slice_+1,:,:]
+                        return (
+                            numpy.asarray(
+                                file_[
+                                    self.subpath_real]) +
+                            1j *
+                            numpy.asarray(
+                                file_[
+                                    self.subpath_imag]))[
+                            :,
+                            slice_:slice_ +
+                            1,
+                            :,
+                            :]
 
-                # dim 5 is arbitrary parameter, dim 4 is the coil dimension and is always completely loaded therefore no indexing of dim 4
+                # dim 5 is arbitrary parameter, dim 4 is the coil dimension and
+                # is always completely loaded therefore no indexing of dim 4
                 if self.dims == 5:
-                    dim_5, dim_coil = divmod(scan, file_[self.subpath_real].shape[1])
-                    if slice_ ==-1:
-                        return (numpy.asarray(file_[self.subpath_real][dim_5]) + 1j*numpy.asarray(file_[self.subpath_imag][dim_5]))[:,:,:,:]
+                    dim_5, dim_coil = divmod(
+                        scan, file_[self.subpath_real].shape[1])
+                    if slice_ == -1:
+                        return (
+                            numpy.asarray(
+                                file_[
+                                    self.subpath_real][dim_5]) +
+                            1j *
+                            numpy.asarray(
+                                file_[
+                                    self.subpath_imag][dim_5]))[
+                            :,
+                            :,
+                            :,
+                            :]
                     else:
-                        return (numpy.asarray(file_[self.subpath_real][dim_5]) + 1j*numpy.asarray(file_[self.subpath_imag][dim_5]))[:,slice_:slice_+1,:,:]
-
+                        return (
+                            numpy.asarray(
+                                file_[
+                                    self.subpath_real][dim_5]) +
+                            1j *
+                            numpy.asarray(
+                                file_[
+                                    self.subpath_imag][dim_5]))[
+                            :,
+                            slice_:slice_ +
+                            1,
+                            :,
+                            :]
 
         return []
 
     def get_coil_data(self, slice_):
-        # Asumption that coil data is 4D always. 
-        # Return is also always 4D, even if less dim are needed, other dims are len=1
+        # Asumption that coil data is 4D always.
+        # Return is also always 4D, even if less dim are needed, other dims are
+        # len=1
         with h5py.File(self.path, "r") as file_:
 
             if slice_ == -1:
                 return numpy.asarray(file_[self.subpath_coil])
 
-            return numpy.asarray(file_[self.subpath_coil])[:,slice_:slice_+1,:,:]
+            return numpy.asarray(file_[self.subpath_coil])[
+                :, slice_:slice_ + 1, :, :]
 
     def get_scan_metadata(self, scan):
         metadata = {}
@@ -258,7 +328,7 @@ class H5(BaseFormat):
         return []
 
 
-class H5Explorer(QDialog):  # pylint: disable=R0903
+class H5Explorer(QDialog):
     """Dialog for selecting a dataset in an H5 file."""
 
     def __init__(self, items, title):

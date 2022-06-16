@@ -3,8 +3,8 @@ PySeus Documentation
 
 PySeus is a simple viewer for MRI data written in Python and licensed 
 under `MIT/X11 <https://github.com/calmer/PySeus/blob/master/LICENSE>`_. 
-It was developed in 2019 as a bachelor's thesis project at the 
-`Institute of Medical Engineering <https://www.tugraz.at/institute/imt/home/>`_ 
+It was developed in 2019 as a bachelor's thesis project and extended in 2021 as 
+a master's thesis project at the `Institute of Medical Engineering <https://www.tugraz.at/institute/imt/home/>`_ 
 at `Gaz University of Technology <https://www.tugraz.at/en/home/>`_.
 
 .. toctree::
@@ -20,8 +20,10 @@ at `Gaz University of Technology <https://www.tugraz.at/en/home/>`_.
    usage/installation
    usage/startup
    usage/interface
+   usage/file
    usage/navigation
    usage/evaluate
+   usage/process
 
 .. toctree::
    :maxdepth: 1
@@ -34,3 +36,4 @@ at `Gaz University of Technology <https://www.tugraz.at/en/home/>`_.
    development/modes
    development/tools
    development/interface
+   development/process

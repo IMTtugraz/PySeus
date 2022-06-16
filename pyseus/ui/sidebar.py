@@ -41,13 +41,13 @@ class InfoWidget(QFrame):
 
         self.updateGeometry()
 
-    def minimumSizeHint(self):  # pylint: disable=C0103,R0201
+    def minimumSizeHint(self):
         """Return widget size to ensure unifrom sidebar width."""
         return QSize(int(settings["ui"]["sidebar_size"]), 80)
 
     def update_slice(self, current, slices):
         """Update the displayed slice index."""
-        self.slice.setText("{} / {}".format(current+1, slices))
+        self.slice.setText("{} / {}".format(current + 1, slices))
 
     def update_scan(self, scan):
         """Update the displayed scan ID."""
@@ -80,7 +80,7 @@ class MetaWidget(QScrollArea):
 
         self.updateGeometry()
 
-    def minimumSizeHint(self):  # pylint: disable=C0103,R0201
+    def minimumSizeHint(self):
         """Return widget size to ensure unifrom sidebar width."""
         return QSize(int(settings["ui"]["sidebar_size"]), 100)
 
@@ -103,7 +103,7 @@ class MetaWidget(QScrollArea):
         elif data is None or not data:
             self.table.addRow("No metadata available", None)
 
-    def _show_more(self, event):  # pylint: disable=W0613
+    def _show_more(self, event):
         """Display a window showing all available metadata."""
         self.app.show_metadata_window()
 
@@ -121,7 +121,7 @@ class ConsoleWidget(QTextEdit):
                            QSizePolicy.Policy.MinimumExpanding)
         self.updateGeometry()
 
-    def minimumSizeHint(self):  # pylint: disable=C0103,R0201
+    def minimumSizeHint(self):
         """Return widget size to ensure unifrom sidebar width."""
         return QSize(int(settings["ui"]["sidebar_size"]), 100)
 

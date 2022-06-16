@@ -9,4 +9,4 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(
     os.path.dirname(__file__), "../")))
 
-import pyseus  # noqa: F401,E402  # pylint: disable=C0413,W0611
+import pyseus

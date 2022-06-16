@@ -46,7 +46,7 @@ class DICOM(BaseFormat):
         _, ext = os.path.splitext(path)
         return ext.lower() in cls.EXTENSIONS
 
-    def load(self, path, data_type):
+    def load(self, path, data_type=None):
         if not os.path.isfile(path):
             raise LoadError("File not found.")
 
@@ -59,7 +59,7 @@ class DICOM(BaseFormat):
         for dir_ in natsorted(scan_dirs):
             has_dcm = False
             for file_ in os.listdir(os.path.abspath(
-                                os.path.join(self.scan_level, dir_))):
+                    os.path.join(self.scan_level, dir_))):
                 _, ext = os.path.splitext(file_)
                 if ext.lower() in DICOM.EXTENSIONS:
                     has_dcm = True
