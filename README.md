@@ -1,3 +1,6 @@
+**The main repository has moved to: https://gitlab.tugraz.at/ibi/mrirecon/software/PySeus**
+
+
 # PySEUS
 
 [![Build Status](https://travis-ci.com/IMTtugraz/PySeus.svg?branch=master)](https://travis-ci.com/IMTtugraz/PySeus)
